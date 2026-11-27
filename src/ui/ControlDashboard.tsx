@@ -1,16 +1,19 @@
 import { motion } from 'framer-motion'
+import { Cpu, Gauge } from 'lucide-react'
 import type { AeroMode } from '@/types/aero'
 import { useAeroStore } from '@/store'
+import { cn } from '@/lib/utils'
+import { BorderBeam, GlassCard, ShineButton } from '@/ui/primitives'
 
 const MODES: AeroMode[] = ['DRS', 'PASSIVE', 'MAXP', 'AEROBRAKE']
 
-const MODE_ACCENT: Record<AeroMode, string> = {
-  DRS: 'border-aero-cyan bg-cyan-950/40 text-aero-cyan shadow-[0_0_24px_rgb(0_240_255_/0.18)]',
+const MODE_ACTIVE: Record<AeroMode, string> = {
+  DRS: 'border-aero-cyan/80 bg-cyan-950/45 text-aero-cyan shadow-[0_0_24px_rgb(0_240_255_/0.18)]',
   PASSIVE:
-    'border-slate-500/50 bg-slate-900/40 text-aero-champagne shadow-[0_0_16px_rgb(148_163_184_/0.12)]',
-  MAXP: 'border-aero-lime bg-aero-amr-deep/50 text-aero-lime shadow-[0_0_24px_rgb(196_223_0_/0.2)]',
+    'border-slate-400/40 bg-slate-900/45 text-aero-champagne shadow-[0_0_16px_rgb(148_163_184_/0.12)]',
+  MAXP: 'border-aero-lime/80 bg-aero-amr-deep/55 text-aero-lime shadow-[0_0_24px_rgb(196_223_0_/0.2)]',
   AEROBRAKE:
-    'border-aero-crimson bg-red-950/40 text-aero-crimson shadow-[0_0_24px_rgb(255_59_48_/0.2)]',
+    'border-aero-crimson/80 bg-red-950/45 text-aero-crimson shadow-[0_0_24px_rgb(255_59_48_/0.2)]',
 }
 
 /** Chapter 3 live aero control simulator — wired to Zustand store. */
@@ -43,15 +46,18 @@ export function ControlDashboard() {
   }
 
   return (
-    <motion.div
+    <GlassCard
+      variant="strong"
+      className="pointer-events-auto relative w-full max-w-lg overflow-hidden p-6"
       initial={{ opacity: 0, y: 18 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.3 }}
       transition={{ duration: 0.6 }}
-      className="glass-panel-strong pointer-events-auto w-full max-w-lg rounded-xl p-6"
     >
-      <p className="font-mono text-[10px] tracking-[0.28em] text-aero-lime uppercase">
-        Live control · Chapter 03 · Rear wing
+      <BorderBeam duration={9} />
+      <p className="inline-flex items-center gap-2 font-mono text-[10px] tracking-[0.28em] text-aero-lime uppercase">
+        <Cpu className="size-3.5" aria-hidden />
+        Live control · Chapter 03 · Wind tunnel
       </p>
       <h3 className="font-display mt-2 text-2xl font-semibold tracking-[0.03em]">
         Mecatronic state machine
@@ -65,24 +71,21 @@ export function ControlDashboard() {
         {MODES.map((m) => {
           const active = mode === m
           return (
-            <button
+            <ShineButton
               key={m}
-              type="button"
               data-testid={`mode-${m}`}
               onClick={() => selectMode(m)}
-              className={`rounded-md border px-2 py-2.5 font-mono text-[11px] tracking-wide transition ${
-                active
-                  ? MODE_ACCENT[m]
-                  : 'border-aero-border text-aero-muted hover:border-aero-amr hover:text-aero-champagne'
-              }`}
+              active={active}
+              className={cn(active && MODE_ACTIVE[m])}
             >
               {m}
-            </button>
+            </ShineButton>
           )
         })}
       </div>
 
-      <div className="mt-3.5 font-mono text-[10px] text-aero-muted">
+      <div className="mt-3.5 inline-flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-[10px] text-aero-muted">
+        <Gauge className="size-3 text-aero-lime" aria-hidden />
         Effective <span className="text-aero-lime">{mode}</span>
         {requestedMode !== mode ? (
           <>
@@ -124,7 +127,7 @@ export function ControlDashboard() {
         testId="brake-slider"
         warn={brakePct > 40}
       />
-    </motion.div>
+    </GlassCard>
   )
 }
 
@@ -151,9 +154,14 @@ function Slider({
     <label className="mt-4 block">
       <div className="mb-1.5 flex items-center justify-between font-mono text-[10px] tracking-wider uppercase">
         <span className={warn ? 'text-aero-crimson' : 'text-aero-muted'}>{label}</span>
-        <span className="tabular-nums text-aero-text">
+        <motion.span
+          key={value.toFixed(0)}
+          initial={{ opacity: 0.4, y: 2 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="tabular-nums text-aero-text"
+        >
           {value.toFixed(0)} {unit}
-        </span>
+        </motion.span>
       </div>
       <input
         data-testid={testId}
