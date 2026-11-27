@@ -14,3 +14,11 @@ export {
 
 export { PAPER_CITATIONS } from './papers'
 export { NURBURGRING_GP } from './nurburgringGp'
+export { VEHICLE_14DOF } from './vehicle14Dof'
+export type {
+  Vehicle14DofKnownParams,
+  Vehicle14DofPendingParams,
+  Vehicle14DofModel,
+} from './vehicle14Dof'
+export { PI_ROM_METADATA } from './piRom'
+export type { PiRomMetadata } from './piRom'

@@ -30,6 +30,8 @@ export interface TelemetryMetrics extends AeroControlInputs {
   cd: number
   /** Lift coefficient C_L (negative = downforce). */
   cl: number
+  /** C_L / C_D ratio for HUD. */
+  clOverCd: number
   /** Center of pressure rear share [%]. */
   copRearPct: number
   /** Control-loop sample rate [Hz] for HUD badge. */
