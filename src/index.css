@@ -1,0 +1,59 @@
+@import "tailwindcss";
+
+/*
+  Valhalla Active Aero — cyberpunk theme tokens
+  Source of truth for slate-950 / cyan / emerald / amber accents.
+*/
+@theme {
+  --color-aero-bg: #020617;
+  --color-aero-surface: #0f172a;
+  --color-aero-panel: rgb(15 23 42 / 0.6);
+  --color-aero-border: #1e293b;
+  --color-aero-cyan: #22d3ee;
+  --color-aero-emerald: #34d399;
+  --color-aero-amber: #fbbf24;
+  --color-aero-muted: #94a3b8;
+  --color-aero-text: #e2e8f0;
+
+  --font-sans: "Segoe UI", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "Cascadia Code", monospace;
+}
+
+:root {
+  /* Runtime CSS variables for non-Tailwind consumers (canvas HUD, Three overlays) */
+  --aero-bg: #020617;
+  --aero-surface: #0f172a;
+  --aero-panel: rgb(15 23 42 / 0.6);
+  --aero-border: #1e293b;
+  --aero-cyan: #22d3ee;
+  --aero-emerald: #34d399;
+  --aero-amber: #fbbf24;
+  --aero-muted: #94a3b8;
+  --aero-text: #e2e8f0;
+  --aero-glass-blur: 12px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background-color: var(--aero-bg);
+  color: var(--aero-text);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  isolation: isolate;
+}
