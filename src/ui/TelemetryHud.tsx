@@ -1,6 +1,8 @@
 import { motion } from 'framer-motion'
+import { Activity, Gauge, Radio } from 'lucide-react'
 import { useAeroStore } from '@/store'
 import { useScrollStore } from '@/scene'
+import { BorderBeam, GlassCard, MetricChip } from '@/ui/primitives'
 
 /** Fixed luxury glass telemetry HUD — master-spec §4. */
 export function TelemetryHud() {
@@ -28,9 +30,14 @@ export function TelemetryHud() {
       className="pointer-events-none fixed top-0 right-0 left-0 z-30 flex justify-end p-3 md:p-5"
       aria-label="Telemetry HUD"
     >
-      <div className="glass-panel pointer-events-none w-full max-w-md rounded-xl px-4 py-3.5 md:max-w-lg">
+      <GlassCard
+        variant="soft"
+        className="pointer-events-none relative w-full max-w-md overflow-hidden px-4 py-3.5 md:max-w-lg"
+      >
+        <BorderBeam duration={11} />
         <div className="flex items-center justify-between gap-3">
-          <div className="font-mono text-[10px] tracking-[0.22em] text-aero-lime uppercase">
+          <div className="inline-flex items-center gap-1.5 font-mono text-[10px] tracking-[0.22em] text-aero-lime uppercase">
+            <Radio className="size-3" aria-hidden />
             System online · {controlLoopHz} Hz
           </div>
           <div className="font-mono text-[10px] text-aero-muted">
@@ -42,15 +49,32 @@ export function TelemetryHud() {
         <div className="luxury-rule my-3" />
 
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-          <Metric
+          <MetricChip
             label="Mode"
             value={mode}
             accent={aerobrakeForced ? 'crimson' : 'lime'}
+            icon={Activity}
           />
-          <Metric label="Speed" value={`${speedKmh.toFixed(0)}`} unit="km/h" accent="cyan" />
-          <Metric label="C_L / C_D" value={clOverCd.toFixed(2)} accent="cyan" />
-          <Metric label="Downforce" value={formatForce(downforceN)} unit="N" accent="cyan" />
-          <Metric label="Drag" value={formatForce(dragN)} unit="N" accent="crimson" />
+          <MetricChip
+            label="Speed"
+            value={speedKmh.toFixed(0)}
+            unit="km/h"
+            accent="cyan"
+            icon={Gauge}
+          />
+          <MetricChip label="C_L / C_D" value={clOverCd.toFixed(2)} accent="cyan" />
+          <MetricChip
+            label="Downforce"
+            value={formatForce(downforceN)}
+            unit="N"
+            accent="cyan"
+          />
+          <MetricChip
+            label="Drag"
+            value={formatForce(dragN)}
+            unit="N"
+            accent="crimson"
+          />
           <div>
             <div className="font-mono text-[9px] tracking-wider text-aero-muted uppercase">
               AOA 0–25°
@@ -74,42 +98,8 @@ export function TelemetryHud() {
           <Pedal label="Throttle" pct={throttlePct} color="bg-aero-lime" />
           <Pedal label="Brake" pct={brakePct} color="bg-aero-crimson" />
         </div>
-      </div>
+      </GlassCard>
     </motion.aside>
-  )
-}
-
-function Metric({
-  label,
-  value,
-  unit,
-  accent,
-}: {
-  label: string
-  value: string
-  unit?: string
-  accent: 'cyan' | 'lime' | 'crimson'
-}) {
-  const color =
-    accent === 'cyan'
-      ? 'text-aero-cyan'
-      : accent === 'lime'
-        ? 'text-aero-lime'
-        : 'text-aero-crimson'
-  return (
-    <div>
-      <div className="font-mono text-[9px] tracking-wider text-aero-muted uppercase">
-        {label}
-      </div>
-      <div className="mt-0.5 flex items-baseline gap-1">
-        <span className={`font-mono text-lg font-medium tabular-nums ${color}`}>
-          {value}
-        </span>
-        {unit ? (
-          <span className="font-mono text-[10px] text-aero-muted">{unit}</span>
-        ) : null}
-      </div>
-    </div>
   )
 }
 

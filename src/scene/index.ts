@@ -5,6 +5,7 @@ export { CfdCanvasOverlay } from './CfdCanvasOverlay'
 export { PhotoChapterStage } from './PhotoChapterStage'
 export { PhotoForceVectors } from './PhotoForceVectors'
 export { NeuralOverlay } from './NeuralOverlay'
+export { SplineCarCanvas } from './SplineCarCanvas'
 export {
   useScrollStore,
   CHAPTER_IDS,

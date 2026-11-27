@@ -6,13 +6,14 @@ import { CfdCanvasOverlay } from './CfdCanvasOverlay'
 import { PhotoChapterStage } from './PhotoChapterStage'
 import { PhotoForceVectors } from './PhotoForceVectors'
 import { NeuralOverlay } from './NeuralOverlay'
+import { SplineCarCanvas } from './SplineCarCanvas'
 import { useAeroStore } from '@/store'
 import { TelemetryHud } from '@/ui/TelemetryHud'
 import { ChapterContent } from '@/ui/chapters/ChapterContent'
 
 /**
- * Photo-led cinematic stage:
- * full-bleed chapter photography + CFD streamlines + soft 3D depth + glass HUD.
+ * Premium cinematic stage:
+ * photo atmosphere + Spline interactive 3D (hero/tunnel) + CFD + glass HUD.
  */
 export function ChapterScrollLayout() {
   const rootRef = useRef<HTMLDivElement>(null)
@@ -32,10 +33,12 @@ export function ChapterScrollLayout() {
     <div ref={rootRef} className="relative bg-aero-bg text-aero-text">
       <div className="pointer-events-none fixed inset-0 z-0">
         <PhotoChapterStage />
-        {/* Soft 3D Valhalla as depth layer over photography */}
-        <div className="absolute inset-0 z-[1] opacity-45 mix-blend-lighten">
+        {/* Soft R3F Valhalla as atmospheric depth under Spline */}
+        <div className="absolute inset-0 z-[1] opacity-30 mix-blend-lighten">
           <WindTunnelScene className="h-dvh w-full" />
         </div>
+        {/* Interactive Spline sports-car canvas (hero + wind tunnel) */}
+        <SplineCarCanvas />
         <CfdCanvasOverlay />
         <PhotoForceVectors />
         <NeuralOverlay />
@@ -43,7 +46,8 @@ export function ChapterScrollLayout() {
 
       <TelemetryHud />
 
-      <div className="relative z-10">
+      {/* Pass-through so Spline orbit works; interactive UI re-enables pointer-events */}
+      <div className="pointer-events-none relative z-10">
         {CHAPTER_IDS.map((id) => (
           <section key={id} data-chapter={id} className="relative min-h-[100dvh]">
             <ChapterContent id={id} />

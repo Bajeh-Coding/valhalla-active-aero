@@ -84,25 +84,28 @@ body {
   font-family: var(--font-serif);
 }
 
-/* Luxury glass — emerald-bordered, deep blur, soft shadow */
+/*
+  Legacy glass utility classes retained for any residual markup.
+  Prefer GlassCard / BorderBeam primitives (Aceternity/Magic-style).
+*/
 .glass-panel {
-  background: rgb(15 23 42 / 0.4);
-  border: 1px solid rgb(6 78 59 / 0.3);
+  background: rgb(15 23 42 / 0.45);
+  border: 1px solid rgb(255 255 255 / 0.1);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
   box-shadow:
     0 25px 50px -12px rgb(0 0 0 / 0.55),
-    inset 0 1px 0 rgb(196 223 0 / 0.04);
+    inset 0 1px 0 rgb(196 223 0 / 0.05);
 }
 
 .glass-panel-strong {
-  background: rgb(11 14 20 / 0.72);
-  border: 1px solid rgb(6 78 59 / 0.4);
+  background: rgb(2 6 23 / 0.72);
+  border: 1px solid rgb(0 89 73 / 0.4);
   backdrop-filter: blur(32px);
   -webkit-backdrop-filter: blur(32px);
   box-shadow:
     0 30px 60px -15px rgb(0 0 0 / 0.65),
-    inset 0 1px 0 rgb(0 240 255 / 0.05);
+    inset 0 1px 0 rgb(0 240 255 / 0.06);
 }
 
 /* Range inputs — AMR lime accent */
