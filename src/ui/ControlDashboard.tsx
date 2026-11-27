@@ -51,14 +51,14 @@ export function ControlDashboard() {
       className="glass-panel-strong pointer-events-auto w-full max-w-lg rounded-xl p-6"
     >
       <p className="font-mono text-[10px] tracking-[0.28em] text-aero-lime uppercase">
-        Live control · Chapter 03
+        Live control · Chapter 03 · Rear wing
       </p>
       <h3 className="font-display mt-2 text-2xl font-semibold tracking-[0.03em]">
         Mecatronic state machine
       </h3>
       <p className="mt-2 text-sm leading-relaxed text-aero-muted">
-        Mode buttons drive wing AOA and splitter. Brake &gt; 40% forces AEROBRAKE
-        regardless of selection.
+        DRS / MAXP / AEROBRAKE / PASSIVE drive wing AOA and splitter. Streamline
+        color follows mode. Brake &gt; 40% forces AEROBRAKE regardless of selection.
       </p>
 
       <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-4">
