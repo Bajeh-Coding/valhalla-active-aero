@@ -2,7 +2,7 @@ import type { AeroMode } from '@/types/aero'
 
 /**
  * Mode color language — AMR brand system.
- * DRS cyan · MAXP lime · AEROBRAKE crimson · PASSIVE titanium.
+ * DRS cyan · MAXP lime · AEROBRAKE crimson · STANDARD titanium.
  */
 export const MODE_COLORS: Record<
   AeroMode,
@@ -13,7 +13,7 @@ export const MODE_COLORS: Record<
     secondary: '#67e8f9',
     emissive: '#0891b2',
   },
-  PASSIVE: {
+  STANDARD: {
     primary: '#94a3b8',
     secondary: '#cbd5e1',
     emissive: '#475569',

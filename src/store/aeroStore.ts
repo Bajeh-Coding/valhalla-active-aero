@@ -1,52 +1,53 @@
 import { create } from 'zustand'
-import { CONTROL_LOOP_HZ, getModeCoefficients } from '@/data/vehicleConstants'
+import { ACTUATORS } from '@/data/vehicleConstants'
 import { aeroPhysics } from '@/math/aeroPhysics'
-import type { AeroMode, SplitterState, TelemetryMetrics } from '@/types/aero'
+import type {
+  AeroMode,
+  FactId,
+  SplitterState,
+  TelemetryMetrics,
+} from '@/types/aero'
 
 export interface AeroStoreState {
   /** User-selected mode (before AEROBRAKE / DRS resolve). */
   requestedMode: AeroMode
-  /** Wing AOA [deg] 0..25. */
+  /** Wing AOA set-point / MaxP override [deg]. */
   aoaDeg: number
+  /** Effective AOA after state machine [deg]. */
+  aoaDegEffective: number
   /** Speed [km/h]. */
   speedKmh: number
   /** Throttle 0..100. */
   throttlePct: number
   /** Brake 0..100. */
   brakePct: number
+  /** Lateral acceleration [g] for |ay|≤1 g gates. */
+  ayG: number
   /** Effective mode after state machine. */
   mode: AeroMode
   /** Splitter OPEN | CLOSED. */
   splitter: SplitterState
-  /** Drag force F_D [N] — derived. */
-  dragN: number
-  /** Downforce F_L [N] — derived. */
-  downforceN: number
-  /** Drag coefficient C_D. */
-  cd: number
-  /** Lift coefficient C_L (negative = downforce). */
-  cl: number
-  /** C_L / C_D. */
-  clOverCd: number
-  /** Center of pressure rear share [%]. */
-  copRearPct: number
-  /** True when brake > 40% forced AEROBRAKE. */
+  /** Drag [N] — Table 3 @160 km/h or null. */
+  dragN: number | null
+  /** Front downforce [N] — Table 3 @160 or null. */
+  frontDownforceN: number | null
+  /** Rear downforce [N] — Table 3 @160 or null. */
+  rearDownforceN: number | null
+  /** front DF / total DF; null if unavailable. */
+  balanceFront: number | null
   aerobrakeForced: boolean
-  /** True when DRS was requested but triggers unmet. */
   drsDenied: boolean
-  controlLoopHz: number
+  citations: FactId[]
 
   setAoaDeg: (aoaDeg: number) => void
   setSpeedKmh: (speedKmh: number) => void
   setThrottlePct: (throttlePct: number) => void
   setBrakePct: (brakePct: number) => void
+  setAyG: (ayG: number) => void
   setMode: (mode: AeroMode) => void
   setSplitter: (splitter: SplitterState) => void
-  /** Apply mode set-points from the coefficient table, then re-resolve. */
   applyModeSetpoints: (mode: AeroMode) => void
-  /** Recompute derived aero from current inputs (idempotent). */
   recompute: () => void
-  /** Snapshot for HUD / consumers. */
   getTelemetry: () => TelemetryMetrics
 }
 
@@ -59,6 +60,7 @@ interface ControlSlice {
   speedKmh: number
   throttlePct: number
   brakePct: number
+  ayG: number
   aoaDeg: number
 }
 
@@ -68,17 +70,18 @@ function derivedFrom(controls: ControlSlice) {
     speedKmh: controls.speedKmh,
     throttlePct: controls.throttlePct,
     brakePct: controls.brakePct,
+    ayG: controls.ayG,
     aoaDegOverride: controls.aoaDeg,
   })
 }
 
-const passive = getModeCoefficients('PASSIVE')
 const initialControls: ControlSlice = {
-  requestedMode: 'PASSIVE',
+  requestedMode: 'STANDARD',
   speedKmh: 0,
   throttlePct: 0,
   brakePct: 0,
-  aoaDeg: typeof passive.aoaDeg === 'number' ? passive.aoaDeg : 10,
+  ayG: 0,
+  aoaDeg: ACTUATORS.standardAoaDeg,
 }
 const initialDerived = derivedFrom(initialControls)
 
@@ -86,21 +89,20 @@ export const useAeroStore = create<AeroStoreState>((set, get) => ({
   ...initialControls,
   mode: initialDerived.mode,
   splitter: initialDerived.splitter,
+  aoaDegEffective: initialDerived.aoaDegEffective,
   dragN: initialDerived.dragN,
-  downforceN: initialDerived.downforceN,
-  cd: initialDerived.cd,
-  cl: initialDerived.cl,
-  clOverCd: initialDerived.clOverCd,
-  copRearPct: initialDerived.copRearPct,
+  frontDownforceN: initialDerived.frontDownforceN,
+  rearDownforceN: initialDerived.rearDownforceN,
+  balanceFront: initialDerived.balanceFront,
   aerobrakeForced: initialDerived.aerobrakeForced,
   drsDenied: initialDerived.drsDenied,
-  controlLoopHz: CONTROL_LOOP_HZ,
+  citations: initialDerived.citations,
 
   setAoaDeg: (aoaDeg) => {
-    const next = clamp(aoaDeg, 0, 25)
+    const next = clamp(aoaDeg, ACTUATORS.aoaMinDeg, ACTUATORS.aoaMaxDeg)
     const s = get()
     const d = derivedFrom({ ...s, aoaDeg: next })
-    set(packDerived(d))
+    set({ aoaDeg: next, ...packDerived(d) })
   },
 
   setSpeedKmh: (speedKmh) => {
@@ -124,6 +126,13 @@ export const useAeroStore = create<AeroStoreState>((set, get) => ({
     set({ brakePct: next, ...packDerived(d) })
   },
 
+  setAyG: (ayG) => {
+    const next = clamp(ayG, -3, 3)
+    const s = get()
+    const d = derivedFrom({ ...s, ayG: next })
+    set({ ayG: next, ...packDerived(d) })
+  },
+
   setMode: (mode) => {
     const s = get()
     const d = derivedFrom({ ...s, requestedMode: mode })
@@ -137,9 +146,15 @@ export const useAeroStore = create<AeroStoreState>((set, get) => ({
 
   applyModeSetpoints: (mode) => {
     const s = get()
-    const d = derivedFrom({ ...s, requestedMode: mode })
+    let aoaDeg = s.aoaDeg
+    if (mode === 'STANDARD') aoaDeg = ACTUATORS.standardAoaDeg
+    if (mode === 'DRS') aoaDeg = ACTUATORS.drsAoaDeg
+    if (mode === 'AEROBRAKE') aoaDeg = ACTUATORS.aerobrakeAoaDeg
+    if (mode === 'MAXP') aoaDeg = aeroPhysics.maxpAoaDeg(s.speedKmh)
+    const d = derivedFrom({ ...s, requestedMode: mode, aoaDeg })
     set({
       requestedMode: mode,
+      aoaDeg,
       ...packDerived(d),
     })
   },
@@ -154,18 +169,20 @@ export const useAeroStore = create<AeroStoreState>((set, get) => ({
     const s = get()
     return {
       aoaDeg: s.aoaDeg,
+      aoaDegEffective: s.aoaDegEffective,
       speedKmh: s.speedKmh,
       throttlePct: s.throttlePct,
       brakePct: s.brakePct,
+      ayG: s.ayG,
       mode: s.mode,
       splitter: s.splitter,
       dragN: s.dragN,
-      downforceN: s.downforceN,
-      cd: s.cd,
-      cl: s.cl,
-      clOverCd: s.clOverCd,
-      copRearPct: s.copRearPct,
-      controlLoopHz: s.controlLoopHz,
+      frontDownforceN: s.frontDownforceN,
+      rearDownforceN: s.rearDownforceN,
+      balanceFront: s.balanceFront,
+      aerobrakeForced: s.aerobrakeForced,
+      drsDenied: s.drsDenied,
+      citations: s.citations,
     }
   },
 }))
@@ -174,14 +191,13 @@ function packDerived(d: ReturnType<typeof derivedFrom>) {
   return {
     mode: d.mode,
     splitter: d.splitter,
-    aoaDeg: d.aoaDeg,
-    cd: d.cd,
-    cl: d.cl,
-    clOverCd: d.clOverCd,
+    aoaDegEffective: d.aoaDegEffective,
     dragN: d.dragN,
-    downforceN: d.downforceN,
-    copRearPct: d.copRearPct,
+    frontDownforceN: d.frontDownforceN,
+    rearDownforceN: d.rearDownforceN,
+    balanceFront: d.balanceFront,
     aerobrakeForced: d.aerobrakeForced,
     drsDenied: d.drsDenied,
+    citations: d.citations,
   }
 }

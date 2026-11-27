@@ -80,33 +80,33 @@ test.describe('Valhalla scrollytelling E2E', () => {
     await expect(page.getByLabel('Telemetry HUD')).toContainText(/0\.0°/)
     await expect(page.getByLabel('Telemetry HUD')).toContainText('DRS')
 
-    await page.getByTestId('mode-PASSIVE').click()
-    await expect(page.getByLabel('Telemetry HUD')).toContainText(/10\.0°/)
-    await expect(page.getByLabel('Telemetry HUD')).toContainText('PASSIVE')
+    await page.getByTestId('mode-STANDARD').click()
+    await expect(page.getByLabel('Telemetry HUD')).toContainText(/6\.0°/)
+    await expect(page.getByLabel('Telemetry HUD')).toContainText('STANDARD')
 
     await page.getByTestId('mode-AEROBRAKE').click()
-    await expect(page.getByLabel('Telemetry HUD')).toContainText(/25\.0°/)
+    await expect(page.getByLabel('Telemetry HUD')).toContainText(/19\.0°/)
     await expect(page.getByLabel('Telemetry HUD')).toContainText('AEROBRAKE')
 
     await page.getByTestId('mode-MAXP').click()
-    // Prior AEROBRAKE AOA=25 clamps into MAXP range [5, 18] → 18°
+    // MaxP schedule @ ≥180 km/h → 0° or 3° (S1-F051); no invent [5,18]
     await expect(page.getByLabel('Telemetry HUD')).toContainText('MAXP')
-    await expect(page.getByLabel('Telemetry HUD')).toContainText(/18\.0°/)
 
     expect(errors, errors.join('\n')).toEqual([])
   })
 
-  test('brake > 40% forces AEROBRAKE regardless of mode', async ({ page }) => {
+  test('brake ≥ 40% forces AEROBRAKE regardless of mode', async ({ page }) => {
     const errors = await attachErrorTrap(page)
     await gotoApp(page)
 
     await page.locator('[data-chapter="control"]').scrollIntoViewIfNeeded()
     await page.waitForTimeout(400)
 
-    await page.getByTestId('mode-PASSIVE').click()
+    await page.getByTestId('mode-STANDARD').click()
+    await page.getByTestId('speed-slider').fill('150')
     await page.getByTestId('brake-slider').fill('45')
     await expect(page.getByLabel('Telemetry HUD')).toContainText('AEROBRAKE')
-    await expect(page.getByLabel('Telemetry HUD')).toContainText(/25\.0°/)
+    await expect(page.getByLabel('Telemetry HUD')).toContainText(/19\.0°/)
 
     expect(errors, errors.join('\n')).toEqual([])
   })

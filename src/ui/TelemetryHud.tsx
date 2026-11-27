@@ -7,16 +7,20 @@ import { useScrollStore } from '@/scene'
  * Single compact cluster; no glass card stacks or metric grids.
  */
 export function TelemetryHud() {
-  const aoaDeg = useAeroStore((s) => s.aoaDeg)
+  const aoaDeg = useAeroStore((s) => s.aoaDegEffective)
   const speedKmh = useAeroStore((s) => s.speedKmh)
-  const downforceN = useAeroStore((s) => s.downforceN)
+  const frontDownforceN = useAeroStore((s) => s.frontDownforceN)
+  const rearDownforceN = useAeroStore((s) => s.rearDownforceN)
   const dragN = useAeroStore((s) => s.dragN)
-  const clOverCd = useAeroStore((s) => s.clOverCd)
+  const balanceFront = useAeroStore((s) => s.balanceFront)
   const throttlePct = useAeroStore((s) => s.throttlePct)
   const brakePct = useAeroStore((s) => s.brakePct)
   const mode = useAeroStore((s) => s.mode)
-  const controlLoopHz = useAeroStore((s) => s.controlLoopHz)
   const aerobrakeForced = useAeroStore((s) => s.aerobrakeForced)
+  const totalDf =
+    frontDownforceN != null && rearDownforceN != null
+      ? frontDownforceN + rearDownforceN
+      : null
   const chapterIndex = useScrollStore((s) => s.chapterIndex)
   const chapter3Pinned = useScrollStore((s) => s.chapter3Pinned)
 
@@ -36,7 +40,7 @@ export function TelemetryHud() {
         >
           <div className="min-w-[11.5rem] border-l border-aero-lime/25 bg-aero-bg/55 py-3 pl-4 backdrop-blur-md">
             <p className="font-mono text-[9px] tracking-[0.28em] text-aero-muted uppercase">
-              Sistem online · {controlLoopHz} Hz
+              Telemetrie A3 · Table 3 @160
             </p>
             <p
               className={`mt-2 font-mono text-xs tracking-[0.18em] uppercase ${
@@ -48,9 +52,20 @@ export function TelemetryHud() {
             <dl className="mt-3 space-y-1.5 font-mono text-[11px] tabular-nums text-aero-champagne/90">
               <Row label="AOA" value={`${aoaDeg.toFixed(1)}°`} />
               <Row label="SPD" value={`${speedKmh.toFixed(0)} km/h`} />
-              <Row label="L/D" value={clOverCd.toFixed(2)} />
-              <Row label="DF" value={`${formatForce(downforceN)} N`} />
-              <Row label="DRG" value={`${formatForce(dragN)} N`} />
+              <Row
+                label="BAL"
+                value={
+                  balanceFront != null ? balanceFront.toFixed(3) : '—'
+                }
+              />
+              <Row
+                label="DF"
+                value={totalDf != null ? `${formatForce(totalDf)} N` : '—'}
+              />
+              <Row
+                label="DRG"
+                value={dragN != null ? `${formatForce(dragN)} N` : '—'}
+              />
               <Row label="THR" value={`${throttlePct.toFixed(0)}%`} />
               <Row label="BRK" value={`${brakePct.toFixed(0)}%`} />
             </dl>

@@ -7,8 +7,11 @@ import { useAeroStore } from '@/store'
  * Magnitudes for display only — values come from Phase 2 engine.
  */
 export function ForceVectors() {
-  const dragN = useAeroStore((s) => s.dragN)
-  const downforceN = useAeroStore((s) => s.downforceN)
+  const dragN = useAeroStore((s) => s.dragN) ?? 0
+  const frontDf = useAeroStore((s) => s.frontDownforceN)
+  const rearDf = useAeroStore((s) => s.rearDownforceN)
+  const downforceN =
+    frontDf != null && rearDf != null ? frontDf + rearDf : 0
 
   const dragLen = useMemo(() => Math.min(2.4, dragN / 2800), [dragN])
   const liftLen = useMemo(() => Math.min(2.4, downforceN / 4500), [downforceN])

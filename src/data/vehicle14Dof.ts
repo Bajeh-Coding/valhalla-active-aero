@@ -1,35 +1,39 @@
 /**
- * 14-DOF vehicle-dynamics parameter stub (Chapter 4).
- *
- * Master-spec names a 14-DOF model and gives sprung/total mass, wheelbase,
- * and mass distribution — but does **not** enumerate the 14 DOFs or tire /
- * suspension coefficients. This module holds only verified constants and a
- * typed slot for a future paper-backed fill-in. Do not invent DOF counts
- * or missing coefficients.
+ * 14-DOF vehicle-dynamics parameters from S1-F001 / S1-F002.
+ * Do not mix with S2 Table 7 (1680 kg).
  */
 import { VEHICLE, VEHICLE_CLASS } from './vehicleConstants'
 
-/** Known mass / geometry inputs that feed a future 14-DOF plant. */
+/** Known mass / geometry inputs from S1 Table 1. */
 export interface Vehicle14DofKnownParams {
   vehicleClass: typeof VEHICLE_CLASS
+  /** Baseline DOF count (S1-F001). */
+  dofBaseline: 14
   sprungMassKg: number
-  totalMassKg: number
-  /** Unsprung estimate = total − sprung (derived from master-spec masses). */
   unsprungMassKg: number
+  totalMassKg: number
   wheelbaseMm: number
+  cogToFrontMm: number
+  cogHeightMm: number
+  frontTrackMm: number
+  rearTrackMm: number
+  frontTireRadiusMm: number
+  rearTireRadiusMm: number
+  /** Derived from a, L (Table 1) — not the old 43/57 invent. */
   massDistributionFrontPct: number
   massDistributionRearPct: number
   totalSystemPowerKw: number
+  frontalAreaM2: number
+  /** CFD body shape reference (S1-F003). */
+  cfdBodyShape: 'Aston Martin Vantage 2019'
 }
 
 /**
- * Placeholder for the remaining 14-DOF parameterization
- * (suspension, tires, unsprung corners, etc.) — intentionally empty
- * until filled from SAE / paper sources.
+ * Remaining plant coefficients (tires, suspension rates, etc.) —
+ * not enumerated numerically in science-facts beyond Table 1.
  */
 export interface Vehicle14DofPendingParams {
-  /** Dataset completeness — never claim 'complete' without paper values. */
-  status: 'stub'
+  status: 'partial'
   note: string
 }
 
@@ -41,19 +45,28 @@ export interface Vehicle14DofModel {
 export const VEHICLE_14DOF: Vehicle14DofModel = {
   known: {
     vehicleClass: VEHICLE_CLASS,
+    dofBaseline: 14,
     sprungMassKg: VEHICLE.sprungMassKg,
+    unsprungMassKg: VEHICLE.unsprungMassKg,
     totalMassKg: VEHICLE.totalMassKg,
-    unsprungMassKg: VEHICLE.totalMassKg - VEHICLE.sprungMassKg,
     wheelbaseMm: VEHICLE.wheelbaseMm,
+    cogToFrontMm: VEHICLE.cogToFrontMm,
+    cogHeightMm: VEHICLE.cogHeightMm,
+    frontTrackMm: VEHICLE.frontTrackMm,
+    rearTrackMm: VEHICLE.rearTrackMm,
+    frontTireRadiusMm: VEHICLE.frontTireRadiusMm,
+    rearTireRadiusMm: VEHICLE.rearTireRadiusMm,
     massDistributionFrontPct: VEHICLE.massDistributionFrontPct,
     massDistributionRearPct: VEHICLE.massDistributionRearPct,
     totalSystemPowerKw: VEHICLE.totalSystemPowerKw,
+    frontalAreaM2: VEHICLE.frontalAreaM2,
+    cfdBodyShape: 'Aston Martin Vantage 2019',
   },
   pending: {
-    status: 'stub',
+    status: 'partial',
     note:
-      '14-DOF DOF list and tire/suspension coefficients are not specified in ' +
-      'master-spec beyond mass, wheelbase, and distribution. Do not fabricate; ' +
-      'populate from SAE 2020-36-0079 / named papers before Chapter 4 sim.',
+      'S1 gives 14 DOF structure + Table 1 geometry/mass/power. Tire/suspension ' +
+      'coefficients and Pacejka params are not in science-facts for the S1 plant. ' +
+      'S2 Table 7 (1680 kg) must not fill these slots.',
   },
 }
