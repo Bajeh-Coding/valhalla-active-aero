@@ -1,5 +1,5 @@
-import { AppShell } from '@/ui'
+import { CongressTalk } from '@/congress'
 
 export default function App() {
-  return <AppShell />
+  return <CongressTalk />
 }

@@ -14,7 +14,6 @@ import {
   VEHICLE,
   getModeSurface,
 } from './vehicleConstants'
-import { VEHICLE_14DOF } from './vehicle14Dof'
 
 describe('vehicleConstants — S1 Table 1 lock', () => {
   it('locks sprung/unsprung/power/geometry (S1-F002)', () => {
@@ -125,14 +124,10 @@ describe('vehicleConstants — Table 3 + actuators + triggers', () => {
   })
 })
 
-describe('vehicle14Dof — S1 only', () => {
-  it('exposes Table 1 + Vantage body; not S2 1680', () => {
-    expect(VEHICLE_14DOF.known.dofBaseline).toBe(14)
-    expect(VEHICLE_14DOF.known.sprungMassKg).toBe(2050)
-    expect(VEHICLE_14DOF.known.unsprungMassKg).toBe(190)
-    expect(VEHICLE_14DOF.known.cfdBodyShape).toBe(
-      'Aston Martin Vantage 2019',
-    )
-    expect(VEHICLE_14DOF.known.sprungMassKg).not.toBe(1680)
+describe('S1 vehicle vs S2 sim — never mix', () => {
+  it('keeps S1 sprung mass distinct from S2 Table 7', () => {
+    expect(VEHICLE.sprungMassKg).toBe(2050)
+    expect(S2_SIM_VEHICLE.massKg).toBe(1680)
+    expect(VEHICLE.sprungMassKg).not.toBe(S2_SIM_VEHICLE.massKg)
   })
 })

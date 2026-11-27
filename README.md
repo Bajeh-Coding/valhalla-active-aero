@@ -1,28 +1,26 @@
-# Valhalla Active Aero
+# Valhalla — Aerodinamică activă (congres)
 
-Interactive scrollytelling web app for Aston Martin Valhalla active aerodynamics (Phase 1 architecture scaffold).
+Prezentare științifică oral+visual (bară AIAA/SAE) pe aerodinamica activă, demonstrată vizual cu Aston Martin Valhalla. Limbă: română. Cifrele pe ecran provin din SAE 2020-36-0079 (S1) și Machines 2024, 12, 160 (S2) — nu din marketing Valhalla.
 
-## Project root
+## Arc narativ
 
-```
-/agent/valhalla-active-aero
-```
+problemă → 3 takeaways → SotA → metodă → control → rezultate → implicații → recap + bibliografie
 
-## Commands
+## Comenzi
 
 ```bash
-cd /agent/valhalla-active-aero
 npm install
-npm run fetch-assets  # Download chapter photos → public/images/ (also postinstall)
-npm run dev           # Vite dev server (host: all interfaces, port 5173)
-npm run build         # Typecheck + production SPA build → dist/
-npm run preview       # Serve dist/ (host: all interfaces, port 4173) — publish-app path
-npm test              # Vitest (physics/telemetry)
-npm run test:e2e      # Playwright
+npm run dev       # Vite :5173
+npm run build
+npm run preview   # :4173 — cale publish-app
+npm test          # Vitest (fizică paper-exact)
+npm run test:e2e  # Playwright
 ```
 
-Chapter photography lives in `public/images/` (`hero-valhalla`, `side-aero`, `rear-wing`, `track-nurburgring`). If download is blocked, the UI falls back to Unsplash CDN URLs.
+## Asset-uri
 
-Production preview binds all interfaces (`--host`) so Cursor `publish-app` and external devices can reach the SPA. No localhost-only asset URLs.
+Fotografii reale Valhalla în `public/images/valhalla/` (Wikimedia Commons, CC BY-SA). Zero Unsplash. Proveniența e documentată în `src/congress/assets.ts`.
 
-Ground-truth constants: `src/data/vehicleConstants.ts` (from master-spec only).
+## Stack
+
+React + Vite + Tailwind + GSAP ScrollTrigger + Zustand (doar pe beat-ul de control).

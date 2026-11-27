@@ -1,9 +1,9 @@
 @import "tailwindcss";
 
 /*
-  Valhalla Active Aero — art-direction tokens
-  Display: Cinzel · Body serif: Cormorant · UI: Plus Jakarta · Mono: JetBrains
-  Palette: void / ink / mist / ivory / amr / lime / signal — AMR+lime rare.
+  Congress talk — Valhalla Active Aero
+  Display: Cinzel · Body: Cormorant · UI: Plus Jakarta · Mono: JetBrains
+  Palette: void / ink / mist / ivory / amr / lime / signal
 */
 @theme {
   --color-aero-bg: #05070a;
@@ -36,18 +36,6 @@
   --amr: #005949;
   --lime: #c4df00;
   --signal: #e8e4dc;
-  --aero-bg: #05070a;
-  --aero-bg-deep: #0b0e14;
-  --aero-surface: #0b0e14;
-  --aero-amr: #005949;
-  --aero-amr-deep: #004225;
-  --aero-lime: #c4df00;
-  --aero-mist: #8b929a;
-  --aero-muted: #8b929a;
-  --aero-ivory: #f2f0ea;
-  --aero-text: #f2f0ea;
-  --aero-signal: #e8e4dc;
-  --aero-champagne: #e8e4dc;
 }
 
 *,
@@ -91,7 +79,10 @@ body {
   font-family: var(--font-ui);
 }
 
-/* Range inputs — quiet lime thumb, rare accent */
+.font-mono {
+  font-family: var(--font-mono);
+}
+
 input[type="range"].aero-range {
   -webkit-appearance: none;
   appearance: none;
@@ -122,10 +113,10 @@ input[type="range"].aero-range::-moz-range-thumb {
 @keyframes luxury-breathe {
   0%,
   100% {
-    opacity: 0.3;
+    opacity: 0.35;
   }
   50% {
-    opacity: 0.75;
+    opacity: 0.8;
   }
 }
 
@@ -136,6 +127,18 @@ input[type="range"].aero-range::-moz-range-thumb {
 @media (prefers-reduced-motion: reduce) {
   .luxury-pulse {
     animation: none;
-    opacity: 0.5;
+    opacity: 0.55;
   }
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }

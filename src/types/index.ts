@@ -6,7 +6,3 @@ export type {
   TelemetryMetrics,
   ModeSurfaceSetpoint,
 } from './aero'
-
-export type { PaperCitation, PaperCitationId } from './papers'
-
-export type { TrackCoordinate, TrackLayout } from './track'

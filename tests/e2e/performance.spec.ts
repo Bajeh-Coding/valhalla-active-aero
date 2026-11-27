@@ -1,14 +1,16 @@
 import { expect, test } from '@playwright/test'
 
 /**
- * Photo-led stage rAF sanity (no WebGL hero).
+ * Congress talk rAF sanity (photo-led, no WebGL).
  * Reports measured averages — never claim 60 FPS without numbers.
  */
-test.describe('Photo stage performance probe', () => {
-  test('measures rAF FPS during scroll scrub', async ({ page }) => {
+test.describe('Congress talk performance probe', () => {
+  test('measures rAF FPS during beat scroll', async ({ page }) => {
     await page.goto('/', { waitUntil: 'networkidle' })
-    await expect(page.getByTestId('photo-stage')).toBeVisible({ timeout: 30_000 })
-    await page.waitForTimeout(800)
+    await expect(page.getByTestId('congress-talk')).toBeVisible({
+      timeout: 30_000,
+    })
+    await page.waitForTimeout(600)
 
     const result = await page.evaluate(async () => {
       const samples: number[] = []
@@ -30,17 +32,17 @@ test.describe('Photo stage performance probe', () => {
             resolve()
           }
         }
-        const chapters = [
-          'a1-limita',
-          'a3-control',
-          'a4-rezultat',
-          'a5-inchidere',
-          'a0-hero',
+        const beats = [
+          'problem',
+          'method-control',
+          'results-grip',
+          'recap',
+          'title',
         ]
         let i = 0
         const scrollIv = window.setInterval(() => {
           const el = document.querySelector(
-            `[data-chapter="${chapters[i % chapters.length]}"]`,
+            `[data-testid="beat-${beats[i % beats.length]}"]`,
           )
           el?.scrollIntoView({ behavior: 'instant', block: 'start' })
           i += 1
@@ -54,23 +56,28 @@ test.describe('Photo stage performance probe', () => {
           ? 0
           : samples.reduce((a, b) => a + b, 0) / samples.length
       const min = samples.length ? Math.min(...samples) : 0
-      const stage = document.querySelector('[data-testid="photo-stage"]')
-      const imgs = stage?.querySelectorAll('img[data-active="true"]') ?? []
 
       return {
         sampleCount: samples.length,
         avgFps: Number(avg.toFixed(1)),
         minFps: Number(min.toFixed(1)),
-        hasPhotoStage: Boolean(stage),
-        activePhotoCount: imgs.length,
+        hasCongress: Boolean(
+          document.querySelector('[data-testid="congress-talk"]'),
+        ),
+        valhallaImgCount: document.querySelectorAll(
+          'img[src*="/images/valhalla/"]',
+        ).length,
         canvasCount: document.querySelectorAll('canvas').length,
+        unsplashCount: document.querySelectorAll('img[src*="unsplash"]').length,
       }
     })
 
     console.log(`PERF_JSON ${JSON.stringify(result)}`)
 
-    expect(result.hasPhotoStage).toBe(true)
+    expect(result.hasCongress).toBe(true)
     expect(result.canvasCount).toBe(0)
+    expect(result.unsplashCount).toBe(0)
+    expect(result.valhallaImgCount).toBeGreaterThan(0)
     expect(result.sampleCount).toBeGreaterThan(0)
     expect(result.avgFps).toBeGreaterThan(2)
   })
