@@ -10,7 +10,7 @@ const MODES: { id: AeroMode; label: string }[] = [
   { id: 'MAXP', label: 'MaxP' },
 ]
 
-/** Sole interactive surface — paper state machine demo. */
+/** Paper state machine demo — sole interactive control surface. */
 export function ControlDemo() {
   const {
     requestedMode,
@@ -36,7 +36,7 @@ export function ControlDemo() {
 
   return (
     <div
-      className="mt-8 w-full max-w-lg border-t border-aero-signal/15 pt-6"
+      className="mt-6 w-full max-w-xl border-t border-aero-signal/15 pt-5"
       data-testid="control-demo"
     >
       <div className="mb-5 flex flex-wrap gap-2">
@@ -50,7 +50,7 @@ export function ControlDemo() {
               'font-ui px-3 py-1.5 text-[11px] tracking-[0.14em] uppercase transition-colors',
               requestedMode === m.id
                 ? 'bg-aero-amr text-aero-ivory'
-                : 'bg-transparent text-aero-mist hover:text-aero-ivory',
+                : 'text-aero-mist hover:text-aero-ivory',
             )}
           >
             {m.label}
@@ -101,51 +101,48 @@ export function ControlDemo() {
         />
       </div>
 
-      <dl className="mt-6 grid grid-cols-2 gap-x-6 gap-y-3 font-mono text-sm">
-        <Metric label="Mod efectiv" value={mode} testId="metric-mode" />
+      <dl className="mt-6 grid grid-cols-2 gap-x-6 gap-y-3 sm:grid-cols-3">
+        <Metric testId="metric-mode" label="Mode" value={mode} />
         <Metric
+          testId="metric-aoa"
           label="AOA"
           value={`${aoaDegEffective.toFixed(1)}°`}
-          testId="metric-aoa"
         />
-        <Metric label="Splitter" value={splitter} testId="metric-splitter" />
+        <Metric testId="metric-splitter" label="Splitter" value={splitter} />
         <Metric
-          label="Balance F"
-          value={
-            balanceFront === null ? '—' : balanceFront.toFixed(3)
-          }
-          testId="metric-balance"
-        />
-        <Metric
-          label="Drag @160"
-          value={dragN === null ? '—' : `${dragN} N`}
           testId="metric-drag"
+          label="Drag"
+          value={dragN != null ? `${dragN} N` : '— (@160)'}
         />
         <Metric
-          label="DF F/R @160"
-          value={
-            frontDownforceN === null || rearDownforceN === null
-              ? '—'
-              : `${frontDownforceN}/${rearDownforceN} N`
-          }
-          testId="metric-df"
+          testId="metric-fdf"
+          label="Front DF"
+          value={frontDownforceN != null ? `${frontDownforceN} N` : '—'}
+        />
+        <Metric
+          testId="metric-rdf"
+          label="Rear DF"
+          value={rearDownforceN != null ? `${rearDownforceN} N` : '—'}
         />
       </dl>
 
-      <p className="font-ui mt-5 text-[11px] leading-relaxed tracking-wide text-aero-mist">
-        DRS: accel. ≥ {DRS_TRIGGERS.minThrottlePct}% · |ay| ≤ {DRS_TRIGGERS.maxAbsAyG} g ·
-        rampă aripă {DRS_TRIGGERS.minSpeedKmh}–{DRS_TRIGGERS.wingRampEndKmh} km/h.
-        Aerobrake: v ≥ {AEROBRAKE_TRIGGERS.minSpeedKmh} km/h · frână ≥{' '}
-        {AEROBRAKE_TRIGGERS.minBrakePct}% · AOA {ACTUATORS.aerobrakeAoaDeg}°.
-        {aerobrakeForced ? ' · Aerobrake forțat.' : ''}
-        {drsDenied ? ' · DRS refuzat (condiții).' : ''}
-        {' '}Forțele CFD doar la ancora Table 3 (160 km/h).
+      <p className="font-ui mt-4 text-[10px] leading-relaxed tracking-wide text-aero-mist/70">
+        Gates: DRS throttle ≥{DRS_TRIGGERS.minThrottlePct}% · |ay| ≤
+        {DRS_TRIGGERS.maxAbsAyG} g · Aerobrake brake ≥
+        {AEROBRAKE_TRIGGERS.minBrakePct}% · AOA ∈ [
+        {ACTUATORS.aoaMinDeg}°, {ACTUATORS.aoaMaxDeg}°]
+        {aerobrakeForced ? ' · AEROBRAKE forced' : ''}
+        {drsDenied ? ' · DRS denied' : ''}
+        {balanceFront != null
+          ? ` · balance ${balanceFront.toFixed(3)}`
+          : ''}
       </p>
     </div>
   )
 }
 
 function Slider({
+  testId,
   label,
   value,
   min,
@@ -153,31 +150,29 @@ function Slider({
   step,
   unit,
   onChange,
-  testId,
 }: {
+  testId: string
   label: string
   value: number
   min: number
   max: number
   step: number
   unit: string
-  onChange: (n: number) => void
-  testId: string
+  onChange: (v: number) => void
 }) {
   return (
     <label className="block">
-      <div className="mb-1.5 flex items-baseline justify-between">
-        <span className="font-ui text-[11px] tracking-[0.16em] text-aero-mist uppercase">
-          {label}
+      <span className="font-ui mb-1.5 flex justify-between text-[10px] tracking-[0.16em] text-aero-mist uppercase">
+        <span>{label}</span>
+        <span className="font-mono text-aero-ivory/80">
+          {value}
+          {unit}
         </span>
-        <span className="font-mono text-xs text-aero-ivory tabular-nums">
-          {Number.isInteger(step) ? value : value.toFixed(2)} {unit}
-        </span>
-      </div>
+      </span>
       <input
         data-testid={testId}
-        className="aero-range w-full"
         type="range"
+        className="aero-range w-full"
         min={min}
         max={max}
         step={step}
@@ -189,20 +184,25 @@ function Slider({
 }
 
 function Metric({
+  testId,
   label,
   value,
-  testId,
 }: {
+  testId: string
   label: string
   value: string
-  testId: string
 }) {
   return (
-    <div data-testid={testId}>
-      <dt className="font-ui text-[10px] tracking-[0.16em] text-aero-mist uppercase">
+    <div>
+      <dt className="font-ui text-[9px] tracking-[0.18em] text-aero-mist/70 uppercase">
         {label}
       </dt>
-      <dd className="mt-0.5 text-aero-ivory">{value}</dd>
+      <dd
+        data-testid={testId}
+        className="font-mono mt-0.5 text-sm text-aero-ivory"
+      >
+        {value}
+      </dd>
     </div>
   )
 }

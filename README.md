@@ -1,10 +1,10 @@
-# Valhalla — Aerodinamică activă (congres)
+# Valhalla Active Aero — Hybrid AM
 
-Prezentare științifică oral+visual (bară AIAA/SAE) pe aerodinamica activă, demonstrată vizual cu Aston Martin Valhalla. Limbă: română. Cifrele pe ecran provin din SAE 2020-36-0079 (S1) și Machines 2024, 12, 160 (S2) — nu din marketing Valhalla.
+Prezentare congres Hybrid AM: limbaj vizual Aston Martin Valhalla + știință paper-exact (SAE 2020-36-0079). RO pe UI; termeni tehnici EN păstrați. **Graficele poartă argumentul**; foto = atmosferă.
 
-## Arc narativ
+## Capitole
 
-problemă → 3 takeaways → SotA → metodă → control → rezultate → implicații → recap + bibliografie
+0 Titlu · 1 Intro (CoP/CoG, Table 3) · 2 Mecatronică (DRS/Aerobrake/MaxP) · 3 Simulare (Simulink×VI-CarRealTime, DIL) · 4 Rezultate · 5 Valhalla industrial (firewall) · 6 Galerie grafice · 7 Recap
 
 ## Comenzi
 
@@ -12,15 +12,15 @@ problemă → 3 takeaways → SotA → metodă → control → rezultate → imp
 npm install
 npm run dev       # Vite :5173
 npm run build
-npm run preview   # :4173 — cale publish-app
-npm test          # Vitest (fizică paper-exact)
+npm run preview   # :4173
+npm test          # Vitest
 npm run test:e2e  # Playwright
 ```
 
 ## Asset-uri
 
-Fotografii reale Valhalla în `public/images/valhalla/` (Wikimedia Commons, CC BY-SA). Zero Unsplash. Proveniența e documentată în `src/congress/assets.ts`.
+`public/images/valhalla/` — Wikimedia Commons (CC BY-SA). Zero Unsplash. Zero AM CDN. Proveniență: `src/hybrid/assets.ts`.
 
 ## Stack
 
-React + Vite + Tailwind + GSAP ScrollTrigger + Zustand (doar pe beat-ul de control).
+React + Vite + Tailwind + GSAP ScrollTrigger + SVG charts + Zustand (control demo).

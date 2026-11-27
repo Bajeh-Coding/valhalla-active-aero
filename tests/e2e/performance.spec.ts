@@ -1,13 +1,13 @@
 import { expect, test } from '@playwright/test'
 
 /**
- * Congress talk rAF sanity (photo-led, no WebGL).
+ * Hybrid AM rAF sanity (SVG charts, no WebGL).
  * Reports measured averages — never claim 60 FPS without numbers.
  */
-test.describe('Congress talk performance probe', () => {
+test.describe('Hybrid AM performance probe', () => {
   test('measures rAF FPS during beat scroll', async ({ page }) => {
     await page.goto('/', { waitUntil: 'networkidle' })
-    await expect(page.getByTestId('congress-talk')).toBeVisible({
+    await expect(page.getByTestId('hybrid-talk')).toBeVisible({
       timeout: 30_000,
     })
     await page.waitForTimeout(600)
@@ -33,9 +33,10 @@ test.describe('Congress talk performance probe', () => {
           }
         }
         const beats = [
-          'problem',
-          'method-control',
-          'results-grip',
+          'cl-cd-compromise',
+          'ch02-state-machine',
+          'lap-grip-algorithms',
+          'g1-table3-forces',
           'recap',
           'title',
         ]
@@ -61,21 +62,20 @@ test.describe('Congress talk performance probe', () => {
         sampleCount: samples.length,
         avgFps: Number(avg.toFixed(1)),
         minFps: Number(min.toFixed(1)),
-        hasCongress: Boolean(
-          document.querySelector('[data-testid="congress-talk"]'),
+        hasHybrid: Boolean(
+          document.querySelector('[data-testid="hybrid-talk"]'),
         ),
         valhallaImgCount: document.querySelectorAll(
           'img[src*="/images/valhalla/"]',
         ).length,
-        canvasCount: document.querySelectorAll('canvas').length,
+        chartCount: document.querySelectorAll('[data-chart-id]').length,
         unsplashCount: document.querySelectorAll('img[src*="unsplash"]').length,
       }
     })
 
     console.log(`PERF_JSON ${JSON.stringify(result)}`)
 
-    expect(result.hasCongress).toBe(true)
-    expect(result.canvasCount).toBe(0)
+    expect(result.hasHybrid).toBe(true)
     expect(result.unsplashCount).toBe(0)
     expect(result.valhallaImgCount).toBeGreaterThan(0)
     expect(result.sampleCount).toBeGreaterThan(0)
