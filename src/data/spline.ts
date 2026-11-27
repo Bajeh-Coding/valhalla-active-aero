@@ -1,15 +1,18 @@
 /**
  * Single source of truth for the Spline 3D scene URL.
  *
- * PLACEHOLDER: Official Spline Viewer “Orbit & Zoom” public scene
- * (https://viewer.spline.design/ — interactive orbit/zoom demo).
- * Swap this constant for a sports-car / Valhalla `.splinecode` export
- * from Spline → Export → Code → React when available.
+ * PLACEHOLDER (no sports-car `.splinecode` was provided / publicly mintable):
+ * Official Spline Viewer “Orbit & Zoom” demo — interactive orbit/zoom.
+ * Source: https://viewer.spline.design/ (Orbit & Zoom embed).
  *
- * Must be a minted `https://prod.spline.design/<id>/scene.splinecode` URL.
+ * Replace with a sports-car / Valhalla export:
+ * Spline editor → Export → Code → React → copy the `.splinecode` URL here.
+ *
+ * Must be a minted `https://prod.spline.design/<id>/scene.splinecode` URL
+ * (community file pages are NOT loadable exports).
  */
 export const SPLINE_SCENE_URL =
   'https://prod.spline.design/U9O6K7fXziMEU7Wu/scene.splinecode' as const
 
 export const SPLINE_SCENE_NOTE =
-  'Placeholder: Spline Orbit & Zoom public demo. Replace SPLINE_SCENE_URL with a sports-car scene export.' as const
+  'Placeholder scene (Orbit & Zoom). Swap SPLINE_SCENE_URL for a sports-car .splinecode export.' as const

@@ -33,11 +33,11 @@ export function ChapterScrollLayout() {
     <div ref={rootRef} className="relative bg-aero-bg text-aero-text">
       <div className="pointer-events-none fixed inset-0 z-0">
         <PhotoChapterStage />
-        {/* Soft R3F Valhalla as atmospheric depth under Spline */}
-        <div className="absolute inset-0 z-[1] opacity-30 mix-blend-lighten">
+        {/* Soft R3F Valhalla depth layer */}
+        <div className="absolute inset-0 z-[1] opacity-40 mix-blend-lighten">
           <WindTunnelScene className="h-dvh w-full" />
         </div>
-        {/* Interactive Spline sports-car canvas (hero + wind tunnel) */}
+        {/* Interactive Spline panel — hero + wind-tunnel chapters */}
         <SplineCarCanvas />
         <CfdCanvasOverlay />
         <PhotoForceVectors />
