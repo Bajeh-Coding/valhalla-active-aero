@@ -12,8 +12,9 @@ import { TelemetryHud } from '@/ui/TelemetryHud'
 import { ChapterContent } from '@/ui/chapters/ChapterContent'
 
 /**
- * Premium cinematic stage:
- * photo atmosphere + Spline interactive 3D (hero/tunnel) + CFD + glass HUD.
+ * Minimal cinematic stage:
+ * full-bleed photography + soft R3F depth + sparse chapter typography.
+ * HUD appears only from the control chapter onward.
  */
 export function ChapterScrollLayout() {
   const rootRef = useRef<HTMLDivElement>(null)
@@ -33,11 +34,9 @@ export function ChapterScrollLayout() {
     <div ref={rootRef} className="relative bg-aero-bg text-aero-text">
       <div className="pointer-events-none fixed inset-0 z-0">
         <PhotoChapterStage />
-        {/* Soft R3F Valhalla depth layer */}
-        <div className="absolute inset-0 z-[1] opacity-40 mix-blend-lighten">
+        <div className="absolute inset-0 z-[1] opacity-35 mix-blend-lighten">
           <WindTunnelScene className="h-dvh w-full" />
         </div>
-        {/* Interactive Spline panel — hero + wind-tunnel chapters */}
         <SplineCarCanvas />
         <CfdCanvasOverlay />
         <PhotoForceVectors />
@@ -46,7 +45,6 @@ export function ChapterScrollLayout() {
 
       <TelemetryHud />
 
-      {/* Pass-through so Spline orbit works; interactive UI re-enables pointer-events */}
       <div className="pointer-events-none relative z-10">
         {CHAPTER_IDS.map((id) => (
           <section key={id} data-chapter={id} className="relative min-h-[100dvh]">

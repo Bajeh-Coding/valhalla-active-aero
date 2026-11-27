@@ -33,14 +33,15 @@ async function gotoApp(page: Page) {
 }
 
 test.describe('Valhalla scrollytelling E2E', () => {
-  test('boots HUD + hero without console/page errors', async ({ page }) => {
+  test('boots minimal hero without console/page errors', async ({ page }) => {
     const errors = await attachErrorTrap(page)
     await gotoApp(page)
 
     await expect(page.getByText('ASTON MARTIN')).toBeVisible()
     await expect(page.getByText('VALHALLA')).toBeVisible()
-    await expect(page.getByLabel('Telemetry HUD')).toBeVisible()
-    await expect(page.getByText('System online', { exact: false }).first()).toBeVisible()
+    await expect(page.getByText('Active aerodynamics, revealed.')).toBeVisible()
+    // HUD is deferred until control chapter — must not clutter hero
+    await expect(page.getByLabel('Telemetry HUD')).toHaveCount(0)
 
     expect(errors, errors.join('\n')).toEqual([])
   })
@@ -71,6 +72,7 @@ test.describe('Valhalla scrollytelling E2E', () => {
 
     await page.locator('[data-chapter="control"]').scrollIntoViewIfNeeded()
     await page.waitForTimeout(500)
+    await expect(page.getByLabel('Telemetry HUD')).toBeVisible()
 
     await page.getByTestId('mode-DRS').click()
     await expect(page.getByLabel('Telemetry HUD')).toContainText(/0\.0°/)
@@ -144,7 +146,7 @@ test.describe('Valhalla scrollytelling E2E', () => {
     }
 
     const cls = await page.evaluate(() => (window as unknown as { __cls: number }).__cls)
-    // Fixed canvas + absolute HUD should keep cumulative CLS modest.
+    // Fixed canvas + deferred HUD should keep cumulative CLS modest.
     expect(cls).toBeLessThan(0.25)
   })
 })

@@ -1,22 +1,18 @@
 import { motion } from 'framer-motion'
-import { Cpu, Gauge } from 'lucide-react'
 import type { AeroMode } from '@/types/aero'
 import { useAeroStore } from '@/store'
 import { cn } from '@/lib/utils'
-import { BorderBeam, GlassCard, ShineButton } from '@/ui/primitives'
 
 const MODES: AeroMode[] = ['DRS', 'PASSIVE', 'MAXP', 'AEROBRAKE']
 
 const MODE_ACTIVE: Record<AeroMode, string> = {
-  DRS: 'border-aero-cyan/80 bg-cyan-950/45 text-aero-cyan shadow-[0_0_24px_rgb(0_240_255_/0.18)]',
-  PASSIVE:
-    'border-slate-400/40 bg-slate-900/45 text-aero-champagne shadow-[0_0_16px_rgb(148_163_184_/0.12)]',
-  MAXP: 'border-aero-lime/80 bg-aero-amr-deep/55 text-aero-lime shadow-[0_0_24px_rgb(196_223_0_/0.2)]',
-  AEROBRAKE:
-    'border-aero-crimson/80 bg-red-950/45 text-aero-crimson shadow-[0_0_24px_rgb(255_59_48_/0.2)]',
+  DRS: 'border-aero-cyan/60 text-aero-cyan',
+  PASSIVE: 'border-aero-champagne/40 text-aero-champagne',
+  MAXP: 'border-aero-lime/70 text-aero-lime',
+  AEROBRAKE: 'border-aero-crimson/60 text-aero-crimson',
 }
 
-/** Chapter 3 live aero control simulator — wired to Zustand store. */
+/** Chapter 3 live aero controls — interaction surface only, no neon chrome. */
 export function ControlDashboard() {
   const mode = useAeroStore((s) => s.mode)
   const requestedMode = useAeroStore((s) => s.requestedMode)
@@ -46,46 +42,43 @@ export function ControlDashboard() {
   }
 
   return (
-    <GlassCard
-      variant="strong"
-      className="pointer-events-auto relative w-full max-w-lg overflow-hidden p-6"
-      initial={{ opacity: 0, y: 18 }}
+    <motion.div
+      className="pointer-events-auto w-full max-w-md border border-white/10 bg-aero-bg/70 p-6 backdrop-blur-xl"
+      initial={{ opacity: 0, y: 16 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.3 }}
-      transition={{ duration: 0.6 }}
+      transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
     >
-      <BorderBeam duration={9} />
-      <p className="inline-flex items-center gap-2 font-mono text-[10px] tracking-[0.28em] text-aero-lime uppercase">
-        <Cpu className="size-3.5" aria-hidden />
-        Live control · Chapter 03 · Wind tunnel
-      </p>
-      <h3 className="font-display mt-2 text-2xl font-semibold tracking-[0.03em]">
-        Mecatronic state machine
+      <h3 className="font-display text-2xl font-semibold tracking-[0.04em]">
+        Live control
       </h3>
       <p className="mt-2 text-sm leading-relaxed text-aero-muted">
-        DRS / MAXP / AEROBRAKE / PASSIVE drive wing AOA and splitter. Streamline
-        color follows mode. Brake &gt; 40% forces AEROBRAKE regardless of selection.
+        Command wing AOA and splitter. Brake above 40% forces AEROBRAKE.
       </p>
 
-      <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-4">
+      <div className="mt-6 grid grid-cols-2 gap-2 sm:grid-cols-4">
         {MODES.map((m) => {
           const active = mode === m
           return (
-            <ShineButton
+            <button
               key={m}
+              type="button"
               data-testid={`mode-${m}`}
               onClick={() => selectMode(m)}
-              active={active}
-              className={cn(active && MODE_ACTIVE[m])}
+              className={cn(
+                'border bg-transparent px-2 py-2.5 font-mono text-[11px] tracking-[0.12em] transition-colors',
+                active
+                  ? MODE_ACTIVE[m]
+                  : 'border-white/10 text-aero-muted hover:border-white/25 hover:text-aero-champagne',
+              )}
             >
               {m}
-            </ShineButton>
+            </button>
           )
         })}
       </div>
 
-      <div className="mt-3.5 inline-flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-[10px] text-aero-muted">
-        <Gauge className="size-3 text-aero-lime" aria-hidden />
+      <p className="mt-3 font-mono text-[10px] text-aero-muted">
         Effective <span className="text-aero-lime">{mode}</span>
         {requestedMode !== mode ? (
           <>
@@ -97,7 +90,7 @@ export function ControlDashboard() {
         {drsDenied ? ' · DRS denied' : null}
         {' · '}
         AOA {aoaDeg.toFixed(1)}° · splitter {splitter}
-      </div>
+      </p>
 
       <Slider
         label="Speed"
@@ -127,7 +120,7 @@ export function ControlDashboard() {
         testId="brake-slider"
         warn={brakePct > 40}
       />
-    </GlassCard>
+    </motion.div>
   )
 }
 
@@ -151,7 +144,7 @@ function Slider({
   warn?: boolean
 }) {
   return (
-    <label className="mt-4 block">
+    <label className="mt-5 block">
       <div className="mb-1.5 flex items-center justify-between font-mono text-[10px] tracking-wider uppercase">
         <span className={warn ? 'text-aero-crimson' : 'text-aero-muted'}>{label}</span>
         <motion.span
