@@ -25,7 +25,7 @@ export function ChapterScrollLayout() {
   }, [applyModeSetpoints, setSpeedKmh, setThrottlePct])
 
   return (
-    <div ref={rootRef} className="relative bg-aero-bg text-aero-text">
+    <div ref={rootRef} className="relative bg-aero-void text-aero-ivory">
       <div className="pointer-events-none fixed inset-0 z-0">
         <PhotoStage />
       </div>

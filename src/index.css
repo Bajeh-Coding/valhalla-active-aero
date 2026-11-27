@@ -1,27 +1,28 @@
 @import "tailwindcss";
 
 /*
-  Valhalla Active Aero — minimal cinematic brand system
-  Display: Cinzel · Body: Plus Jakarta Sans · Telemetry: JetBrains Mono
+  Valhalla Active Aero — art-direction tokens
+  Display: Cinzel · Body serif: Cormorant · UI: Plus Jakarta · Mono: JetBrains
+  Palette: void / ink / mist / ivory / amr / lime / signal — AMR+lime rare.
 */
 @theme {
   --color-aero-bg: #05070a;
+  --color-aero-void: #05070a;
+  --color-aero-ink: #0b0e14;
   --color-aero-bg-deep: #0b0e14;
   --color-aero-surface: #0b0e14;
-  --color-aero-panel: rgb(11 14 20 / 0.55);
-  --color-aero-border: rgb(6 78 59 / 0.35);
   --color-aero-amr: #005949;
   --color-aero-amr-deep: #004225;
   --color-aero-lime: #c4df00;
-  --color-aero-cyan: #00f0ff;
-  --color-aero-crimson: #ff3b30;
-  --color-aero-emerald: #005949;
-  --color-aero-amber: #ff3b30;
+  --color-aero-mist: #8b929a;
   --color-aero-muted: #8b929a;
+  --color-aero-ivory: #f2f0ea;
   --color-aero-text: #f2f0ea;
+  --color-aero-signal: #e8e4dc;
   --color-aero-champagne: #e8e4dc;
 
   --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-ui: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Cinzel", "Cormorant Garamond", Georgia, serif;
   --font-serif: "Cormorant Garamond", "Cinzel", Georgia, serif;
   --font-mono: "JetBrains Mono", ui-monospace, "Cascadia Code", monospace;
@@ -38,15 +39,14 @@
   --aero-bg: #05070a;
   --aero-bg-deep: #0b0e14;
   --aero-surface: #0b0e14;
-  --aero-panel: rgb(11 14 20 / 0.4);
-  --aero-border: rgb(6 78 59 / 0.3);
   --aero-amr: #005949;
   --aero-amr-deep: #004225;
   --aero-lime: #c4df00;
-  --aero-cyan: #00f0ff;
-  --aero-crimson: #ff3b30;
+  --aero-mist: #8b929a;
   --aero-muted: #8b929a;
+  --aero-ivory: #f2f0ea;
   --aero-text: #f2f0ea;
+  --aero-signal: #e8e4dc;
   --aero-champagne: #e8e4dc;
 }
 
@@ -68,11 +68,9 @@ html {
 
 body {
   margin: 0;
-  background:
-    radial-gradient(ellipse 90% 55% at 50% 0%, rgb(0 89 73 / 0.14), transparent 55%),
-    var(--aero-bg);
-  color: var(--aero-text);
-  font-family: var(--font-sans);
+  background: var(--void);
+  color: var(--ivory);
+  font-family: var(--font-serif);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -89,54 +87,55 @@ body {
   font-family: var(--font-serif);
 }
 
-/* Range inputs — quiet AMR lime accent */
+.font-ui {
+  font-family: var(--font-ui);
+}
+
+/* Range inputs — quiet lime thumb, rare accent */
 input[type="range"].aero-range {
   -webkit-appearance: none;
   appearance: none;
-  height: 2px;
-  border-radius: 999px;
-  background: rgb(255 255 255 / 0.12);
+  height: 1px;
+  border-radius: 0;
+  background: rgb(232 228 220 / 0.14);
   outline: none;
 }
 input[type="range"].aero-range::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 12px;
-  height: 12px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   background: #c4df00;
   border: 2px solid #05070a;
   cursor: pointer;
 }
 input[type="range"].aero-range::-moz-range-thumb {
-  width: 12px;
-  height: 12px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   background: #c4df00;
   border: 2px solid #05070a;
   cursor: pointer;
 }
 
-.luxury-rule {
-  height: 1px;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgb(196 223 0 / 0.35),
-    transparent
-  );
-}
-
 @keyframes luxury-breathe {
   0%,
   100% {
-    opacity: 0.35;
+    opacity: 0.3;
   }
   50% {
-    opacity: 0.9;
+    opacity: 0.75;
   }
 }
 
 .luxury-pulse {
   animation: luxury-breathe 3.2s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .luxury-pulse {
+    animation: none;
+    opacity: 0.5;
+  }
 }
