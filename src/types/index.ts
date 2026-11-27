@@ -1,17 +1,12 @@
 export type {
   AeroMode,
   SplitterState,
+  FactId,
   AeroControlInputs,
   TelemetryMetrics,
-  ModeAeroCoefficients,
+  ModeSurfaceSetpoint,
 } from './aero'
 
-export type {
-  PaperCitation,
-  PaperCitationId,
-} from './papers'
+export type { PaperCitation, PaperCitationId } from './papers'
 
-export type {
-  TrackCoordinate,
-  TrackLayout,
-} from './track'
+export type { TrackCoordinate, TrackLayout } from './track'

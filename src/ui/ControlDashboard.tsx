@@ -4,11 +4,11 @@ import { PRESENTATION_COPY } from '@/data/presentationCopy'
 import { useAeroStore } from '@/store'
 import { cn } from '@/lib/utils'
 
-const MODES: AeroMode[] = ['DRS', 'PASSIVE', 'MAXP', 'AEROBRAKE']
+const MODES: AeroMode[] = ['DRS', 'STANDARD', 'MAXP', 'AEROBRAKE']
 
 const MODE_ACTIVE: Record<AeroMode, string> = {
   DRS: 'border-aero-cyan/60 text-aero-cyan',
-  PASSIVE: 'border-aero-champagne/40 text-aero-champagne',
+  STANDARD: 'border-aero-champagne/40 text-aero-champagne',
   MAXP: 'border-aero-lime/70 text-aero-lime',
   AEROBRAKE: 'border-aero-crimson/60 text-aero-crimson',
 }
@@ -23,7 +23,7 @@ export function ControlDashboard() {
   const aerobrakeForced = useAeroStore((s) => s.aerobrakeForced)
   const drsDenied = useAeroStore((s) => s.drsDenied)
   const splitter = useAeroStore((s) => s.splitter)
-  const aoaDeg = useAeroStore((s) => s.aoaDeg)
+  const aoaDeg = useAeroStore((s) => s.aoaDegEffective)
   const applyModeSetpoints = useAeroStore((s) => s.applyModeSetpoints)
   const setSpeedKmh = useAeroStore((s) => s.setSpeedKmh)
   const setThrottlePct = useAeroStore((s) => s.setThrottlePct)

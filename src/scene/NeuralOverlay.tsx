@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { motion } from 'framer-motion'
 import { useScrollStore } from './scrollStore'
-import { PI_ROM } from '@/data/vehicleConstants'
+import { PI_ROM } from '@/data/piRom'
 
 /**
  * Chapter 5 — soft neural / nodal pressure-field overlay on the photo stage.

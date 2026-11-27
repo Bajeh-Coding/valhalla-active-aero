@@ -25,7 +25,7 @@ export function ChapterScrollLayout() {
   const setThrottlePct = useAeroStore((s) => s.setThrottlePct)
 
   useEffect(() => {
-    applyModeSetpoints('PASSIVE')
+    applyModeSetpoints('STANDARD')
     setSpeedKmh(180)
     setThrottlePct(40)
   }, [applyModeSetpoints, setSpeedKmh, setThrottlePct])

@@ -9,7 +9,10 @@ import { useScrollStore } from './scrollStore'
 export function PhotoForceVectors() {
   const chapterIndex = useScrollStore((s) => s.chapterIndex)
   const dragN = useAeroStore((s) => s.dragN)
-  const downforceN = useAeroStore((s) => s.downforceN)
+  const frontDf = useAeroStore((s) => s.frontDownforceN)
+  const rearDf = useAeroStore((s) => s.rearDownforceN)
+  const downforceN =
+    frontDf != null && rearDf != null ? frontDf + rearDf : null
   const visible = chapterIndex === 1
 
   return (
@@ -27,7 +30,7 @@ export function PhotoForceVectors() {
       >
         <VectorBadge
           label="F_L"
-          value={`${formatN(downforceN)} N`}
+          value={downforceN != null ? `${formatN(downforceN)} N` : '—'}
           color="text-aero-cyan"
           direction="down"
         />
@@ -42,7 +45,7 @@ export function PhotoForceVectors() {
       >
         <VectorBadge
           label="F_D"
-          value={`${formatN(dragN)} N`}
+          value={dragN != null ? `${formatN(dragN)} N` : '—'}
           color="text-aero-crimson"
           direction="back"
         />

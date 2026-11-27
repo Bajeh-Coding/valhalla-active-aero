@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
-import { LAP_TIME, PI_ROM, VEHICLE } from '@/data/vehicleConstants'
+import { LAP_TIME, VEHICLE } from '@/data/vehicleConstants'
+import { PI_ROM } from '@/data/piRom'
 import { PRESENTATION_COPY as COPY } from '@/data/presentationCopy'
 import { useAeroStore } from '@/store'
 import type { ChapterId } from '@/scene'
@@ -74,10 +75,11 @@ function HeroChapter() {
   )
 }
 
-/** Cap. 1.2 — compromis FD/FL + CoP. */
+/** Cap. 1.2 — balance aero (S1-F013); CoP invent removed. */
 function PhysicsChapter() {
-  const copRearPct = useAeroStore((s) => s.copRearPct)
+  const balanceFront = useAeroStore((s) => s.balanceFront)
   const cogRear = VEHICLE.massDistributionRearPct
+  const balPct = balanceFront != null ? balanceFront * 100 : null
 
   return (
     <div className="pointer-events-none flex min-h-[100dvh] items-end px-6 pb-20 md:px-16 md:pb-28">
@@ -99,17 +101,24 @@ function PhysicsChapter() {
             <span
               className="absolute top-1/2 h-2 w-px -translate-y-1/2 bg-aero-lime/80"
               style={{ left: `${cogRear}%` }}
-              title={`CoG ${cogRear}%`}
+              title={`CoG rear ${cogRear.toFixed(1)}%`}
             />
-            <motion.span
-              className="absolute top-1/2 size-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-aero-champagne"
-              animate={{ left: `${copRearPct}%` }}
-              transition={{ type: 'spring', stiffness: 90, damping: 20 }}
-            />
+            {balPct != null ? (
+              <motion.span
+                className="absolute top-1/2 size-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-aero-champagne"
+                animate={{ left: `${balPct}%` }}
+                transition={{ type: 'spring', stiffness: 90, damping: 20 }}
+              />
+            ) : null}
           </div>
           <div className="mt-3 flex justify-between font-mono text-[10px] tracking-wider text-aero-muted uppercase">
-            <span>CoP {copRearPct.toFixed(1)}%</span>
-            <span className="text-aero-lime/80">CoG {cogRear}%</span>
+            <span>
+              Bal{' '}
+              {balPct != null ? `${balPct.toFixed(1)}%` : '— (@160 km/h)'}
+            </span>
+            <span className="text-aero-lime/80">
+              CoG {cogRear.toFixed(1)}%
+            </span>
           </div>
         </div>
       </motion.div>

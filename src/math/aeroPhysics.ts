@@ -1,104 +1,97 @@
 /**
- * Paper-exact aerodynamic physics engine (master-spec §2).
- * All constants imported from `@/data/vehicleConstants` — no fabricated numbers.
+ * Paper-exact aerodynamic physics (S1 state machine + Table 3 force anchor).
+ * No ½ρv² / invented C_D·C_L. Facts: docs/science-facts.md.
  */
 import {
-  AEROBRAKE_TRIGGERS,
   ACTUATORS,
-  COP,
+  AEROBRAKE_TRIGGERS,
+  AERO_BALANCE_TARGET,
   DRS_TRIGGERS,
-  getModeCoefficients,
-  VEHICLE,
+  FRICTION_SATURATION,
+  TABLE3_FORCES,
+  TABLE3_SPEED_KMH,
+  getModeSurface,
 } from '@/data/vehicleConstants'
-import type { AeroMode, ModeAeroCoefficients, SplitterState } from '@/types/aero'
+import type { AeroMode, FactId, SplitterState } from '@/types/aero'
 
 export interface AeroForces {
-  dragN: number
-  downforceN: number
-}
-
-export interface CopResult {
-  /** Center of pressure rear share [%]. */
-  copRearPct: number
+  dragN: number | null
+  frontDownforceN: number | null
+  rearDownforceN: number | null
+  /** front / (front+rear); null if forces missing or total ≤ 0. */
+  balanceFront: number | null
+  /** True only when returning exact Table 3 @160 km/h values. */
+  atTable3Anchor: boolean
 }
 
 export interface ResolvedAeroMode {
   mode: AeroMode
-  coefficients: ModeAeroCoefficients
   splitter: SplitterState
-  /** AOA set-point for the resolved mode [deg]. MAXP uses midpoint of [5, 18]. */
-  aoaDeg: number
-  /** True when AEROBRAKE was forced by brake > 40%. */
+  /** Effective AOA after schedule / ramp [deg]. */
+  aoaDegEffective: number
   aerobrakeForced: boolean
-  /** True when requested DRS but speed/throttle triggers were not met. */
   drsDenied: boolean
+  citations: FactId[]
+}
+
+export interface TelemetryInput {
+  requestedMode: AeroMode
+  speedKmh: number
+  throttlePct: number
+  brakePct: number
+  /** Lateral accel in g (for |ay| ≤ 1 g gates). */
+  ayG: number
+  /** Optional MaxP AOA override within [0, 25]. */
+  aoaDegOverride?: number
+}
+
+export interface TelemetrySnapshot extends ResolvedAeroMode {
+  aoaDeg: number
+  dragN: number | null
+  frontDownforceN: number | null
+  rearDownforceN: number | null
+  balanceFront: number | null
 }
 
 export interface AeroPhysicsEngine {
-  /** Convert km/h → m/s. */
   kmhToMs: (speedKmh: number) => number
-  /** F_D = ½ ρ v² A C_D  (v from km/h). */
-  computeDragN: (speedKmh: number, cd: number) => number
-  /** F_L = ½ ρ v² A |C_L|. */
-  computeDownforceN: (speedKmh: number, cl: number) => number
-  /** CoP_rear% = 50% + (AOA/25° × 12%). */
-  computeCopRearPct: (aoaDeg: number) => number
-  /** C_L / C_D (signed; C_L negative = downforce). */
-  computeClOverCd: (cl: number, cd: number) => number
+  /** Exact Table 3 forces only at 160 km/h; otherwise null (S1-F011 / S1-F022). */
+  lookupTable3Forces: (
+    speedKmh: number,
+    pack?: 'original' | 'newPack',
+  ) => AeroForces
+  /** Aero balance = front DF / total DF (S1-F013). */
+  computeBalanceFront: (
+    frontDownforceN: number,
+    rearDownforceN: number,
+  ) => number | null
   /**
-   * Resolve effective mode.
-   * - Brake > 40% → AEROBRAKE regardless of requested mode.
-   * - Requested DRS only engages when speed > 90 km/h AND throttle > 70%;
-   *   otherwise falls back to PASSIVE.
+   * S2 Eq. (25) — satt,i = Fz / (2 √(Fx²+Fy²)). Medium confidence on factor 2.
    */
-  resolveMode: (input: {
-    requestedMode: AeroMode
-    speedKmh: number
-    throttlePct: number
-    brakePct: number
-  }) => ResolvedAeroMode
-  /** Bundle forces for a speed + coefficient pair. */
-  computeForces: (speedKmh: number, cd: number, cl: number) => AeroForces
-  /** Full derived telemetry snapshot from control inputs. */
-  computeTelemetry: (input: {
-    requestedMode: AeroMode
-    speedKmh: number
-    throttlePct: number
-    brakePct: number
-    /** Optional AOA override (e.g. MAXP modulation within [5, 18]). */
-    aoaDegOverride?: number
-  }) => {
-    mode: AeroMode
-    splitter: SplitterState
-    aoaDeg: number
-    cd: number
-    cl: number
-    clOverCd: number
-    dragN: number
-    downforceN: number
-    copRearPct: number
-    aerobrakeForced: boolean
-    drsDenied: boolean
-  }
-}
-
-function modeAoaSetpoint(coeffs: ModeAeroCoefficients): number {
-  if (typeof coeffs.aoaDeg === 'number') {
-    return coeffs.aoaDeg
-  }
-  return (coeffs.aoaDeg.min + coeffs.aoaDeg.max) / 2
+  computeSaturationFactor: (fzN: number, fxN: number, fyN: number) => number
+  /** MaxP AOA schedule (S1-F051). */
+  maxpAoaDeg: (speedKmh: number) => number
+  /** DRS wing ramp AOA 6°→0° on 70–120 km/h (S1-F034). */
+  drsWingAoaDeg: (speedKmh: number) => number
+  resolveMode: (input: TelemetryInput) => ResolvedAeroMode
+  computeTelemetry: (input: TelemetryInput) => TelemetrySnapshot
 }
 
 function clampAoa(aoaDeg: number): number {
   return Math.min(ACTUATORS.aoaMaxDeg, Math.max(ACTUATORS.aoaMinDeg, aoaDeg))
 }
 
-function clampMaxpAoa(aoaDeg: number): number {
-  const coeffs = getModeCoefficients('MAXP')
-  if (typeof coeffs.aoaDeg === 'number') {
-    return clampAoa(aoaDeg)
-  }
-  return Math.min(coeffs.aoaDeg.max, Math.max(coeffs.aoaDeg.min, aoaDeg))
+function absAyOk(ayG: number, maxAbs: number): boolean {
+  return Math.abs(ayG) <= maxAbs
+}
+
+function balanceFront(
+  frontDownforceN: number,
+  rearDownforceN: number,
+): number | null {
+  const total = frontDownforceN + rearDownforceN
+  if (total <= 0) return null
+  return frontDownforceN / total
 }
 
 export const aeroPhysics: AeroPhysicsEngine = {
@@ -106,113 +99,185 @@ export const aeroPhysics: AeroPhysicsEngine = {
     return speedKmh / 3.6
   },
 
-  computeDragN(speedKmh, cd) {
-    const v = speedKmh / 3.6
-    return 0.5 * VEHICLE.airDensityKgPerM3 * v * v * VEHICLE.frontalAreaM2 * cd
-  },
-
-  computeDownforceN(speedKmh, cl) {
-    const v = speedKmh / 3.6
-    return (
-      0.5 *
-      VEHICLE.airDensityKgPerM3 *
-      v *
-      v *
-      VEHICLE.frontalAreaM2 *
-      Math.abs(cl)
-    )
-  },
-
-  computeCopRearPct(aoaDeg) {
-    const aoa = clampAoa(aoaDeg)
-    return (
-      COP.baselineRearPct + (aoa / COP.aoaSpanDeg) * COP.aoaGainPct
-    )
-  },
-
-  computeClOverCd(cl, cd) {
-    if (cd === 0) {
-      throw new Error('C_D must be non-zero to compute C_L/C_D')
-    }
-    return cl / cd
-  },
-
-  resolveMode({ requestedMode, speedKmh, throttlePct, brakePct }) {
-    // Master-spec QA: Brake > 40% forces AEROBRAKE regardless of mode.
-    if (brakePct > AEROBRAKE_TRIGGERS.minBrakePct) {
-      const coefficients = getModeCoefficients('AEROBRAKE')
+  lookupTable3Forces(speedKmh, pack = 'newPack') {
+    const row = TABLE3_FORCES[pack]
+    if (speedKmh !== TABLE3_SPEED_KMH) {
       return {
-        mode: 'AEROBRAKE',
-        coefficients,
-        splitter: coefficients.splitter,
-        aoaDeg: modeAoaSetpoint(coefficients),
-        aerobrakeForced: true,
-        drsDenied: false,
+        dragN: null,
+        frontDownforceN: null,
+        rearDownforceN: null,
+        balanceFront: null,
+        atTable3Anchor: false,
       }
     }
+    return {
+      dragN: row.dragN,
+      frontDownforceN: row.frontDownforceN,
+      rearDownforceN: row.rearDownforceN,
+      balanceFront: balanceFront(row.frontDownforceN, row.rearDownforceN),
+      atTable3Anchor: true,
+    }
+  },
 
-    let mode = requestedMode
-    let drsDenied = false
+  computeBalanceFront(frontDownforceN, rearDownforceN) {
+    return balanceFront(frontDownforceN, rearDownforceN)
+  },
+
+  computeSaturationFactor(fzN, fxN, fyN) {
+    const plane = Math.hypot(fxN, fyN)
+    if (plane === 0) {
+      return Number.POSITIVE_INFINITY
+    }
+    return fzN / (FRICTION_SATURATION.printedDenominatorFactor * plane)
+  },
+
+  maxpAoaDeg(speedKmh) {
+    // S1-F051: V∈[100,180]→0°; (180,250]→3°; (250,300]→4.5°.
+    // Below 100 km/h: paper silent → Standard 6° (gap flagged in handoff).
+    if (speedKmh < 100) return ACTUATORS.standardAoaDeg
+    if (speedKmh <= 180) return 0
+    if (speedKmh <= 250) return 3
+    if (speedKmh <= 300) return 4.5
+    // Above 300: last defined MaxP band; paper hints baseline 6° may win (gap).
+    return 4.5
+  },
+
+  drsWingAoaDeg(speedKmh) {
+    const { minSpeedKmh, wingRampEndKmh } = DRS_TRIGGERS
+    if (speedKmh < minSpeedKmh) return ACTUATORS.standardAoaDeg
+    if (speedKmh >= wingRampEndKmh) return ACTUATORS.drsAoaDeg
+    const t =
+      (speedKmh - minSpeedKmh) / (wingRampEndKmh - minSpeedKmh)
+    return ACTUATORS.standardAoaDeg + (ACTUATORS.drsAoaDeg - ACTUATORS.standardAoaDeg) * t
+  },
+
+  resolveMode({ requestedMode, speedKmh, throttlePct, brakePct, ayG }) {
+    const citations: FactId[] = []
+
+    // AEROBRAKE priority when paper conditions met (S1-F040/041).
+    const aerobrakeOk =
+      speedKmh >= AEROBRAKE_TRIGGERS.minSpeedKmh &&
+      brakePct >= AEROBRAKE_TRIGGERS.minBrakePct &&
+      absAyOk(ayG, AEROBRAKE_TRIGGERS.maxAbsAyG)
+
+    if (aerobrakeOk) {
+      citations.push('S1-F040', 'S1-F041')
+      return {
+        mode: 'AEROBRAKE',
+        splitter: 'CLOSED',
+        aoaDegEffective: ACTUATORS.aerobrakeAoaDeg,
+        aerobrakeForced: brakePct >= AEROBRAKE_TRIGGERS.minBrakePct,
+        drsDenied: false,
+        citations,
+      }
+    }
 
     if (requestedMode === 'DRS') {
       const drsOk =
-        speedKmh > DRS_TRIGGERS.minSpeedKmh &&
-        throttlePct > DRS_TRIGGERS.minThrottlePct
+        speedKmh >= DRS_TRIGGERS.minSpeedKmh &&
+        throttlePct >= DRS_TRIGGERS.minThrottlePct &&
+        absAyOk(ayG, DRS_TRIGGERS.maxAbsAyG)
+
       if (!drsOk) {
-        mode = 'PASSIVE'
-        drsDenied = true
+        citations.push('S1-F033', 'S1-F021')
+        return {
+          mode: 'STANDARD',
+          splitter: 'CLOSED',
+          aoaDegEffective: ACTUATORS.standardAoaDeg,
+          aerobrakeForced: false,
+          drsDenied: true,
+          citations,
+        }
+      }
+
+      citations.push('S1-F032', 'S1-F033', 'S1-F034')
+      const splitter: SplitterState =
+        speedKmh >= DRS_TRIGGERS.splitterOpenKmh ? 'OPEN' : 'CLOSED'
+      return {
+        mode: 'DRS',
+        splitter,
+        aoaDegEffective: aeroPhysics.drsWingAoaDeg(speedKmh),
+        aerobrakeForced: false,
+        drsDenied: false,
+        citations,
       }
     }
 
-    const coefficients = getModeCoefficients(mode)
-    return {
-      mode,
-      coefficients,
-      splitter: coefficients.splitter,
-      aoaDeg: modeAoaSetpoint(coefficients),
-      aerobrakeForced: false,
-      drsDenied,
+    if (requestedMode === 'MAXP') {
+      citations.push('S1-F050', 'S1-F051')
+      return {
+        mode: 'MAXP',
+        splitter: 'CLOSED',
+        aoaDegEffective: aeroPhysics.maxpAoaDeg(speedKmh),
+        aerobrakeForced: false,
+        drsDenied: false,
+        citations,
+      }
     }
-  },
 
-  computeForces(speedKmh, cd, cl) {
+    if (requestedMode === 'AEROBRAKE') {
+      // Requested but gates failed → STANDARD (do not invent engagement).
+      citations.push('S1-F041', 'S1-F021')
+      return {
+        mode: 'STANDARD',
+        splitter: 'CLOSED',
+        aoaDegEffective: ACTUATORS.standardAoaDeg,
+        aerobrakeForced: false,
+        drsDenied: false,
+        citations,
+      }
+    }
+
+    // STANDARD
+    citations.push('S1-F021', 'S1-F020')
+    const surface = getModeSurface('STANDARD')
     return {
-      dragN: aeroPhysics.computeDragN(speedKmh, cd),
-      downforceN: aeroPhysics.computeDownforceN(speedKmh, cl),
+      mode: 'STANDARD',
+      splitter: surface.splitter,
+      aoaDegEffective: ACTUATORS.standardAoaDeg,
+      aerobrakeForced: false,
+      drsDenied: false,
+      citations,
     }
   },
 
   computeTelemetry(input) {
     const resolved = aeroPhysics.resolveMode(input)
-    const { coefficients, mode, splitter, aerobrakeForced, drsDenied } = resolved
+    let aoaDegEffective = resolved.aoaDegEffective
 
-    let aoaDeg = resolved.aoaDeg
     if (
       input.aoaDegOverride !== undefined &&
-      mode === 'MAXP' &&
-      !aerobrakeForced
+      resolved.mode === 'MAXP' &&
+      !resolved.aerobrakeForced
     ) {
-      aoaDeg = clampMaxpAoa(input.aoaDegOverride)
+      aoaDegEffective = clampAoa(input.aoaDegOverride)
     }
 
-    const { cd, cl } = coefficients
-    const forces = aeroPhysics.computeForces(input.speedKmh, cd, cl)
+    // Active surfaces use New Aero Pack; forces only at Table 3 anchor speed.
+    const forces = aeroPhysics.lookupTable3Forces(input.speedKmh, 'newPack')
+    const citations = [...resolved.citations, 'S1-F011', 'S1-F022'] as FactId[]
+    if (forces.atTable3Anchor) {
+      citations.push('S1-F013')
+    }
 
     return {
-      mode,
-      splitter,
-      aoaDeg,
-      cd,
-      cl,
-      clOverCd: aeroPhysics.computeClOverCd(cl, cd),
+      ...resolved,
+      aoaDegEffective,
+      aoaDeg: aoaDegEffective,
       dragN: forces.dragN,
-      downforceN: forces.downforceN,
-      copRearPct: aeroPhysics.computeCopRearPct(aoaDeg),
-      aerobrakeForced,
-      drsDenied,
+      frontDownforceN: forces.frontDownforceN,
+      rearDownforceN: forces.rearDownforceN,
+      balanceFront: forces.balanceFront,
+      citations,
     }
   },
 }
 
-/** @deprecated Use `aeroPhysics` — stub retained name removed in Phase 2. */
-export const aeroPhysicsStub = aeroPhysics
+/** New-pack balance at Table 3 (sanity for tests / UI footnotes). */
+export const TABLE3_NEW_PACK_BALANCE_FRONT =
+  aeroPhysics.computeBalanceFront(
+    TABLE3_FORCES.newPack.frontDownforceN,
+    TABLE3_FORCES.newPack.rearDownforceN,
+  )
+
+export { AERO_BALANCE_TARGET }
