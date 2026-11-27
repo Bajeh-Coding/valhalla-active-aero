@@ -30,7 +30,7 @@ export function ChapterContent({ id }: { id: ChapterId }) {
   }
 }
 
-/** Chapter 1 — brand-first hero. Brand dominates; one headline; no cards. */
+/** Chapter 1 — photo hero + cyan airflow + luxury title + 50 Hz badge. */
 function HeroChapter() {
   return (
     <div className="pointer-events-none flex min-h-[100dvh] flex-col justify-end px-6 pb-20 md:px-16 md:pb-28">
@@ -45,7 +45,7 @@ function HeroChapter() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.25, duration: 0.9 }}
-          className="font-mono text-[10px] tracking-[0.35em] text-aero-lime uppercase luxury-pulse"
+          className="font-mono text-[10px] tracking-[0.35em] text-aero-cyan uppercase luxury-pulse"
         >
           System online · {CONTROL_LOOP_HZ} Hz control loop
         </motion.p>
@@ -59,14 +59,15 @@ function HeroChapter() {
           Active Aerodynamics &amp; Control
         </p>
         <p className="mt-4 max-w-md text-sm leading-relaxed text-aero-muted">
-          An editorial wind-tunnel journey through integrated active aero — wing,
-          splitter, and paper-exact force telemetry.
+          Photo-led wind-tunnel journey — cyan airflow over the hypercar,
+          paper-exact forces, live mecatronic control.
         </p>
       </motion.div>
     </div>
   )
 }
 
+/** Chapter 2 — side-aero + CoP/CoG cards (FL/FD vectors live on the photo stage). */
 function PhysicsChapter() {
   const copRearPct = useAeroStore((s) => s.copRearPct)
   const dragN = useAeroStore((s) => s.dragN)
@@ -81,13 +82,13 @@ function PhysicsChapter() {
       <motion.div {...fadeUp} className="pointer-events-auto w-full max-w-xl space-y-5">
         <div>
           <p className="font-mono text-[10px] tracking-[0.28em] text-aero-lime uppercase">
-            Chapter 02
+            Chapter 02 · Side aero
           </p>
           <h2 className="font-display mt-2 text-3xl font-semibold tracking-[0.03em] sm:text-4xl">
             Aerodynamic physics &amp; aero-balance
           </h2>
           <p className="mt-3 max-w-lg text-sm leading-relaxed text-aero-muted">
-            Live forces from paper-exact equations. Center of pressure versus
+            Live F_L / F_D vectors on the side profile. Center of pressure versus
             center of gravity as wing angle changes.
           </p>
         </div>
@@ -143,9 +144,10 @@ function PhysicsChapter() {
   )
 }
 
+/** Chapter 3 — pinned rear-wing photo + live controls. */
 function ControlChapter() {
   return (
-    <div className="flex min-h-[100dvh] items-end px-6 pb-16 md:px-14">
+    <div className="flex min-h-[100dvh] items-end px-6 pb-16 md:items-center md:justify-end md:px-14 md:pb-0">
       <div className="w-full max-w-lg">
         <ControlDashboard />
       </div>
@@ -153,6 +155,7 @@ function ControlChapter() {
   )
 }
 
+/** Chapter 4 — track photo + −2.55 s lap delta. */
 function DynamicsChapter() {
   return (
     <div className="pointer-events-none flex min-h-[100dvh] items-end px-6 pb-16 md:px-14">
@@ -191,6 +194,7 @@ function DynamicsChapter() {
   )
 }
 
+/** Chapter 5 — neural overlay + 4-paper matrix. */
 function PiRomChapter() {
   return (
     <div className="pointer-events-none flex min-h-[100dvh] items-end px-6 pb-24 md:px-14">

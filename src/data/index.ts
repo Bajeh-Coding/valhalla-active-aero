@@ -22,3 +22,10 @@ export type {
 } from './vehicle14Dof'
 export { PI_ROM_METADATA } from './piRom'
 export type { PiRomMetadata } from './piRom'
+export {
+  PHOTO_ASSETS,
+  CHAPTER_PHOTO_KEYS,
+  photoSrc,
+  photoCdn,
+} from './photoAssets'
+export type { PhotoAsset, PhotoKey } from './photoAssets'

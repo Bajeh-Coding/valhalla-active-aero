@@ -7,10 +7,10 @@ import { CHAPTER_IDS, useScrollStore } from './scrollStore'
 gsap.registerPlugin(ScrollTrigger)
 
 /**
- * GSAP ScrollTrigger skeleton for 5 chapters.
- * - Scrubs camera between chapter keyframes
- * - Chapter 3 (`control`) uses a pin hook for live aero controls (Phase 4 UI)
- * Exposes progress via `useScrollStore`.
+ * GSAP ScrollTrigger for photo-led chapters 1–5.
+ * - Scrubs camera between chapter keyframes (scrub: 1)
+ * - Pins chapter 3 (rear-wing + live controls)
+ * - Light pins on chapters 2 & 4 for photo dwell
  */
 export function useScrollTimeline(scrollRootRef: RefObject<HTMLElement | null>) {
   useEffect(() => {
@@ -44,34 +44,35 @@ export function useScrollTimeline(scrollRootRef: RefObject<HTMLElement | null>) 
     })
     triggers.push(main)
 
-    const ch3 = root.querySelector('[data-chapter="control"]')
-    if (ch3) {
+    // Chapter pins — photo dwell + interactive control
+    const pinSpecs: { selector: string; end: string; flag?: 'chapter3' }[] = [
+      { selector: '[data-chapter="physics"]', end: '+=80%' },
+      { selector: '[data-chapter="control"]', end: '+=140%', flag: 'chapter3' },
+      { selector: '[data-chapter="dynamics"]', end: '+=70%' },
+    ]
+
+    for (const spec of pinSpecs) {
+      const el = root.querySelector(spec.selector)
+      if (!el) continue
+      const isCh3 = spec.flag === 'chapter3'
       const pin = ScrollTrigger.create({
-        trigger: ch3,
+        trigger: el,
         start: 'top top',
-        end: '+=120%',
+        end: spec.end,
         pin: true,
         pinSpacing: true,
-        onEnter: () =>
-          useScrollStore.getState().setScroll({
-            ...pickScroll(),
-            chapter3Pinned: true,
-          }),
-        onEnterBack: () =>
-          useScrollStore.getState().setScroll({
-            ...pickScroll(),
-            chapter3Pinned: true,
-          }),
-        onLeave: () =>
-          useScrollStore.getState().setScroll({
-            ...pickScroll(),
-            chapter3Pinned: false,
-          }),
-        onLeaveBack: () =>
-          useScrollStore.getState().setScroll({
-            ...pickScroll(),
-            chapter3Pinned: false,
-          }),
+        onEnter: () => {
+          if (isCh3) setPinned(true)
+        },
+        onEnterBack: () => {
+          if (isCh3) setPinned(true)
+        },
+        onLeave: () => {
+          if (isCh3) setPinned(false)
+        },
+        onLeaveBack: () => {
+          if (isCh3) setPinned(false)
+        },
       })
       triggers.push(pin)
     }
@@ -80,6 +81,13 @@ export function useScrollTimeline(scrollRootRef: RefObject<HTMLElement | null>) 
       triggers.forEach((t) => t.kill())
     }
   }, [scrollRootRef])
+}
+
+function setPinned(chapter3Pinned: boolean) {
+  useScrollStore.getState().setScroll({
+    ...pickScroll(),
+    chapter3Pinned,
+  })
 }
 
 function pickScroll() {

@@ -125,12 +125,14 @@ function drawFrame(
   ctx.clearRect(0, 0, w, h)
   if (paths.length === 0) return
 
-  const color = streamlineColorForMode(state.mode)
+  // Chapter 1 hero: cyan airflow; elsewhere streamline by aero mode.
+  const color =
+    state.chapterIndex === 0 ? '#00F0FF' : streamlineColorForMode(state.mode)
   const speedFactor = Math.max(0.35, state.speedKmh / 180)
   const turb =
     state.mode === 'AEROBRAKE' ? 1 : state.mode === 'DRS' ? 0.15 : 0.4
   const alpha =
-    state.chapterIndex === 0 ? 0.55 : state.chapterIndex === 2 ? 0.85 : 0.7
+    state.chapterIndex === 0 ? 0.72 : state.chapterIndex === 2 ? 0.9 : 0.55
 
   const glow = ctx.createRadialGradient(
     w * 0.55,

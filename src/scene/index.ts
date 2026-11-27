@@ -2,6 +2,9 @@ export { WindTunnelScene } from './WindTunnelScene'
 export type { WindTunnelSceneProps } from './WindTunnelScene'
 export { ChapterScrollLayout } from './ChapterScrollLayout'
 export { CfdCanvasOverlay } from './CfdCanvasOverlay'
+export { PhotoChapterStage } from './PhotoChapterStage'
+export { PhotoForceVectors } from './PhotoForceVectors'
+export { NeuralOverlay } from './NeuralOverlay'
 export {
   useScrollStore,
   CHAPTER_IDS,

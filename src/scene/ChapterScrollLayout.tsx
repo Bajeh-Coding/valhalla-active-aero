@@ -3,12 +3,16 @@ import { CHAPTER_IDS } from './scrollStore'
 import { useScrollTimeline } from './useScrollTimeline'
 import { WindTunnelScene } from './WindTunnelScene'
 import { CfdCanvasOverlay } from './CfdCanvasOverlay'
+import { PhotoChapterStage } from './PhotoChapterStage'
+import { PhotoForceVectors } from './PhotoForceVectors'
+import { NeuralOverlay } from './NeuralOverlay'
 import { useAeroStore } from '@/store'
 import { TelemetryHud } from '@/ui/TelemetryHud'
 import { ChapterContent } from '@/ui/chapters/ChapterContent'
 
 /**
- * Fixed cinematic stage (3D + 2D CFD) + scroll chapters + luxury glass HUD.
+ * Photo-led cinematic stage:
+ * full-bleed chapter photography + CFD streamlines + soft 3D depth + glass HUD.
  */
 export function ChapterScrollLayout() {
   const rootRef = useRef<HTMLDivElement>(null)
@@ -27,26 +31,21 @@ export function ChapterScrollLayout() {
   return (
     <div ref={rootRef} className="relative bg-aero-bg text-aero-text">
       <div className="pointer-events-none fixed inset-0 z-0">
-        <WindTunnelScene className="h-dvh w-full" />
+        <PhotoChapterStage />
+        {/* Soft 3D Valhalla as depth layer over photography */}
+        <div className="absolute inset-0 z-[1] opacity-45 mix-blend-lighten">
+          <WindTunnelScene className="h-dvh w-full" />
+        </div>
         <CfdCanvasOverlay />
-        {/* Editorial vignette — brand type readability */}
-        <div
-          className="pointer-events-none absolute inset-0 z-[2]"
-          style={{
-            background: `
-              radial-gradient(ellipse 70% 55% at 50% 45%, transparent 30%, rgb(5 7 10 / 0.55) 100%),
-              linear-gradient(to top, rgb(5 7 10 / 0.92) 0%, transparent 38%, rgb(5 7 10 / 0.45) 100%)
-            `,
-          }}
-          aria-hidden
-        />
+        <PhotoForceVectors />
+        <NeuralOverlay />
       </div>
 
       <TelemetryHud />
 
       <div className="relative z-10">
         {CHAPTER_IDS.map((id) => (
-          <section key={id} data-chapter={id} className="relative">
+          <section key={id} data-chapter={id} className="relative min-h-[100dvh]">
             <ChapterContent id={id} />
           </section>
         ))}
