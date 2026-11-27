@@ -10,9 +10,7 @@
     "lint": "oxlint",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:e2e": "playwright test",
-    "fetch-assets": "node scripts/fetch-assets.js",
-    "postinstall": "node scripts/fetch-assets.js"
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "clsx": "^2.1.1",
