@@ -30,3 +30,4 @@ export {
 } from './photoAssets'
 export type { PhotoAsset, PhotoKey } from './photoAssets'
 export { SPLINE_SCENE_URL, SPLINE_SCENE_NOTE } from './spline'
+export { PRESENTATION_COPY } from './presentationCopy'

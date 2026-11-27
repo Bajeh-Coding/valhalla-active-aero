@@ -39,7 +39,9 @@ test.describe('Valhalla scrollytelling E2E', () => {
 
     await expect(page.getByText('ASTON MARTIN')).toBeVisible()
     await expect(page.getByText('VALHALLA')).toBeVisible()
-    await expect(page.getByText('Active aerodynamics, revealed.')).toBeVisible()
+    await expect(
+      page.getByText('FL crește Fz pe punți — dincolo de cercul Kamm.'),
+    ).toBeVisible()
     // HUD is deferred until control chapter — must not clutter hero
     await expect(page.getByLabel('Telemetry HUD')).toHaveCount(0)
 
