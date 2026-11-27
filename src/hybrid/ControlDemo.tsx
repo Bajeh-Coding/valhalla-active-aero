@@ -1,7 +1,12 @@
+import { useEffect } from 'react'
 import { cn } from '@/lib/utils'
 import { useAeroStore } from '@/store/aeroStore'
 import type { AeroMode } from '@/types/aero'
-import { ACTUATORS, AEROBRAKE_TRIGGERS, DRS_TRIGGERS } from '@/data/vehicleConstants'
+import {
+  ACTUATORS,
+  AEROBRAKE_TRIGGERS,
+  DRS_TRIGGERS,
+} from '@/data/vehicleConstants'
 
 const MODES: { id: AeroMode; label: string }[] = [
   { id: 'STANDARD', label: 'Standard' },
@@ -10,7 +15,7 @@ const MODES: { id: AeroMode; label: string }[] = [
   { id: 'MAXP', label: 'MaxP' },
 ]
 
-/** Sole interactive surface — paper state machine demo. */
+/** Sole interactive control surface — S1 state machine. */
 export function ControlDemo() {
   const {
     requestedMode,
@@ -33,6 +38,15 @@ export function ControlDemo() {
     setBrakePct,
     setAyG,
   } = useAeroStore()
+
+  // Sensible demo set-point once (Table 3 anchor speed).
+  useEffect(() => {
+    applyModeSetpoints('STANDARD')
+    setSpeedKmh(160)
+    setThrottlePct(40)
+    setBrakePct(0)
+    setAyG(0)
+  }, [applyModeSetpoints, setSpeedKmh, setThrottlePct, setBrakePct, setAyG])
 
   return (
     <div
@@ -111,9 +125,7 @@ export function ControlDemo() {
         <Metric label="Splitter" value={splitter} testId="metric-splitter" />
         <Metric
           label="Balance F"
-          value={
-            balanceFront === null ? '—' : balanceFront.toFixed(3)
-          }
+          value={balanceFront === null ? '—' : balanceFront.toFixed(3)}
           testId="metric-balance"
         />
         <Metric
@@ -133,13 +145,14 @@ export function ControlDemo() {
       </dl>
 
       <p className="font-ui mt-5 text-[11px] leading-relaxed tracking-wide text-aero-mist">
-        DRS: accel. ≥ {DRS_TRIGGERS.minThrottlePct}% · |ay| ≤ {DRS_TRIGGERS.maxAbsAyG} g ·
-        rampă aripă {DRS_TRIGGERS.minSpeedKmh}–{DRS_TRIGGERS.wingRampEndKmh} km/h.
-        Aerobrake: v ≥ {AEROBRAKE_TRIGGERS.minSpeedKmh} km/h · frână ≥{' '}
+        DRS: accel. ≥ {DRS_TRIGGERS.minThrottlePct}% · |ay| ≤{' '}
+        {DRS_TRIGGERS.maxAbsAyG} g · rampă aripă {DRS_TRIGGERS.minSpeedKmh}–
+        {DRS_TRIGGERS.wingRampEndKmh} km/h. Aerobrake: v ≥{' '}
+        {AEROBRAKE_TRIGGERS.minSpeedKmh} km/h · frână ≥{' '}
         {AEROBRAKE_TRIGGERS.minBrakePct}% · AOA {ACTUATORS.aerobrakeAoaDeg}°.
         {aerobrakeForced ? ' · Aerobrake forțat.' : ''}
-        {drsDenied ? ' · DRS refuzat (condiții).' : ''}
-        {' '}Forțele CFD doar la ancora Table 3 (160 km/h).
+        {drsDenied ? ' · DRS refuzat (condiții).' : ''} Forțele CFD doar la
+        ancora Table 3 (160 km/h).
       </p>
     </div>
   )

@@ -10,7 +10,7 @@ interface ResultsBarsProps {
   bars: readonly Bar[]
 }
 
-/** Simplified figure — one comparison axis, not a dense table. */
+/** Lab-style comparison — one axis, paper Table 5 values only. */
 export function ResultsBars({ bars }: ResultsBarsProps) {
   const max = Math.max(...bars.map((b) => b.seconds))
   const min = Math.min(...bars.map((b) => b.seconds))
@@ -21,14 +21,16 @@ export function ResultsBars({ bars }: ResultsBarsProps) {
       className="mt-10 w-full max-w-xl space-y-3"
       data-testid="results-bars"
       role="img"
-      aria-label="Comparație timp pe tur GRIP"
+      aria-label="Comparație timp pe tur GRIP Table 5"
     >
       {bars.map((bar) => {
-        // Invert: faster (lower s) → longer visual bar toward left of delta scale.
         const gain = (max - bar.seconds) / span
         const widthPct = 28 + gain * 72
         return (
-          <div key={bar.label} className="grid grid-cols-[7.5rem_1fr_4.5rem] items-center gap-3">
+          <div
+            key={bar.label}
+            className="grid grid-cols-[7.5rem_1fr_4.5rem] items-center gap-3"
+          >
             <span
               className={cn(
                 'font-ui text-right text-[11px] tracking-wide',

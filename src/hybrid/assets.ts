@@ -1,6 +1,6 @@
 /**
- * Real Aston Martin Valhalla stills — Wikimedia Commons (CC BY / CC BY-SA).
- * Zero Unsplash. Provenance documented for congress presentation use.
+ * Real Aston Martin Valhalla stills — Wikimedia Commons (CC BY-SA).
+ * Zero Unsplash. Zero AM CDN hotlinks. Provenance for Hybrid AM presentation.
  */
 
 export type ValhallaAssetKey =
@@ -15,7 +15,6 @@ export interface ValhallaAsset {
   src: string
   alt: string
   objectPosition: string
-  /** Commons file title / attribution. */
   credit: string
   license: 'CC BY 4.0' | 'CC BY-SA 4.0'
   commonsUrl: string
@@ -77,3 +76,13 @@ export const VALHALLA_ASSETS: Record<ValhallaAssetKey, ValhallaAsset> = {
       'https://commons.wikimedia.org/wiki/File:Aston_Martin_Valhalla_Prototype_(1).jpg',
   },
 }
+
+/** Scroll-scrub sequence order (honest still fallback — no pirated AM film). */
+export const SCRUB_SEQUENCE: readonly ValhallaAssetKey[] = [
+  'hero',
+  'showroom',
+  'front',
+  'side',
+  'rear',
+  'prototype',
+] as const

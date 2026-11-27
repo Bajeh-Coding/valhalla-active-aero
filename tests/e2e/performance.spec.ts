@@ -1,13 +1,13 @@
 import { expect, test } from '@playwright/test'
 
 /**
- * Congress talk rAF sanity (photo-led, no WebGL).
+ * Hybrid AM rAF sanity (photo still-scrub, no WebGL).
  * Reports measured averages — never claim 60 FPS without numbers.
  */
-test.describe('Congress talk performance probe', () => {
-  test('measures rAF FPS during beat scroll', async ({ page }) => {
+test.describe('Hybrid AM performance probe', () => {
+  test('measures rAF FPS during chapter scroll', async ({ page }) => {
     await page.goto('/', { waitUntil: 'networkidle' })
-    await expect(page.getByTestId('congress-talk')).toBeVisible({
+    await expect(page.getByTestId('hybrid-talk')).toBeVisible({
       timeout: 30_000,
     })
     await page.waitForTimeout(600)
@@ -33,16 +33,18 @@ test.describe('Congress talk performance probe', () => {
           }
         }
         const beats = [
-          'problem',
-          'method-control',
+          'intro-cop',
+          'mecha-control',
           'results-grip',
+          'valhalla-aero',
+          'graphs',
           'recap',
           'title',
         ]
         let i = 0
         const scrollIv = window.setInterval(() => {
           const el = document.querySelector(
-            `[data-testid="beat-${beats[i % beats.length]}"]`,
+            `[data-testid="chapter-${beats[i % beats.length]}"]`,
           )
           el?.scrollIntoView({ behavior: 'instant', block: 'start' })
           i += 1
@@ -61,8 +63,8 @@ test.describe('Congress talk performance probe', () => {
         sampleCount: samples.length,
         avgFps: Number(avg.toFixed(1)),
         minFps: Number(min.toFixed(1)),
-        hasCongress: Boolean(
-          document.querySelector('[data-testid="congress-talk"]'),
+        hasHybrid: Boolean(
+          document.querySelector('[data-testid="hybrid-talk"]'),
         ),
         valhallaImgCount: document.querySelectorAll(
           'img[src*="/images/valhalla/"]',
@@ -74,7 +76,7 @@ test.describe('Congress talk performance probe', () => {
 
     console.log(`PERF_JSON ${JSON.stringify(result)}`)
 
-    expect(result.hasCongress).toBe(true)
+    expect(result.hasHybrid).toBe(true)
     expect(result.canvasCount).toBe(0)
     expect(result.unsplashCount).toBe(0)
     expect(result.valhallaImgCount).toBeGreaterThan(0)

@@ -1,10 +1,24 @@
-# Valhalla — Aerodinamică activă (congres)
+# Valhalla — Hybrid AM science scrollytelling
 
-Prezentare științifică oral+visual (bară AIAA/SAE) pe aerodinamica activă, demonstrată vizual cu Aston Martin Valhalla. Limbă: română. Cifrele pe ecran provin din SAE 2020-36-0079 (S1) și Machines 2024, 12, 160 (S2) — nu din marketing Valhalla.
+Prezentare științifică Hybrid AM (limbaj vizual Aston Martin Valhalla + capitole paper-exact) pe aerodinamica activă. Limbă UI: română. Termeni tehnici EN păstrați (DRS, CoP, CoG, LQR context S2, IPOPT absent din S1).
 
-## Arc narativ
+## Ordine capitole (locked)
 
-problemă → 3 takeaways → SotA → metodă → control → rezultate → implicații → recap + bibliografie
+0. Titlu / takeaways  
+1. Introducere & context (activ vs pasiv, forțe CFD, CoP–CoG)  
+2. Mecatronică & control (splitter, aripă, state machine DRS/Aerobrake/MaxP)  
+3. Simulare (MATLAB/Simulink + VI-CarRealTime, DIL)  
+4. Rezultate & concluzii  
+5. Valhalla Active Aero — **capitol industrial separat** (surse AM publice)  
+6. Grafice pe modelul S1 (re-plot din Table 3/5 / MaxP schedule)  
+7. Recap + bibliografie  
+
+## Reguli
+
+- Cifre pe ecran: `docs/science-facts.md` (S1/S2) sau locator PDF — altfel omit.
+- Capitolul 5 nu „dovedește” capitolul 4.
+- Zero Unsplash; foto Valhalla = Wikimedia Commons (CC BY-SA) în `public/images/valhalla/`.
+- Still scrub local (fallback onest) — fără rip CDN AM / YouTube scrub embed.
 
 ## Comenzi
 
@@ -12,15 +26,11 @@ problemă → 3 takeaways → SotA → metodă → control → rezultate → imp
 npm install
 npm run dev       # Vite :5173
 npm run build
-npm run preview   # :4173 — cale publish-app
+npm run preview   # :4173
 npm test          # Vitest (fizică paper-exact)
 npm run test:e2e  # Playwright
 ```
 
-## Asset-uri
-
-Fotografii reale Valhalla în `public/images/valhalla/` (Wikimedia Commons, CC BY-SA). Zero Unsplash. Proveniența e documentată în `src/congress/assets.ts`.
-
 ## Stack
 
-React + Vite + Tailwind + GSAP ScrollTrigger + Zustand (doar pe beat-ul de control).
+React + Vite + Tailwind + GSAP ScrollTrigger + Zustand (doar pe control).

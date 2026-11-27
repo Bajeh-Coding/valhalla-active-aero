@@ -12,6 +12,6 @@ Local files under `public/images/valhalla/` were downloaded from Wikimedia Commo
 | `rear.jpg` | 2025 Aston Martin Valhalla 6 |
 | `prototype.jpg` | Aston Martin Valhalla Prototype (1) |
 
-Machine-readable credits: `src/congress/assets.ts`.
+Machine-readable credits: `src/hybrid/assets.ts`.
 
 **Do not** reintroduce Unsplash car placeholders.
