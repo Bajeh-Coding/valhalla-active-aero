@@ -3,6 +3,10 @@
  * Download chapter photography into public/images/.
  * Falls back gracefully when Unsplash CDN is blocked — the app also
  * uses the same CDN URLs as <img> fallbacks at runtime.
+ *
+ * HONESTY: these Unsplash stills are atmospheric stock, NOT official
+ * Aston Martin Valhalla press assets. Prefer AM Media / press kit (P0).
+ * See internal/cinematic-stage-handoff.md.
  */
 import { createWriteStream, existsSync, mkdirSync } from 'node:fs'
 import { dirname, join } from 'node:path'

@@ -1,6 +1,5 @@
 import { motion } from 'framer-motion'
 import { LAP_TIME, VEHICLE } from '@/data/vehicleConstants'
-import { PI_ROM } from '@/data/piRom'
 import { PRESENTATION_COPY as COPY } from '@/data/presentationCopy'
 import { useAeroStore } from '@/store'
 import type { ChapterId } from '@/scene'
@@ -13,24 +12,31 @@ const fade = {
   transition: { duration: 1.0, ease: [0.22, 1, 0.36, 1] as const },
 }
 
+/**
+ * Chapter typography shells mapped to A0–A5.
+ * Copy text remains interim — UI agent (#6) owns final RO rewrite.
+ * Visual stage only remaps act ids + drops PI-ROM chapter chrome.
+ */
 export function ChapterContent({ id }: { id: ChapterId }) {
   switch (id) {
-    case 'hero':
+    case 'a0-hero':
       return <HeroChapter />
-    case 'physics':
+    case 'a1-limita':
       return <PhysicsChapter />
-    case 'control':
+    case 'a2-actuatoare':
+      return <ActuatorsPlaceholder />
+    case 'a3-control':
       return <ControlChapter />
-    case 'dynamics':
+    case 'a4-rezultat':
       return <DynamicsChapter />
-    case 'pi-rom':
-      return <PiRomChapter />
+    case 'a5-inchidere':
+      return <ClosePlaceholder />
     default:
       return null
   }
 }
 
-/** Cap. 1 — brand + un rând științific + scroll. */
+/** A0 — brand + scroll. Copy interim from prior shell. */
 function HeroChapter() {
   return (
     <div className="pointer-events-none relative flex min-h-[100dvh] flex-col justify-end px-6 pb-16 md:px-16 md:pb-24">
@@ -47,7 +53,7 @@ function HeroChapter() {
           className="font-display text-[clamp(2.75rem,8vw,6.5rem)] leading-[0.9] font-semibold tracking-[0.06em] text-aero-text"
         >
           <span className="block text-aero-champagne/95">ASTON MARTIN</span>
-          <span className="mt-1 block text-aero-lime">VALHALLA</span>
+          <span className="mt-1 block text-aero-champagne/90">VALHALLA</span>
         </motion.h1>
         <motion.p
           initial={{ opacity: 0, y: 12 }}
@@ -69,13 +75,13 @@ function HeroChapter() {
         <span className="font-mono text-[9px] tracking-[0.4em] text-aero-muted/70 uppercase">
           {COPY.hero.scroll}
         </span>
-        <span className="luxury-pulse block h-8 w-px bg-gradient-to-b from-aero-lime/70 to-transparent" />
+        <span className="luxury-pulse block h-8 w-px bg-gradient-to-b from-aero-amr/70 to-transparent" />
       </motion.div>
     </div>
   )
 }
 
-/** Cap. 1.2 — balance aero (S1-F013); CoP invent removed. */
+/** A1 — interim physics shell (UI rewrites). */
 function PhysicsChapter() {
   const balanceFront = useAeroStore((s) => s.balanceFront)
   const cogRear = VEHICLE.massDistributionRearPct
@@ -99,7 +105,7 @@ function PhysicsChapter() {
         <div className="mt-10 max-w-xs">
           <div className="relative h-px bg-white/10">
             <span
-              className="absolute top-1/2 h-2 w-px -translate-y-1/2 bg-aero-lime/80"
+              className="absolute top-1/2 h-2 w-px -translate-y-1/2 bg-aero-amr/80"
               style={{ left: `${cogRear}%` }}
               title={`CoG rear ${cogRear.toFixed(1)}%`}
             />
@@ -116,7 +122,7 @@ function PhysicsChapter() {
               Bal{' '}
               {balPct != null ? `${balPct.toFixed(1)}%` : '— (@160 km/h)'}
             </span>
-            <span className="text-aero-lime/80">
+            <span className="text-aero-amr/80">
               CoG {cogRear.toFixed(1)}%
             </span>
           </div>
@@ -126,18 +132,31 @@ function PhysicsChapter() {
   )
 }
 
-/** Cap. 3 — control interactiv. */
+/**
+ * A2 — structural shell only (UI owns actuator copy).
+ * Photo stage still scrolls; no interim science copy invented here.
+ */
+function ActuatorsPlaceholder() {
+  return (
+    <div
+      className="pointer-events-none flex min-h-[100dvh] items-end px-6 pb-20 md:px-16 md:pb-28"
+      data-testid="a2-actuatoare-shell"
+    />
+  )
+}
+
+/** A3 — control panel (interaction surface). */
 function ControlChapter() {
   return (
     <div className="flex min-h-[100dvh] items-end px-6 pb-16 md:items-center md:justify-end md:px-14 md:pb-0">
-      <div className="w-full max-w-md">
+      <div className="w-full max-w-md" data-testid="a3-control-panel">
         <ControlDashboard />
       </div>
     </div>
   )
 }
 
-/** Cap. 4 — delta tur. */
+/** A4 — result delta (interim). */
 function DynamicsChapter() {
   return (
     <div className="pointer-events-none flex min-h-[100dvh] items-end px-6 pb-20 md:px-16 md:pb-28">
@@ -148,7 +167,7 @@ function DynamicsChapter() {
         <p className="mt-4 max-w-sm text-sm leading-relaxed text-aero-muted md:text-base">
           {COPY.dynamics.body}
         </p>
-        <p className="font-display mt-10 text-6xl font-semibold tracking-tight text-aero-lime md:text-8xl">
+        <p className="font-display mt-10 text-6xl font-semibold tracking-tight text-aero-champagne md:text-8xl">
           {LAP_TIME.maxPVsPassiveDeltaS.toFixed(2)}
           <span className="ml-2 text-3xl text-aero-champagne/70 md:text-4xl">s</span>
         </p>
@@ -160,25 +179,15 @@ function DynamicsChapter() {
   )
 }
 
-/** Cap. 5 — PI-ROM. */
-function PiRomChapter() {
+/**
+ * A5 — empty structural close (UI owns biblio / system copy).
+ * PI-ROM chapter removed from stage narrative.
+ */
+function ClosePlaceholder() {
   return (
-    <div className="pointer-events-none flex min-h-[100dvh] items-end px-6 pb-24 md:px-16 md:pb-32">
-      <motion.div {...fade} className="max-w-lg">
-        <h2 className="font-display text-3xl font-semibold tracking-[0.04em] md:text-5xl">
-          {COPY.piRom.title}
-        </h2>
-        <p className="mt-4 max-w-sm text-sm leading-relaxed text-aero-muted md:text-base">
-          {COPY.piRom.body}
-        </p>
-        <p className="font-display mt-10 text-6xl font-semibold tracking-tight text-aero-champagne md:text-8xl">
-          {PI_ROM.speedupFactor}
-          <span className="text-aero-lime">×</span>
-        </p>
-        <p className="mt-4 font-mono text-[11px] tracking-wide text-aero-muted">
-          {COPY.piRom.meta}
-        </p>
-      </motion.div>
-    </div>
+    <div
+      className="pointer-events-none flex min-h-[100dvh] items-end px-6 pb-24 md:px-16 md:pb-32"
+      data-testid="a5-inchidere-shell"
+    />
   )
 }

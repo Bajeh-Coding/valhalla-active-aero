@@ -1,14 +1,14 @@
 import { expect, test } from '@playwright/test'
 
 /**
- * Desktop WebGL FPS / draw-ish sanity.
+ * Photo-led stage rAF sanity (no WebGL hero).
  * Reports measured averages — never claim 60 FPS without numbers.
  */
-test.describe('WebGL performance probe', () => {
+test.describe('Photo stage performance probe', () => {
   test('measures rAF FPS during scroll scrub', async ({ page }) => {
     await page.goto('/', { waitUntil: 'networkidle' })
-    await expect(page.locator('canvas').first()).toBeVisible({ timeout: 30_000 })
-    await page.waitForTimeout(1000)
+    await expect(page.getByTestId('photo-stage')).toBeVisible({ timeout: 30_000 })
+    await page.waitForTimeout(800)
 
     const result = await page.evaluate(async () => {
       const samples: number[] = []
@@ -30,11 +30,18 @@ test.describe('WebGL performance probe', () => {
             resolve()
           }
         }
-        // Kick scroll during sampling
-        const chapters = ['physics', 'control', 'dynamics', 'pi-rom', 'hero']
+        const chapters = [
+          'a1-limita',
+          'a3-control',
+          'a4-rezultat',
+          'a5-inchidere',
+          'a0-hero',
+        ]
         let i = 0
         const scrollIv = window.setInterval(() => {
-          const el = document.querySelector(`[data-chapter="${chapters[i % chapters.length]}"]`)
+          const el = document.querySelector(
+            `[data-chapter="${chapters[i % chapters.length]}"]`,
+          )
           el?.scrollIntoView({ behavior: 'instant', block: 'start' })
           i += 1
         }, 700)
@@ -47,35 +54,24 @@ test.describe('WebGL performance probe', () => {
           ? 0
           : samples.reduce((a, b) => a + b, 0) / samples.length
       const min = samples.length ? Math.min(...samples) : 0
+      const stage = document.querySelector('[data-testid="photo-stage"]')
+      const imgs = stage?.querySelectorAll('img[data-active="true"]') ?? []
 
-      // Draw-call proxy: count WebGL contexts + canvas pixels
-      const canvas = document.querySelector('canvas')
-      const gl =
-        canvas &&
-        (canvas.getContext('webgl2') || canvas.getContext('webgl'))
       return {
         sampleCount: samples.length,
         avgFps: Number(avg.toFixed(1)),
         minFps: Number(min.toFixed(1)),
-        canvasWidth: canvas?.width ?? 0,
-        canvasHeight: canvas?.height ?? 0,
-        hasWebGl: Boolean(gl),
-        // Context lost?
-        contextLost: canvas
-          ? (canvas as HTMLCanvasElement & { isContextLost?: () => boolean }).isContextLost?.() ===
-            true
-          : true,
+        hasPhotoStage: Boolean(stage),
+        activePhotoCount: imgs.length,
+        canvasCount: document.querySelectorAll('canvas').length,
       }
     })
 
-    // Persist for qa-report consumption
     console.log(`PERF_JSON ${JSON.stringify(result)}`)
 
-    expect(result.hasWebGl).toBe(true)
-    expect(result.contextLost).toBe(false)
+    expect(result.hasPhotoStage).toBe(true)
+    expect(result.canvasCount).toBe(0)
     expect(result.sampleCount).toBeGreaterThan(0)
-    // Soft floor: headless Chromium/ANGLE often reports single-digit FPS.
-    // Do NOT treat this as desktop 60 FPS proof — see qa-report.md for measured values.
     expect(result.avgFps).toBeGreaterThan(2)
   })
 })

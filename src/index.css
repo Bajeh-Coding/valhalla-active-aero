@@ -17,9 +17,9 @@
   --color-aero-crimson: #ff3b30;
   --color-aero-emerald: #005949;
   --color-aero-amber: #ff3b30;
-  --color-aero-muted: #94a3b8;
-  --color-aero-text: #f1f5f9;
-  --color-aero-champagne: #e2e8f0;
+  --color-aero-muted: #8b929a;
+  --color-aero-text: #f2f0ea;
+  --color-aero-champagne: #e8e4dc;
 
   --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Cinzel", "Cormorant Garamond", Georgia, serif;
@@ -28,20 +28,26 @@
 }
 
 :root {
+  --void: #05070a;
+  --ink: #0b0e14;
+  --mist: #8b929a;
+  --ivory: #f2f0ea;
+  --amr: #005949;
+  --lime: #c4df00;
+  --signal: #e8e4dc;
   --aero-bg: #05070a;
   --aero-bg-deep: #0b0e14;
   --aero-surface: #0b0e14;
-  --aero-panel: rgb(15 23 42 / 0.4);
+  --aero-panel: rgb(11 14 20 / 0.4);
   --aero-border: rgb(6 78 59 / 0.3);
   --aero-amr: #005949;
   --aero-amr-deep: #004225;
   --aero-lime: #c4df00;
   --aero-cyan: #00f0ff;
   --aero-crimson: #ff3b30;
-  --aero-muted: #94a3b8;
-  --aero-text: #f1f5f9;
-  --aero-champagne: #e2e8f0;
-  --aero-glass-blur: 24px;
+  --aero-muted: #8b929a;
+  --aero-text: #f2f0ea;
+  --aero-champagne: #e8e4dc;
 }
 
 *,
