@@ -1,10 +1,11 @@
-import { motion } from 'framer-motion'
-import { Activity, Gauge, Radio } from 'lucide-react'
+import { AnimatePresence, motion } from 'framer-motion'
 import { useAeroStore } from '@/store'
 import { useScrollStore } from '@/scene'
-import { BorderBeam, GlassCard, MetricChip } from '@/ui/primitives'
 
-/** Fixed luxury glass telemetry HUD — master-spec §4. */
+/**
+ * Discreet corner telemetry — fades in from chapter 3 (control) pin onward.
+ * Single compact cluster; no glass card stacks or metric grids.
+ */
 export function TelemetryHud() {
   const aoaDeg = useAeroStore((s) => s.aoaDeg)
   const speedKmh = useAeroStore((s) => s.speedKmh)
@@ -17,114 +18,54 @@ export function TelemetryHud() {
   const controlLoopHz = useAeroStore((s) => s.controlLoopHz)
   const aerobrakeForced = useAeroStore((s) => s.aerobrakeForced)
   const chapterIndex = useScrollStore((s) => s.chapterIndex)
-  const progress = useScrollStore((s) => s.progress)
   const chapter3Pinned = useScrollStore((s) => s.chapter3Pinned)
 
-  const aoaPct = Math.min(100, Math.max(0, (aoaDeg / 25) * 100))
+  const visible = chapterIndex >= 2 || chapter3Pinned
 
   return (
-    <motion.aside
-      initial={{ opacity: 0, y: -14 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
-      className="pointer-events-none fixed top-0 right-0 left-0 z-30 flex justify-end p-3 md:p-5"
-      aria-label="Telemetry HUD"
-    >
-      <GlassCard
-        variant="soft"
-        className="pointer-events-none relative w-full max-w-md overflow-hidden px-4 py-3.5 md:max-w-lg"
-      >
-        <BorderBeam duration={11} />
-        <div className="flex items-center justify-between gap-3">
-          <div className="inline-flex items-center gap-1.5 font-mono text-[10px] tracking-[0.22em] text-aero-lime uppercase">
-            <Radio className="size-3" aria-hidden />
-            System online · {controlLoopHz} Hz
+    <AnimatePresence>
+      {visible ? (
+        <motion.aside
+          key="telemetry-hud"
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -8 }}
+          transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+          className="pointer-events-none fixed top-0 right-0 z-30 p-4 md:p-6"
+          aria-label="Telemetry HUD"
+        >
+          <div className="min-w-[11.5rem] border-l border-aero-lime/25 bg-aero-bg/55 py-3 pl-4 backdrop-blur-md">
+            <p className="font-mono text-[9px] tracking-[0.28em] text-aero-muted uppercase">
+              System online · {controlLoopHz} Hz
+            </p>
+            <p
+              className={`mt-2 font-mono text-xs tracking-[0.18em] uppercase ${
+                aerobrakeForced ? 'text-aero-crimson' : 'text-aero-lime'
+              }`}
+            >
+              {mode}
+            </p>
+            <dl className="mt-3 space-y-1.5 font-mono text-[11px] tabular-nums text-aero-champagne/90">
+              <Row label="AOA" value={`${aoaDeg.toFixed(1)}°`} />
+              <Row label="SPD" value={`${speedKmh.toFixed(0)} km/h`} />
+              <Row label="L/D" value={clOverCd.toFixed(2)} />
+              <Row label="DF" value={`${formatForce(downforceN)} N`} />
+              <Row label="DRG" value={`${formatForce(dragN)} N`} />
+              <Row label="THR" value={`${throttlePct.toFixed(0)}%`} />
+              <Row label="BRK" value={`${brakePct.toFixed(0)}%`} />
+            </dl>
           </div>
-          <div className="font-mono text-[10px] text-aero-muted">
-            CH {chapterIndex + 1}/5 · {(progress * 100).toFixed(0)}%
-            {chapter3Pinned ? ' · PIN' : ''}
-          </div>
-        </div>
-
-        <div className="luxury-rule my-3" />
-
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-          <MetricChip
-            label="Mode"
-            value={mode}
-            accent={aerobrakeForced ? 'crimson' : 'lime'}
-            icon={Activity}
-          />
-          <MetricChip
-            label="Speed"
-            value={speedKmh.toFixed(0)}
-            unit="km/h"
-            accent="cyan"
-            icon={Gauge}
-          />
-          <MetricChip label="C_L / C_D" value={clOverCd.toFixed(2)} accent="cyan" />
-          <MetricChip
-            label="Downforce"
-            value={formatForce(downforceN)}
-            unit="N"
-            accent="cyan"
-          />
-          <MetricChip
-            label="Drag"
-            value={formatForce(dragN)}
-            unit="N"
-            accent="crimson"
-          />
-          <div>
-            <div className="font-mono text-[9px] tracking-wider text-aero-muted uppercase">
-              AOA 0–25°
-            </div>
-            <div className="mt-1 flex items-baseline gap-1">
-              <span className="font-mono text-lg font-medium text-aero-cyan tabular-nums">
-                {aoaDeg.toFixed(1)}°
-              </span>
-            </div>
-            <div className="mt-1.5 h-1 overflow-hidden rounded-full bg-aero-bg-deep">
-              <motion.div
-                className="h-full rounded-full bg-gradient-to-r from-aero-cyan to-aero-lime"
-                animate={{ width: `${aoaPct}%` }}
-                transition={{ type: 'spring', stiffness: 120, damping: 20 }}
-              />
-            </div>
-          </div>
-        </div>
-
-        <div className="mt-3.5 grid grid-cols-2 gap-3">
-          <Pedal label="Throttle" pct={throttlePct} color="bg-aero-lime" />
-          <Pedal label="Brake" pct={brakePct} color="bg-aero-crimson" />
-        </div>
-      </GlassCard>
-    </motion.aside>
+        </motion.aside>
+      ) : null}
+    </AnimatePresence>
   )
 }
 
-function Pedal({
-  label,
-  pct,
-  color,
-}: {
-  label: string
-  pct: number
-  color: string
-}) {
+function Row({ label, value }: { label: string; value: string }) {
   return (
-    <div>
-      <div className="flex items-center justify-between font-mono text-[9px] tracking-wider text-aero-muted uppercase">
-        <span>{label}</span>
-        <span className="tabular-nums text-aero-text">{pct.toFixed(0)}%</span>
-      </div>
-      <div className="mt-1.5 h-1 overflow-hidden rounded-full bg-aero-bg-deep">
-        <motion.div
-          className={`h-full rounded-full ${color}`}
-          animate={{ width: `${Math.min(100, Math.max(0, pct))}%` }}
-          transition={{ type: 'spring', stiffness: 140, damping: 22 }}
-        />
-      </div>
+    <div className="flex items-baseline justify-between gap-6">
+      <dt className="text-[9px] tracking-wider text-aero-muted uppercase">{label}</dt>
+      <dd>{value}</dd>
     </div>
   )
 }

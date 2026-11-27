@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 /*
-  Valhalla Active Aero — ultra-luxury Aston Martin brand system
+  Valhalla Active Aero — minimal cinematic brand system
   Display: Cinzel · Body: Plus Jakarta Sans · Telemetry: JetBrains Mono
 */
 @theme {
@@ -63,8 +63,7 @@ html {
 body {
   margin: 0;
   background:
-    radial-gradient(ellipse 80% 50% at 50% -10%, rgb(0 89 73 / 0.22), transparent 55%),
-    radial-gradient(ellipse 60% 40% at 80% 80%, rgb(0 66 37 / 0.12), transparent 50%),
+    radial-gradient(ellipse 90% 55% at 50% 0%, rgb(0 89 73 / 0.14), transparent 55%),
     var(--aero-bg);
   color: var(--aero-text);
   font-family: var(--font-sans);
@@ -84,68 +83,40 @@ body {
   font-family: var(--font-serif);
 }
 
-/*
-  Legacy glass utility classes retained for any residual markup.
-  Prefer GlassCard / BorderBeam primitives (Aceternity/Magic-style).
-*/
-.glass-panel {
-  background: rgb(15 23 42 / 0.45);
-  border: 1px solid rgb(255 255 255 / 0.1);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  box-shadow:
-    0 25px 50px -12px rgb(0 0 0 / 0.55),
-    inset 0 1px 0 rgb(196 223 0 / 0.05);
-}
-
-.glass-panel-strong {
-  background: rgb(2 6 23 / 0.72);
-  border: 1px solid rgb(0 89 73 / 0.4);
-  backdrop-filter: blur(32px);
-  -webkit-backdrop-filter: blur(32px);
-  box-shadow:
-    0 30px 60px -15px rgb(0 0 0 / 0.65),
-    inset 0 1px 0 rgb(0 240 255 / 0.06);
-}
-
-/* Range inputs — AMR lime accent */
+/* Range inputs — quiet AMR lime accent */
 input[type="range"].aero-range {
   -webkit-appearance: none;
   appearance: none;
-  height: 3px;
+  height: 2px;
   border-radius: 999px;
-  background: linear-gradient(90deg, rgb(0 89 73 / 0.5), rgb(6 78 59 / 0.35));
+  background: rgb(255 255 255 / 0.12);
   outline: none;
 }
 input[type="range"].aero-range::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 14px;
-  height: 14px;
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
   background: #c4df00;
   border: 2px solid #05070a;
-  box-shadow: 0 0 12px rgb(196 223 0 / 0.45);
   cursor: pointer;
 }
 input[type="range"].aero-range::-moz-range-thumb {
-  width: 14px;
-  height: 14px;
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
   background: #c4df00;
   border: 2px solid #05070a;
-  box-shadow: 0 0 12px rgb(196 223 0 / 0.45);
   cursor: pointer;
 }
 
-/* Subtle editorial hairline accent */
 .luxury-rule {
   height: 1px;
   background: linear-gradient(
     90deg,
     transparent,
-    rgb(196 223 0 / 0.45),
-    rgb(0 240 255 / 0.25),
+    rgb(196 223 0 / 0.35),
     transparent
   );
 }
@@ -153,13 +124,13 @@ input[type="range"].aero-range::-moz-range-thumb {
 @keyframes luxury-breathe {
   0%,
   100% {
-    opacity: 0.55;
+    opacity: 0.35;
   }
   50% {
-    opacity: 1;
+    opacity: 0.9;
   }
 }
 
 .luxury-pulse {
-  animation: luxury-breathe 3.6s ease-in-out infinite;
+  animation: luxury-breathe 3.2s ease-in-out infinite;
 }

@@ -30,13 +30,13 @@ export function PhotoChapterStage() {
           />
         )
       })}
-      {/* Obsidian vignette so Cinzel type + glass HUD stay legible */}
+      {/* Soft cinematic vignette — keep photography dominant */}
       <div
         className="absolute inset-0"
         style={{
           background: `
-            radial-gradient(ellipse 75% 60% at 50% 42%, transparent 18%, rgb(5 7 10 / 0.55) 100%),
-            linear-gradient(to top, rgb(5 7 10 / 0.94) 0%, transparent 42%, rgb(5 7 10 / 0.5) 100%)
+            radial-gradient(ellipse 80% 65% at 50% 40%, transparent 30%, rgb(5 7 10 / 0.45) 100%),
+            linear-gradient(to top, rgb(5 7 10 / 0.88) 0%, transparent 38%, rgb(5 7 10 / 0.35) 100%)
           `,
         }}
       />
