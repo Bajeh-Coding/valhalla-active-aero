@@ -43,8 +43,9 @@ test.describe('Valhalla scrollytelling E2E', () => {
     const errors = await attachErrorTrap(page)
     await gotoApp(page)
 
-    await expect(page.getByText('ASTON MARTIN')).toBeVisible()
-    await expect(page.getByText('VALHALLA')).toBeVisible()
+    // exact: A5 also mentions "Aston Martin Valhalla" in brand footnote
+    await expect(page.getByText('ASTON MARTIN', { exact: true })).toBeVisible()
+    await expect(page.getByText('VALHALLA', { exact: true })).toBeVisible()
     await expect(page.getByTestId('photo-stage')).toBeVisible()
     // No Spline / WebGL hero canvas
     await expect(page.locator('canvas')).toHaveCount(0)
@@ -125,7 +126,8 @@ test.describe('Valhalla scrollytelling E2E', () => {
     await page.getByTestId('speed-slider').fill('220')
     await expect(panel).toContainText('220')
     await page.getByTestId('throttle-slider').fill('80')
-    await expect(panel).toContainText(/80%/)
+    // Slider readout is "{value} {unit}" → "80 %"
+    await expect(panel).toContainText(/80\s*%/)
 
     expect(errors, errors.join('\n')).toEqual([])
   })
