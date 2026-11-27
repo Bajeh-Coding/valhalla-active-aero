@@ -1,78 +1,60 @@
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useEffect, type RefObject } from 'react'
-import { CHAPTER_CAMERAS, lerpCamera } from './cameraChapters'
 import { CHAPTER_IDS, useScrollStore } from './scrollStore'
 
 gsap.registerPlugin(ScrollTrigger)
 
 /**
- * GSAP ScrollTrigger for photo-led chapters 1–5.
- * - Scrubs camera between chapter keyframes (scrub: 1)
- * - Pins chapter 3 (rear-wing + live controls)
- * - Light pins on chapters 2 & 4 for photo dwell
+ * GSAP ScrollTrigger for photo-led A0–A5.
+ * - Scrubs chapter index / progress for PhotoStage crossfade (scrub ~1)
+ * - Pins only A3 (control) — art-direction §8
+ * - prefers-reduced-motion: still updates indices without ornamental scrub lag
  */
 export function useScrollTimeline(scrollRootRef: RefObject<HTMLElement | null>) {
   useEffect(() => {
     const root = scrollRootRef.current
     if (!root) return
 
-    const chapters = CHAPTER_IDS.map((id) => CHAPTER_CAMERAS[id])
+    const reduced =
+      typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
     const triggers: ScrollTrigger[] = []
+    const actCount = CHAPTER_IDS.length
 
     const main = ScrollTrigger.create({
       trigger: root,
       start: 'top top',
       end: 'bottom bottom',
-      scrub: 1,
+      scrub: reduced ? true : 1,
       onUpdate: (self) => {
         const p = self.progress
-        const seg = Math.min(0.999, p) * (chapters.length - 1)
+        const seg = Math.min(0.999, p) * (actCount - 1)
         const i = Math.floor(seg)
         const local = seg - i
-        const from = chapters[i]!
-        const to = chapters[Math.min(i + 1, chapters.length - 1)]!
-        const cam = lerpCamera(from, to, local)
-        useScrollStore.getState().setCamera(cam.position, cam.lookAt)
         useScrollStore.getState().setScroll({
           progress: p,
           chapterIndex: i,
           chapterProgress: local,
-          chapter3Pinned: useScrollStore.getState().chapter3Pinned,
+          a3Pinned: useScrollStore.getState().a3Pinned,
         })
       },
     })
     triggers.push(main)
 
-    // Chapter pins — photo dwell + interactive control
-    const pinSpecs: { selector: string; end: string; flag?: 'chapter3' }[] = [
-      { selector: '[data-chapter="physics"]', end: '+=80%' },
-      { selector: '[data-chapter="control"]', end: '+=140%', flag: 'chapter3' },
-      { selector: '[data-chapter="dynamics"]', end: '+=70%' },
-    ]
-
-    for (const spec of pinSpecs) {
-      const el = root.querySelector(spec.selector)
-      if (!el) continue
-      const isCh3 = spec.flag === 'chapter3'
+    const a3 = root.querySelector('[data-chapter="a3-control"]')
+    if (a3) {
       const pin = ScrollTrigger.create({
-        trigger: el,
+        trigger: a3,
         start: 'top top',
-        end: spec.end,
+        end: '+=140%',
         pin: true,
         pinSpacing: true,
-        onEnter: () => {
-          if (isCh3) setPinned(true)
-        },
-        onEnterBack: () => {
-          if (isCh3) setPinned(true)
-        },
-        onLeave: () => {
-          if (isCh3) setPinned(false)
-        },
-        onLeaveBack: () => {
-          if (isCh3) setPinned(false)
-        },
+        onEnter: () => setA3Pinned(true),
+        onEnterBack: () => setA3Pinned(true),
+        onLeave: () => setA3Pinned(false),
+        onLeaveBack: () => setA3Pinned(false),
       })
       triggers.push(pin)
     }
@@ -83,19 +65,12 @@ export function useScrollTimeline(scrollRootRef: RefObject<HTMLElement | null>) 
   }, [scrollRootRef])
 }
 
-function setPinned(chapter3Pinned: boolean) {
-  useScrollStore.getState().setScroll({
-    ...pickScroll(),
-    chapter3Pinned,
-  })
-}
-
-function pickScroll() {
+function setA3Pinned(a3Pinned: boolean) {
   const s = useScrollStore.getState()
-  return {
+  useScrollStore.getState().setScroll({
     progress: s.progress,
     chapterIndex: s.chapterIndex,
     chapterProgress: s.chapterProgress,
-    chapter3Pinned: s.chapter3Pinned,
-  }
+    a3Pinned,
+  })
 }

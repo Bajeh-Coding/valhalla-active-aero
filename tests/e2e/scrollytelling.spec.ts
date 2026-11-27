@@ -1,9 +1,7 @@
 import { expect, test, type ConsoleMessage, type Page } from '@playwright/test'
 
-/** Three.js / WebGL deprecations that are noise, not app bugs. */
+/** Benign console noise — not app bugs. */
 const KNOWN_BENIGN = [
-  /THREE\.Clock: This module has been deprecated/i,
-  /THREE\.WebGLShadowMap: PCFSoftShadowMap has been removed/i,
   /Download the React DevTools/i,
 ]
 
@@ -27,70 +25,76 @@ async function attachErrorTrap(page: Page) {
 
 async function gotoApp(page: Page) {
   await page.goto('/', { waitUntil: 'networkidle' })
-  await expect(page.locator('canvas').first()).toBeVisible({ timeout: 30_000 })
-  // Allow R3F + GSAP + demo store hydrate
-  await page.waitForTimeout(800)
+  await expect(page.getByTestId('photo-stage')).toBeVisible({ timeout: 30_000 })
+  await page.waitForTimeout(600)
 }
 
+const ACTS = [
+  'a0-hero',
+  'a1-limita',
+  'a2-actuatoare',
+  'a3-control',
+  'a4-rezultat',
+  'a5-inchidere',
+] as const
+
 test.describe('Valhalla scrollytelling E2E', () => {
-  test('boots minimal hero without console/page errors', async ({ page }) => {
+  test('boots photo-led hero without console/page errors', async ({ page }) => {
     const errors = await attachErrorTrap(page)
     await gotoApp(page)
 
     await expect(page.getByText('ASTON MARTIN')).toBeVisible()
     await expect(page.getByText('VALHALLA')).toBeVisible()
-    await expect(
-      page.getByText('FL crește Fz pe punți — dincolo de cercul Kamm.'),
-    ).toBeVisible()
-    // HUD is deferred until control chapter — must not clutter hero
+    await expect(page.getByTestId('photo-stage')).toBeVisible()
+    // No Spline / WebGL hero canvas
+    await expect(page.locator('canvas')).toHaveCount(0)
+    // No persistent telemetry HUD on hero
     await expect(page.getByLabel('Telemetry HUD')).toHaveCount(0)
 
     expect(errors, errors.join('\n')).toEqual([])
   })
 
-  test('ScrollTrigger timeline: scroll chapters without console errors', async ({
+  test('ScrollTrigger timeline: scroll A0–A5 without console errors', async ({
     page,
   }) => {
     const errors = await attachErrorTrap(page)
     await gotoApp(page)
 
-    const chapters = ['hero', 'physics', 'control', 'dynamics', 'pi-rom'] as const
-    for (const id of chapters) {
+    for (const id of ACTS) {
       await page.locator(`[data-chapter="${id}"]`).scrollIntoViewIfNeeded()
-      await page.waitForTimeout(400)
+      await page.waitForTimeout(350)
       await expect(page.locator(`[data-chapter="${id}"]`)).toBeVisible()
     }
 
-    // Back to hero — scrub reverse
-    await page.locator('[data-chapter="hero"]').scrollIntoViewIfNeeded()
+    await page.locator('[data-chapter="a0-hero"]').scrollIntoViewIfNeeded()
     await page.waitForTimeout(300)
 
     expect(errors, errors.join('\n')).toEqual([])
   })
 
-  test('mode buttons update AOA in HUD', async ({ page }) => {
+  test('mode buttons update AOA in A3 panel', async ({ page }) => {
     const errors = await attachErrorTrap(page)
     await gotoApp(page)
 
-    await page.locator('[data-chapter="control"]').scrollIntoViewIfNeeded()
+    await page.locator('[data-chapter="a3-control"]').scrollIntoViewIfNeeded()
     await page.waitForTimeout(500)
-    await expect(page.getByLabel('Telemetry HUD')).toBeVisible()
+    const panel = page.getByTestId('a3-control-panel')
+    await expect(panel).toBeVisible()
 
     await page.getByTestId('mode-DRS').click()
-    await expect(page.getByLabel('Telemetry HUD')).toContainText(/0\.0°/)
-    await expect(page.getByLabel('Telemetry HUD')).toContainText('DRS')
+    await expect(panel).toContainText(/0\.0°/)
+    await expect(panel).toContainText('DRS')
 
     await page.getByTestId('mode-STANDARD').click()
-    await expect(page.getByLabel('Telemetry HUD')).toContainText(/6\.0°/)
-    await expect(page.getByLabel('Telemetry HUD')).toContainText('STANDARD')
+    await expect(panel).toContainText(/6\.0°/)
+    await expect(panel).toContainText('STANDARD')
 
     await page.getByTestId('mode-AEROBRAKE').click()
-    await expect(page.getByLabel('Telemetry HUD')).toContainText(/19\.0°/)
-    await expect(page.getByLabel('Telemetry HUD')).toContainText('AEROBRAKE')
+    await expect(panel).toContainText(/19\.0°/)
+    await expect(panel).toContainText('AEROBRAKE')
 
     await page.getByTestId('mode-MAXP').click()
-    // MaxP schedule @ ≥180 km/h → 0° or 3° (S1-F051); no invent [5,18]
-    await expect(page.getByLabel('Telemetry HUD')).toContainText('MAXP')
+    await expect(panel).toContainText('MAXP')
 
     expect(errors, errors.join('\n')).toEqual([])
   })
@@ -99,27 +103,29 @@ test.describe('Valhalla scrollytelling E2E', () => {
     const errors = await attachErrorTrap(page)
     await gotoApp(page)
 
-    await page.locator('[data-chapter="control"]').scrollIntoViewIfNeeded()
+    await page.locator('[data-chapter="a3-control"]').scrollIntoViewIfNeeded()
     await page.waitForTimeout(400)
 
+    const panel = page.getByTestId('a3-control-panel')
     await page.getByTestId('mode-STANDARD').click()
     await page.getByTestId('speed-slider').fill('150')
     await page.getByTestId('brake-slider').fill('45')
-    await expect(page.getByLabel('Telemetry HUD')).toContainText('AEROBRAKE')
-    await expect(page.getByLabel('Telemetry HUD')).toContainText(/19\.0°/)
+    await expect(panel).toContainText('AEROBRAKE')
+    await expect(panel).toContainText(/19\.0°/)
 
     expect(errors, errors.join('\n')).toEqual([])
   })
 
-  test('HUD / controls smoke: speed slider updates HUD', async ({ page }) => {
+  test('A3 controls smoke: speed / throttle sliders', async ({ page }) => {
     const errors = await attachErrorTrap(page)
     await gotoApp(page)
 
-    await page.locator('[data-chapter="control"]').scrollIntoViewIfNeeded()
+    await page.locator('[data-chapter="a3-control"]').scrollIntoViewIfNeeded()
+    const panel = page.getByTestId('a3-control-panel')
     await page.getByTestId('speed-slider').fill('220')
-    await expect(page.getByLabel('Telemetry HUD')).toContainText('220')
+    await expect(panel).toContainText('220')
     await page.getByTestId('throttle-slider').fill('80')
-    await expect(page.getByLabel('Telemetry HUD')).toContainText(/80%/)
+    await expect(panel).toContainText(/80%/)
 
     expect(errors, errors.join('\n')).toEqual([])
   })
@@ -133,7 +139,10 @@ test.describe('Valhalla scrollytelling E2E', () => {
       ;(window as unknown as { __cls: number }).__cls = 0
       const po = new PerformanceObserver((list) => {
         for (const entry of list.getEntries()) {
-          const ls = entry as PerformanceEntry & { value?: number; hadRecentInput?: boolean }
+          const ls = entry as PerformanceEntry & {
+            value?: number
+            hadRecentInput?: boolean
+          }
           if (ls.hadRecentInput) continue
           ;(window as unknown as { __cls: number }).__cls += ls.value ?? 0
         }
@@ -142,13 +151,20 @@ test.describe('Valhalla scrollytelling E2E', () => {
       ;(window as unknown as { __clsPo: PerformanceObserver }).__clsPo = po
     })
 
-    for (const id of ['physics', 'control', 'dynamics', 'pi-rom', 'hero']) {
+    for (const id of [
+      'a1-limita',
+      'a3-control',
+      'a4-rezultat',
+      'a5-inchidere',
+      'a0-hero',
+    ]) {
       await page.locator(`[data-chapter="${id}"]`).scrollIntoViewIfNeeded()
       await page.waitForTimeout(350)
     }
 
-    const cls = await page.evaluate(() => (window as unknown as { __cls: number }).__cls)
-    // Fixed canvas + deferred HUD should keep cumulative CLS modest.
+    const cls = await page.evaluate(
+      () => (window as unknown as { __cls: number }).__cls,
+    )
     expect(cls).toBeLessThan(0.25)
   })
 })

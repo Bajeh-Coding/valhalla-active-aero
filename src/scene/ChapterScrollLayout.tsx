@@ -1,20 +1,14 @@
 import { useEffect, useRef } from 'react'
 import { CHAPTER_IDS } from './scrollStore'
 import { useScrollTimeline } from './useScrollTimeline'
-import { WindTunnelScene } from './WindTunnelScene'
-import { CfdCanvasOverlay } from './CfdCanvasOverlay'
-import { PhotoChapterStage } from './PhotoChapterStage'
-import { PhotoForceVectors } from './PhotoForceVectors'
-import { NeuralOverlay } from './NeuralOverlay'
-import { SplineCarCanvas } from './SplineCarCanvas'
+import { PhotoStage } from './PhotoStage'
 import { useAeroStore } from '@/store'
-import { TelemetryHud } from '@/ui/TelemetryHud'
 import { ChapterContent } from '@/ui/chapters/ChapterContent'
 
 /**
- * Minimal cinematic stage:
- * full-bleed photography + soft R3F depth + sparse chapter typography.
- * HUD appears only from the control chapter onward.
+ * Photo-led cinematic stage:
+ * full-bleed photography + soft vignette + sparse chapter typography.
+ * No Spline, mesh hero, CFD overlays, or persistent HUD.
  */
 export function ChapterScrollLayout() {
   const rootRef = useRef<HTMLDivElement>(null)
@@ -33,17 +27,8 @@ export function ChapterScrollLayout() {
   return (
     <div ref={rootRef} className="relative bg-aero-bg text-aero-text">
       <div className="pointer-events-none fixed inset-0 z-0">
-        <PhotoChapterStage />
-        <div className="absolute inset-0 z-[1] opacity-35 mix-blend-lighten">
-          <WindTunnelScene className="h-dvh w-full" />
-        </div>
-        <SplineCarCanvas />
-        <CfdCanvasOverlay />
-        <PhotoForceVectors />
-        <NeuralOverlay />
+        <PhotoStage />
       </div>
-
-      <TelemetryHud />
 
       <div className="pointer-events-none relative z-10">
         {CHAPTER_IDS.map((id) => (
