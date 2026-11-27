@@ -1,9 +1,9 @@
 import { useAeroStore } from '@/store'
 import { MODE_COLORS } from './modeVisuals'
 
-const BODY = '#0a0c10'
-const BODY_HIGHLIGHT = '#12161e'
-const GLASS = '#0b1620'
+const BODY = '#141820'
+const BODY_HIGHLIGHT = '#1c2230'
+const GLASS = '#0d1a26'
 const AMR = '#005949'
 const AMR_DEEP = '#004225'
 const LIME = '#C4DF00'
@@ -60,14 +60,12 @@ export function ValhallaCar() {
       {/* Cabin canopy — low glasshouse */}
       <mesh position={[0, 0.78, 0.2]} castShadow>
         <boxGeometry args={[1.22, 0.32, 1.55]} />
-        <meshPhysicalMaterial
+        <meshStandardMaterial
           color={GLASS}
-          metalness={0.15}
-          roughness={0.08}
-          transmission={0.35}
-          thickness={0.4}
+          metalness={0.35}
+          roughness={0.12}
           transparent
-          opacity={0.82}
+          opacity={0.78}
         />
       </mesh>
 
