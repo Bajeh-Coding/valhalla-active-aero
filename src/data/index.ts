@@ -29,8 +29,6 @@ export type {
   Vehicle14DofPendingParams,
   Vehicle14DofModel,
 } from './vehicle14Dof'
-export { PI_ROM_METADATA } from './piRom'
-export type { PiRomMetadata } from './piRom'
 export {
   PHOTO_ASSETS,
   CHAPTER_PHOTO_KEYS,
