@@ -36,7 +36,7 @@ export function TelemetryHud() {
         >
           <div className="min-w-[11.5rem] border-l border-aero-lime/25 bg-aero-bg/55 py-3 pl-4 backdrop-blur-md">
             <p className="font-mono text-[9px] tracking-[0.28em] text-aero-muted uppercase">
-              System online · {controlLoopHz} Hz
+              Sistem online · {controlLoopHz} Hz
             </p>
             <p
               className={`mt-2 font-mono text-xs tracking-[0.18em] uppercase ${

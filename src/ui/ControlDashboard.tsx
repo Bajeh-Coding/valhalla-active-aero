@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import type { AeroMode } from '@/types/aero'
+import { PRESENTATION_COPY } from '@/data/presentationCopy'
 import { useAeroStore } from '@/store'
 import { cn } from '@/lib/utils'
 
@@ -50,10 +51,10 @@ export function ControlDashboard() {
       transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
     >
       <h3 className="font-display text-2xl font-semibold tracking-[0.04em]">
-        Live control
+        {PRESENTATION_COPY.control.title}
       </h3>
       <p className="mt-2 text-sm leading-relaxed text-aero-muted">
-        Command wing AOA and splitter. Brake above 40% forces AEROBRAKE.
+        {PRESENTATION_COPY.control.body}
       </p>
 
       <div className="mt-6 grid grid-cols-2 gap-2 sm:grid-cols-4">
@@ -79,21 +80,21 @@ export function ControlDashboard() {
       </div>
 
       <p className="mt-3 font-mono text-[10px] text-aero-muted">
-        Effective <span className="text-aero-lime">{mode}</span>
+        Efectiv <span className="text-aero-lime">{mode}</span>
         {requestedMode !== mode ? (
           <>
             {' '}
-            · requested <span className="text-aero-crimson">{requestedMode}</span>
+            · cerut <span className="text-aero-crimson">{requestedMode}</span>
           </>
         ) : null}
-        {aerobrakeForced ? ' · brake override' : null}
-        {drsDenied ? ' · DRS denied' : null}
+        {aerobrakeForced ? ' · override frână' : null}
+        {drsDenied ? ' · DRS refuzat' : null}
         {' · '}
         AOA {aoaDeg.toFixed(1)}° · splitter {splitter}
       </p>
 
       <Slider
-        label="Speed"
+        label="Viteză"
         value={speedKmh}
         min={0}
         max={350}
@@ -102,7 +103,7 @@ export function ControlDashboard() {
         testId="speed-slider"
       />
       <Slider
-        label="Throttle"
+        label="Accelerație"
         value={throttlePct}
         min={0}
         max={100}
@@ -111,7 +112,7 @@ export function ControlDashboard() {
         testId="throttle-slider"
       />
       <Slider
-        label="Brake"
+        label="Frână"
         value={brakePct}
         min={0}
         max={100}
