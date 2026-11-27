@@ -2,13 +2,13 @@ import { useEffect, useRef } from 'react'
 import { CHAPTER_IDS } from './scrollStore'
 import { useScrollTimeline } from './useScrollTimeline'
 import { WindTunnelScene } from './WindTunnelScene'
+import { CfdCanvasOverlay } from './CfdCanvasOverlay'
 import { useAeroStore } from '@/store'
 import { TelemetryHud } from '@/ui/TelemetryHud'
 import { ChapterContent } from '@/ui/chapters/ChapterContent'
 
 /**
- * Fixed WebGL stage + scroll chapters + glass HUD.
- * Scroll progress via `useScrollStore`; aero via `useAeroStore`.
+ * Fixed cinematic stage (3D + 2D CFD) + scroll chapters + luxury glass HUD.
  */
 export function ChapterScrollLayout() {
   const rootRef = useRef<HTMLDivElement>(null)
@@ -28,9 +28,16 @@ export function ChapterScrollLayout() {
     <div ref={rootRef} className="relative bg-aero-bg text-aero-text">
       <div className="pointer-events-none fixed inset-0 z-0">
         <WindTunnelScene className="h-dvh w-full" />
-        {/* Soft vignette so brand type reads over the tunnel */}
+        <CfdCanvasOverlay />
+        {/* Editorial vignette — brand type readability */}
         <div
-          className="pointer-events-none absolute inset-0 bg-gradient-to-t from-aero-bg via-transparent to-aero-bg/50"
+          className="pointer-events-none absolute inset-0 z-[2]"
+          style={{
+            background: `
+              radial-gradient(ellipse 70% 55% at 50% 45%, transparent 30%, rgb(5 7 10 / 0.55) 100%),
+              linear-gradient(to top, rgb(5 7 10 / 0.92) 0%, transparent 38%, rgb(5 7 10 / 0.45) 100%)
+            `,
+          }}
           aria-hidden
         />
       </div>

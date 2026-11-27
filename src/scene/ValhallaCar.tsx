@@ -1,13 +1,17 @@
 import { useAeroStore } from '@/store'
 import { MODE_COLORS } from './modeVisuals'
 
-const BODY = '#1a1f2e'
-const ACCENT = '#0e7490'
-const GLASS = '#0f172a'
+const BODY = '#141820'
+const BODY_HIGHLIGHT = '#1c2230'
+const GLASS = '#0d1a26'
+const AMR = '#005949'
+const AMR_DEEP = '#004225'
+const LIME = '#C4DF00'
+const TITANIUM = '#8a93a0'
 
 /**
- * Procedural stylized Valhalla-like hypercar.
- * Rear wing AOA and front splitter elevation driven exclusively by `useAeroStore`.
+ * Cinematic Valhalla silhouette — refined hypercar proportions,
+ * AMR green accents, active wing/splitter from `useAeroStore` only.
  */
 export function ValhallaCar() {
   const aoaDeg = useAeroStore((s) => s.aoaDeg)
@@ -15,117 +19,205 @@ export function ValhallaCar() {
   const mode = useAeroStore((s) => s.mode)
   const colors = MODE_COLORS[mode]
 
-  // Spec: CLOSED = max downforce (low), OPEN = low-drag undertray (raised).
   const splitterY = splitter === 'OPEN' ? 0.12 : 0.02
   const aoaRad = (aoaDeg * Math.PI) / 180
 
   return (
     <group position={[0, 0, 0]}>
-      {/* Main body tub */}
-      <mesh position={[0, 0.38, 0]} castShadow receiveShadow>
-        <boxGeometry args={[1.85, 0.42, 4.2]} />
-        <meshStandardMaterial color={BODY} metalness={0.85} roughness={0.28} />
-      </mesh>
-
-      {/* Cabin canopy */}
-      <mesh position={[0, 0.72, 0.15]} castShadow>
-        <boxGeometry args={[1.35, 0.38, 1.6]} />
+      {/* Underbody shadow disc */}
+      <mesh
+        position={[0, 0.01, 0]}
+        rotation={[-Math.PI / 2, 0, 0]}
+        scale={[1.4, 2.4, 1]}
+        receiveShadow
+      >
+        <circleGeometry args={[1, 48]} />
         <meshStandardMaterial
-          color={GLASS}
-          metalness={0.4}
-          roughness={0.15}
+          color="#000000"
           transparent
-          opacity={0.72}
+          opacity={0.45}
+          depthWrite={false}
         />
       </mesh>
 
-      {/* Nose */}
-      <mesh position={[0, 0.32, 2.0]} castShadow>
-        <boxGeometry args={[1.55, 0.28, 0.9]} />
-        <meshStandardMaterial color={BODY} metalness={0.88} roughness={0.25} />
+      {/* Main body tub — elongated */}
+      <mesh position={[0, 0.36, 0.05]} castShadow receiveShadow>
+        <boxGeometry args={[1.78, 0.38, 4.35]} />
+        <meshStandardMaterial
+          color={BODY}
+          metalness={0.92}
+          roughness={0.22}
+          envMapIntensity={1.2}
+        />
       </mesh>
-      <mesh position={[0, 0.28, 2.45]} castShadow>
-        <boxGeometry args={[1.2, 0.18, 0.45]} />
-        <meshStandardMaterial color={BODY} metalness={0.9} roughness={0.22} />
+
+      {/* Sculpted upper deck */}
+      <mesh position={[0, 0.58, 0.05]} castShadow>
+        <boxGeometry args={[1.55, 0.16, 3.6]} />
+        <meshStandardMaterial color={BODY_HIGHLIGHT} metalness={0.9} roughness={0.18} />
+      </mesh>
+
+      {/* Cabin canopy — low glasshouse */}
+      <mesh position={[0, 0.78, 0.2]} castShadow>
+        <boxGeometry args={[1.22, 0.32, 1.55]} />
+        <meshStandardMaterial
+          color={GLASS}
+          metalness={0.35}
+          roughness={0.12}
+          transparent
+          opacity={0.78}
+        />
+      </mesh>
+
+      {/* Windscreen rake hint */}
+      <mesh position={[0, 0.72, 0.95]} rotation={[-0.35, 0, 0]} castShadow>
+        <boxGeometry args={[1.15, 0.04, 0.55]} />
+        <meshStandardMaterial
+          color="#0e1a24"
+          metalness={0.3}
+          roughness={0.1}
+          transparent
+          opacity={0.7}
+        />
+      </mesh>
+
+      {/* Nose cone */}
+      <mesh position={[0, 0.3, 2.05]} castShadow>
+        <boxGeometry args={[1.48, 0.26, 0.85]} />
+        <meshStandardMaterial color={BODY} metalness={0.94} roughness={0.2} />
+      </mesh>
+      <mesh position={[0, 0.26, 2.48]} castShadow>
+        <boxGeometry args={[1.1, 0.16, 0.42]} />
+        <meshStandardMaterial color={BODY} metalness={0.95} roughness={0.18} />
+      </mesh>
+
+      {/* AMR green accent stripe — brand signal */}
+      <mesh position={[0, 0.56, 0.1]}>
+        <boxGeometry args={[0.06, 0.02, 3.8]} />
+        <meshStandardMaterial
+          color={LIME}
+          emissive={AMR}
+          emissiveIntensity={0.55}
+          metalness={0.4}
+          roughness={0.25}
+        />
       </mesh>
 
       {/* Rear deck */}
-      <mesh position={[0, 0.48, -1.7]} castShadow>
-        <boxGeometry args={[1.7, 0.22, 1.1]} />
-        <meshStandardMaterial color={BODY} metalness={0.82} roughness={0.3} />
+      <mesh position={[0, 0.5, -1.75]} castShadow>
+        <boxGeometry args={[1.62, 0.2, 1.05]} />
+        <meshStandardMaterial color={BODY_HIGHLIGHT} metalness={0.88} roughness={0.24} />
       </mesh>
 
-      {/* Side pods */}
-      <mesh position={[-0.95, 0.28, -0.2]} castShadow>
-        <boxGeometry args={[0.28, 0.35, 2.4]} />
-        <meshStandardMaterial color={ACCENT} metalness={0.7} roughness={0.35} />
+      {/* Side pods — AMR deep green */}
+      <mesh position={[-0.92, 0.28, -0.15]} castShadow>
+        <boxGeometry args={[0.26, 0.34, 2.5]} />
+        <meshStandardMaterial
+          color={AMR_DEEP}
+          metalness={0.75}
+          roughness={0.32}
+          emissive={AMR}
+          emissiveIntensity={0.12}
+        />
       </mesh>
-      <mesh position={[0.95, 0.28, -0.2]} castShadow>
-        <boxGeometry args={[0.28, 0.35, 2.4]} />
-        <meshStandardMaterial color={ACCENT} metalness={0.7} roughness={0.35} />
+      <mesh position={[0.92, 0.28, -0.15]} castShadow>
+        <boxGeometry args={[0.26, 0.34, 2.5]} />
+        <meshStandardMaterial
+          color={AMR_DEEP}
+          metalness={0.75}
+          roughness={0.32}
+          emissive={AMR}
+          emissiveIntensity={0.12}
+        />
       </mesh>
 
-      {/* Wheels */}
-      <Wheel position={[-0.85, 0.32, 1.35]} />
-      <Wheel position={[0.85, 0.32, 1.35]} />
-      <Wheel position={[-0.9, 0.34, -1.45]} />
-      <Wheel position={[0.9, 0.34, -1.45]} />
+      {/* Side intake lips */}
+      <mesh position={[-0.95, 0.42, 0.6]}>
+        <boxGeometry args={[0.08, 0.08, 0.7]} />
+        <meshStandardMaterial color={TITANIUM} metalness={0.85} roughness={0.25} />
+      </mesh>
+      <mesh position={[0.95, 0.42, 0.6]}>
+        <boxGeometry args={[0.08, 0.08, 0.7]} />
+        <meshStandardMaterial color={TITANIUM} metalness={0.85} roughness={0.25} />
+      </mesh>
+
+      <Wheel position={[-0.82, 0.32, 1.4]} />
+      <Wheel position={[0.82, 0.32, 1.4]} />
+      <Wheel position={[-0.88, 0.34, -1.5]} />
+      <Wheel position={[0.88, 0.34, -1.5]} />
 
       {/* Front splitter — binary elevation */}
-      <group position={[0, splitterY, 2.55]}>
+      <group position={[0, splitterY, 2.58]}>
         <mesh castShadow>
-          <boxGeometry args={[1.7, 0.04, 0.55]} />
+          <boxGeometry args={[1.72, 0.035, 0.58]} />
           <meshStandardMaterial
             color={colors.primary}
-            metalness={0.6}
-            roughness={0.35}
-            emissive={colors.emissive}
-            emissiveIntensity={0.25}
-          />
-        </mesh>
-        <mesh position={[0, 0.02, -0.15]}>
-          <boxGeometry args={[1.55, 0.02, 0.2]} />
-          <meshStandardMaterial color="#334155" metalness={0.5} roughness={0.4} />
-        </mesh>
-      </group>
-
-      {/* Active rear wing — AOA about local X (pitch) */}
-      <group position={[0, 0.78, -2.15]} rotation={[aoaRad, 0, 0]}>
-        {/* Endplates */}
-        <mesh position={[-0.85, 0.12, 0]} castShadow>
-          <boxGeometry args={[0.05, 0.35, 0.45]} />
-          <meshStandardMaterial color="#0f172a" metalness={0.5} roughness={0.4} />
-        </mesh>
-        <mesh position={[0.85, 0.12, 0]} castShadow>
-          <boxGeometry args={[0.05, 0.35, 0.45]} />
-          <meshStandardMaterial color="#0f172a" metalness={0.5} roughness={0.4} />
-        </mesh>
-        {/* Main plane */}
-        <mesh position={[0, 0.18, 0]} castShadow>
-          <boxGeometry args={[1.7, 0.05, 0.4]} />
-          <meshStandardMaterial
-            color={colors.primary}
-            metalness={0.55}
-            roughness={0.3}
+            metalness={0.65}
+            roughness={0.28}
             emissive={colors.emissive}
             emissiveIntensity={0.35}
           />
         </mesh>
-        {/* Struts */}
-        <mesh position={[-0.45, -0.15, 0.05]}>
-          <boxGeometry args={[0.06, 0.35, 0.06]} />
-          <meshStandardMaterial color="#64748b" metalness={0.7} roughness={0.3} />
-        </mesh>
-        <mesh position={[0.45, -0.15, 0.05]}>
-          <boxGeometry args={[0.06, 0.35, 0.06]} />
-          <meshStandardMaterial color="#64748b" metalness={0.7} roughness={0.3} />
+        <mesh position={[0, 0.02, -0.18]}>
+          <boxGeometry args={[1.5, 0.018, 0.18]} />
+          <meshStandardMaterial color="#1a2332" metalness={0.55} roughness={0.4} />
         </mesh>
       </group>
 
-      {/* Underbody diffuser hint */}
-      <mesh position={[0, 0.08, -1.9]} castShadow>
-        <boxGeometry args={[1.4, 0.08, 0.8]} />
-        <meshStandardMaterial color="#334155" metalness={0.6} roughness={0.45} />
+      {/* Active rear wing */}
+      <group position={[0, 0.82, -2.2]} rotation={[aoaRad, 0, 0]}>
+        <mesh position={[-0.88, 0.14, 0]} castShadow>
+          <boxGeometry args={[0.045, 0.38, 0.48]} />
+          <meshStandardMaterial color="#0a0c10" metalness={0.55} roughness={0.35} />
+        </mesh>
+        <mesh position={[0.88, 0.14, 0]} castShadow>
+          <boxGeometry args={[0.045, 0.38, 0.48]} />
+          <meshStandardMaterial color="#0a0c10" metalness={0.55} roughness={0.35} />
+        </mesh>
+        <mesh position={[0, 0.2, 0]} castShadow>
+          <boxGeometry args={[1.72, 0.045, 0.42]} />
+          <meshStandardMaterial
+            color={colors.primary}
+            metalness={0.6}
+            roughness={0.22}
+            emissive={colors.emissive}
+            emissiveIntensity={0.45}
+          />
+        </mesh>
+        {/* Gurney lip */}
+        <mesh position={[0, 0.24, -0.2]}>
+          <boxGeometry args={[1.65, 0.04, 0.02]} />
+          <meshStandardMaterial
+            color={colors.secondary}
+            emissive={colors.emissive}
+            emissiveIntensity={0.3}
+          />
+        </mesh>
+        <mesh position={[-0.42, -0.18, 0.04]}>
+          <boxGeometry args={[0.05, 0.38, 0.05]} />
+          <meshStandardMaterial color={TITANIUM} metalness={0.8} roughness={0.25} />
+        </mesh>
+        <mesh position={[0.42, -0.18, 0.04]}>
+          <boxGeometry args={[0.05, 0.38, 0.05]} />
+          <meshStandardMaterial color={TITANIUM} metalness={0.8} roughness={0.25} />
+        </mesh>
+      </group>
+
+      {/* Diffuser */}
+      <mesh position={[0, 0.07, -1.95]} castShadow>
+        <boxGeometry args={[1.35, 0.07, 0.85]} />
+        <meshStandardMaterial color="#151a24" metalness={0.7} roughness={0.4} />
+      </mesh>
+
+      {/* Rear light bar — lime brand cue */}
+      <mesh position={[0, 0.55, -2.28]}>
+        <boxGeometry args={[1.1, 0.03, 0.04]} />
+        <meshStandardMaterial
+          color={LIME}
+          emissive={LIME}
+          emissiveIntensity={0.85}
+          toneMapped={false}
+        />
       </mesh>
     </group>
   )
@@ -135,12 +227,16 @@ function Wheel({ position }: { position: [number, number, number] }) {
   return (
     <group position={position}>
       <mesh rotation={[0, 0, Math.PI / 2]} castShadow>
-        <cylinderGeometry args={[0.32, 0.32, 0.22, 24]} />
-        <meshStandardMaterial color="#0a0a0a" metalness={0.4} roughness={0.55} />
+        <cylinderGeometry args={[0.33, 0.33, 0.24, 28]} />
+        <meshStandardMaterial color="#050505" metalness={0.35} roughness={0.6} />
       </mesh>
       <mesh rotation={[0, 0, Math.PI / 2]}>
-        <cylinderGeometry args={[0.18, 0.18, 0.24, 16]} />
-        <meshStandardMaterial color="#475569" metalness={0.85} roughness={0.25} />
+        <cylinderGeometry args={[0.17, 0.17, 0.26, 18]} />
+        <meshStandardMaterial color="#5c6570" metalness={0.9} roughness={0.2} />
+      </mesh>
+      <mesh rotation={[0, 0, Math.PI / 2]}>
+        <torusGeometry args={[0.28, 0.03, 8, 28]} />
+        <meshStandardMaterial color="#2a3038" metalness={0.7} roughness={0.35} />
       </mesh>
     </group>
   )

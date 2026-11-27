@@ -1,6 +1,7 @@
 export { WindTunnelScene } from './WindTunnelScene'
 export type { WindTunnelSceneProps } from './WindTunnelScene'
 export { ChapterScrollLayout } from './ChapterScrollLayout'
+export { CfdCanvasOverlay } from './CfdCanvasOverlay'
 export {
   useScrollStore,
   CHAPTER_IDS,
@@ -8,4 +9,8 @@ export {
 } from './scrollStore'
 export type { ChapterId, ScrollProgressState } from './scrollStore'
 export { CHAPTER_CAMERAS, lerpCamera } from './cameraChapters'
-export { MODE_COLORS, pressureColorFromCd } from './modeVisuals'
+export {
+  MODE_COLORS,
+  pressureColorFromCd,
+  streamlineColorForMode,
+} from './modeVisuals'

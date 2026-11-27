@@ -2,7 +2,7 @@ import { motion } from 'framer-motion'
 import { useAeroStore } from '@/store'
 import { useScrollStore } from '@/scene'
 
-/** Fixed glass telemetry HUD — master-spec §4. */
+/** Fixed luxury glass telemetry HUD — master-spec §4. */
 export function TelemetryHud() {
   const aoaDeg = useAeroStore((s) => s.aoaDeg)
   const speedKmh = useAeroStore((s) => s.speedKmh)
@@ -22,15 +22,15 @@ export function TelemetryHud() {
 
   return (
     <motion.aside
-      initial={{ opacity: 0, y: -12 }}
+      initial={{ opacity: 0, y: -14 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-      className="pointer-events-none fixed top-0 right-0 left-0 z-30 flex justify-end p-3 md:p-4"
+      transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
+      className="pointer-events-none fixed top-0 right-0 left-0 z-30 flex justify-end p-3 md:p-5"
       aria-label="Telemetry HUD"
     >
-      <div className="glass-panel pointer-events-none w-full max-w-md rounded-lg px-4 py-3 shadow-[0_0_40px_rgb(34_211_238_/0.08)] md:max-w-lg">
+      <div className="glass-panel pointer-events-none w-full max-w-md rounded-xl px-4 py-3.5 md:max-w-lg">
         <div className="flex items-center justify-between gap-3">
-          <div className="font-mono text-[10px] tracking-[0.18em] text-aero-cyan uppercase">
+          <div className="font-mono text-[10px] tracking-[0.22em] text-aero-lime uppercase">
             System online · {controlLoopHz} Hz
           </div>
           <div className="font-mono text-[10px] text-aero-muted">
@@ -39,24 +39,30 @@ export function TelemetryHud() {
           </div>
         </div>
 
-        <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
-          <Metric label="Mode" value={mode} accent={aerobrakeForced ? 'amber' : 'emerald'} />
+        <div className="luxury-rule my-3" />
+
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+          <Metric
+            label="Mode"
+            value={mode}
+            accent={aerobrakeForced ? 'crimson' : 'lime'}
+          />
           <Metric label="Speed" value={`${speedKmh.toFixed(0)}`} unit="km/h" accent="cyan" />
           <Metric label="C_L / C_D" value={clOverCd.toFixed(2)} accent="cyan" />
           <Metric label="Downforce" value={formatForce(downforceN)} unit="N" accent="cyan" />
-          <Metric label="Drag" value={formatForce(dragN)} unit="N" accent="amber" />
+          <Metric label="Drag" value={formatForce(dragN)} unit="N" accent="crimson" />
           <div>
             <div className="font-mono text-[9px] tracking-wider text-aero-muted uppercase">
               AOA 0–25°
             </div>
             <div className="mt-1 flex items-baseline gap-1">
-              <span className="font-display text-lg font-semibold text-aero-cyan tabular-nums">
+              <span className="font-mono text-lg font-medium text-aero-cyan tabular-nums">
                 {aoaDeg.toFixed(1)}°
               </span>
             </div>
-            <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-slate-800">
+            <div className="mt-1.5 h-1 overflow-hidden rounded-full bg-aero-bg-deep">
               <motion.div
-                className="h-full rounded-full bg-aero-cyan"
+                className="h-full rounded-full bg-gradient-to-r from-aero-cyan to-aero-lime"
                 animate={{ width: `${aoaPct}%` }}
                 transition={{ type: 'spring', stiffness: 120, damping: 20 }}
               />
@@ -64,9 +70,9 @@ export function TelemetryHud() {
           </div>
         </div>
 
-        <div className="mt-3 grid grid-cols-2 gap-3">
-          <Pedal label="Throttle" pct={throttlePct} color="bg-aero-emerald" />
-          <Pedal label="Brake" pct={brakePct} color="bg-aero-amber" />
+        <div className="mt-3.5 grid grid-cols-2 gap-3">
+          <Pedal label="Throttle" pct={throttlePct} color="bg-aero-lime" />
+          <Pedal label="Brake" pct={brakePct} color="bg-aero-crimson" />
         </div>
       </div>
     </motion.aside>
@@ -82,21 +88,21 @@ function Metric({
   label: string
   value: string
   unit?: string
-  accent: 'cyan' | 'emerald' | 'amber'
+  accent: 'cyan' | 'lime' | 'crimson'
 }) {
   const color =
     accent === 'cyan'
       ? 'text-aero-cyan'
-      : accent === 'emerald'
-        ? 'text-aero-emerald'
-        : 'text-aero-amber'
+      : accent === 'lime'
+        ? 'text-aero-lime'
+        : 'text-aero-crimson'
   return (
     <div>
       <div className="font-mono text-[9px] tracking-wider text-aero-muted uppercase">
         {label}
       </div>
       <div className="mt-0.5 flex items-baseline gap-1">
-        <span className={`font-display text-lg font-semibold tabular-nums ${color}`}>
+        <span className={`font-mono text-lg font-medium tabular-nums ${color}`}>
           {value}
         </span>
         {unit ? (
@@ -122,7 +128,7 @@ function Pedal({
         <span>{label}</span>
         <span className="tabular-nums text-aero-text">{pct.toFixed(0)}%</span>
       </div>
-      <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-slate-800">
+      <div className="mt-1.5 h-1 overflow-hidden rounded-full bg-aero-bg-deep">
         <motion.div
           className={`h-full rounded-full ${color}`}
           animate={{ width: `${Math.min(100, Math.max(0, pct))}%` }}

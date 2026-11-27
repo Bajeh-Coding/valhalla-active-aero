@@ -1,5 +1,6 @@
 import { Canvas } from '@react-three/fiber'
 import { Suspense } from 'react'
+import * as THREE from 'three'
 import { ForceVectors } from './ForceVectors'
 import { ScrollCamera } from './ScrollCamera'
 import { Streamlines } from './Streamlines'
@@ -12,8 +13,8 @@ export interface WindTunnelSceneProps {
 }
 
 /**
- * R3F wind-tunnel canvas. Camera pose comes from `useScrollStore`
- * (GSAP ScrollTrigger). Aero meshes read `useAeroStore` only.
+ * Cinematic 3D wind-tunnel stage (hybrid with 2D CFD overlay in layout).
+ * Camera pose from `useScrollStore`; aero meshes from `useAeroStore`.
  */
 export function WindTunnelScene({ className }: WindTunnelSceneProps) {
   return (
@@ -21,9 +22,17 @@ export function WindTunnelScene({ className }: WindTunnelSceneProps) {
       <Canvas
         shadows
         dpr={[1, 1.75]}
-        gl={{ antialias: true, alpha: false, powerPreference: 'high-performance' }}
-        camera={{ fov: 42, near: 0.1, far: 80, position: [4.2, 1.8, 5.5] }}
-        style={{ background: '#020617' }}
+        gl={{
+          antialias: true,
+          alpha: false,
+          powerPreference: 'high-performance',
+        }}
+        onCreated={({ gl }) => {
+          gl.toneMapping = THREE.ACESFilmicToneMapping
+          gl.toneMappingExposure = 1.05
+        }}
+        camera={{ fov: 40, near: 0.1, far: 80, position: [4.2, 1.8, 5.5] }}
+        style={{ background: '#05070A' }}
       >
         <Suspense fallback={null}>
           <TunnelEnvironment />

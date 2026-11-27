@@ -11,8 +11,8 @@ export const CHAPTER_CAMERAS: Record<ChapterId, CameraKeyframe> = {
   hero: { position: [4.2, 1.8, 5.5], lookAt: [0, 0.45, 0] },
   /** Ch2 — side profile for aero-balance. */
   physics: { position: [0.2, 1.1, 6.2], lookAt: [0, 0.5, 0] },
-  /** Ch3 — rear wing + splitter focus (pinned). */
-  control: { position: [-3.8, 1.4, 3.2], lookAt: [-0.2, 0.55, -1.2] },
+  /** Ch3 — rear wing + splitter focus (pinned), full silhouette readable. */
+  control: { position: [-4.6, 1.55, 3.8], lookAt: [0, 0.5, -0.6] },
   /** Ch4 — elevated plan for track overlay later. */
   dynamics: { position: [0.5, 7.5, 0.5], lookAt: [0, 0, 0] },
   /** Ch5 — closer neural / pressure nodal view. */
