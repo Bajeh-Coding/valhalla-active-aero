@@ -4,6 +4,15 @@ import { useAeroStore } from '@/store'
 
 const MODES: AeroMode[] = ['DRS', 'PASSIVE', 'MAXP', 'AEROBRAKE']
 
+const MODE_ACCENT: Record<AeroMode, string> = {
+  DRS: 'border-aero-cyan bg-cyan-950/40 text-aero-cyan shadow-[0_0_24px_rgb(0_240_255_/0.18)]',
+  PASSIVE:
+    'border-slate-500/50 bg-slate-900/40 text-aero-champagne shadow-[0_0_16px_rgb(148_163_184_/0.12)]',
+  MAXP: 'border-aero-lime bg-aero-amr-deep/50 text-aero-lime shadow-[0_0_24px_rgb(196_223_0_/0.2)]',
+  AEROBRAKE:
+    'border-aero-crimson bg-red-950/40 text-aero-crimson shadow-[0_0_24px_rgb(255_59_48_/0.2)]',
+}
+
 /** Chapter 3 live aero control simulator — wired to Zustand store. */
 export function ControlDashboard() {
   const mode = useAeroStore((s) => s.mode)
@@ -35,16 +44,16 @@ export function ControlDashboard() {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 16 }}
+      initial={{ opacity: 0, y: 18 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.3 }}
-      transition={{ duration: 0.5 }}
-      className="glass-panel pointer-events-auto w-full max-w-lg rounded-xl p-5"
+      transition={{ duration: 0.6 }}
+      className="glass-panel-strong pointer-events-auto w-full max-w-lg rounded-xl p-6"
     >
-      <p className="font-mono text-[10px] tracking-[0.2em] text-aero-cyan uppercase">
-        Live control · Chapter 3
+      <p className="font-mono text-[10px] tracking-[0.28em] text-aero-lime uppercase">
+        Live control · Chapter 03
       </p>
-      <h3 className="font-display mt-2 text-xl font-semibold tracking-tight">
+      <h3 className="font-display mt-2 text-2xl font-semibold tracking-[0.03em]">
         Mecatronic state machine
       </h3>
       <p className="mt-2 text-sm leading-relaxed text-aero-muted">
@@ -52,7 +61,7 @@ export function ControlDashboard() {
         regardless of selection.
       </p>
 
-      <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4">
+      <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-4">
         {MODES.map((m) => {
           const active = mode === m
           return (
@@ -61,10 +70,10 @@ export function ControlDashboard() {
               type="button"
               data-testid={`mode-${m}`}
               onClick={() => selectMode(m)}
-              className={`rounded-md border px-2 py-2 font-mono text-[11px] tracking-wide transition ${
+              className={`rounded-md border px-2 py-2.5 font-mono text-[11px] tracking-wide transition ${
                 active
-                  ? 'border-aero-cyan bg-cyan-950/50 text-aero-cyan shadow-[0_0_20px_rgb(34_211_238_/0.15)]'
-                  : 'border-aero-border text-aero-muted hover:border-slate-600 hover:text-aero-text'
+                  ? MODE_ACCENT[m]
+                  : 'border-aero-border text-aero-muted hover:border-aero-amr hover:text-aero-champagne'
               }`}
             >
               {m}
@@ -73,12 +82,12 @@ export function ControlDashboard() {
         })}
       </div>
 
-      <div className="mt-3 font-mono text-[10px] text-aero-muted">
-        Effective <span className="text-aero-emerald">{mode}</span>
+      <div className="mt-3.5 font-mono text-[10px] text-aero-muted">
+        Effective <span className="text-aero-lime">{mode}</span>
         {requestedMode !== mode ? (
           <>
             {' '}
-            · requested <span className="text-aero-amber">{requestedMode}</span>
+            · requested <span className="text-aero-crimson">{requestedMode}</span>
           </>
         ) : null}
         {aerobrakeForced ? ' · brake override' : null}
@@ -141,7 +150,7 @@ function Slider({
   return (
     <label className="mt-4 block">
       <div className="mb-1.5 flex items-center justify-between font-mono text-[10px] tracking-wider uppercase">
-        <span className={warn ? 'text-aero-amber' : 'text-aero-muted'}>{label}</span>
+        <span className={warn ? 'text-aero-crimson' : 'text-aero-muted'}>{label}</span>
         <span className="tabular-nums text-aero-text">
           {value.toFixed(0)} {unit}
         </span>

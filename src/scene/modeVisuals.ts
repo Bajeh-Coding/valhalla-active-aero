@@ -1,12 +1,15 @@
 import type { AeroMode } from '@/types/aero'
 
-/** Mode color language — matches CSS tokens (cyan / emerald / amber). */
+/**
+ * Mode color language — AMR brand system.
+ * DRS cyan · MAXP lime · AEROBRAKE crimson · PASSIVE titanium.
+ */
 export const MODE_COLORS: Record<
   AeroMode,
   { primary: string; secondary: string; emissive: string }
 > = {
   DRS: {
-    primary: '#22d3ee',
+    primary: '#00F0FF',
     secondary: '#67e8f9',
     emissive: '#0891b2',
   },
@@ -16,28 +19,36 @@ export const MODE_COLORS: Record<
     emissive: '#475569',
   },
   MAXP: {
-    primary: '#34d399',
-    secondary: '#6ee7b7',
-    emissive: '#059669',
+    primary: '#C4DF00',
+    secondary: '#e8f56a',
+    emissive: '#005949',
   },
   AEROBRAKE: {
-    primary: '#fbbf24',
-    secondary: '#f87171',
-    emissive: '#b45309',
+    primary: '#FF3B30',
+    secondary: '#ff6b63',
+    emissive: '#991b1b',
   },
 }
 
 /**
- * Streamline pressure tint from C_D (low drag → cyan, high stagnation → amber/red).
+ * Streamline pressure tint from C_D (low drag → cyan, high stagnation → crimson).
  * Uses only coefficient magnitude — no invented physics.
  */
 export function pressureColorFromCd(cd: number): string {
   // Spec range: DRS 0.31 … AEROBRAKE 0.72
   const t = Math.min(1, Math.max(0, (cd - 0.31) / (0.72 - 0.31)))
-  if (t < 0.5) {
-    return lerpHex('#22d3ee', '#34d399', t * 2)
+  if (t < 0.33) {
+    return lerpHex('#00F0FF', '#005949', t / 0.33)
   }
-  return lerpHex('#fbbf24', '#f87171', (t - 0.5) * 2)
+  if (t < 0.66) {
+    return lerpHex('#005949', '#C4DF00', (t - 0.33) / 0.33)
+  }
+  return lerpHex('#C4DF00', '#FF3B30', (t - 0.66) / 0.34)
+}
+
+/** Direct mode streamline accent — DRS cyan / MAXP lime / AEROBRAKE crimson. */
+export function streamlineColorForMode(mode: AeroMode): string {
+  return MODE_COLORS[mode].primary
 }
 
 function lerpHex(a: string, b: string, t: number): string {

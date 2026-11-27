@@ -24,7 +24,7 @@ export function useScrollTimeline(scrollRootRef: RefObject<HTMLElement | null>) 
       trigger: root,
       start: 'top top',
       end: 'bottom bottom',
-      scrub: 0.65,
+      scrub: 1,
       onUpdate: (self) => {
         const p = self.progress
         const seg = Math.min(0.999, p) * (chapters.length - 1)
