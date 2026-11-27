@@ -53,6 +53,13 @@ test.describe('Hybrid AM science E2E', () => {
     await expect(page.getByTestId('chapter-title')).toBeVisible()
     await expect(page.getByText(/Aston Martin/i).first()).toBeVisible()
     await expect(page.getByText(/Valhalla/i).first()).toBeVisible()
+    // Paper id must stay SAE 2020-36-0079 (never 2020-01-0079)
+    await expect(page.getByTestId('chapter-title')).toContainText(
+      'SAE 2020-36-0079',
+    )
+    await expect(page.getByTestId('chapter-title')).not.toContainText(
+      '2020-01-0079',
+    )
     await expect(page.locator('canvas')).toHaveCount(0)
     await expect(page.locator('img[src*="unsplash"]')).toHaveCount(0)
     await expect(page.locator('img[src*="/images/valhalla/"]')).not.toHaveCount(
