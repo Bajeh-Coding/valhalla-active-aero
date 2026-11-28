@@ -78,10 +78,6 @@ export function ChapterSection({ chapter }: ChapterSectionProps) {
             </ol>
           ) : null}
 
-          {hasCharts ? (
-            <Cap08Charts charts={chapter.charts!} chapterId={chapter.id} />
-          ) : null}
-
           {hasDof ? (
             <ul
               className="mt-10 max-w-[640px] space-y-3 border-t border-aero-ivory/10 pt-8"
@@ -164,6 +160,13 @@ export function ChapterSection({ chapter }: ChapterSectionProps) {
           ) : null}
 
         </div>
+
+        {/* Charts/surfaces stay outside the title reveal so tall blocks
+            cannot trap opacity:0 when IntersectionObserver never hits
+            threshold on a multi-viewport element. */}
+        {hasCharts ? (
+          <Cap08Charts charts={chapter.charts!} chapterId={chapter.id} />
+        ) : null}
 
         {hasSurfaces ? (
           <AeroSurfaces

@@ -329,4 +329,41 @@ test.describe('Mockup 10 capitole E2E', () => {
 
     expect(errors, errors.join('\n')).toEqual([])
   })
+
+  test('Cap 07 surfaces and Cap 08 charts are visible after nav', async ({
+    page,
+  }) => {
+    const errors = await attachErrorTrap(page)
+    await gotoApp(page)
+
+    await page.getByTestId('nav-studiu-de-caz').click()
+    await page.waitForTimeout(700)
+    await page.getByTestId('surface-front-wing').scrollIntoViewIfNeeded()
+    await expect(page.getByTestId('surface-front-wing')).toBeVisible()
+    await expect(page.getByTestId('surface-front-wing')).toContainText(
+      /Active front wing/i,
+    )
+    const c7Opacity = await page
+      .getByTestId('surface-front-wing')
+      .evaluate((el) => getComputedStyle(el).opacity)
+    expect(Number(c7Opacity)).toBeGreaterThan(0.9)
+
+    await page.getByTestId('nav-rezultate').click()
+    await page.waitForTimeout(700)
+    await page.getByTestId('chart-ch08-table6-dil').scrollIntoViewIfNeeded()
+    await expect(page.getByTestId('chapter-rezultate-charts')).toBeVisible()
+    await expect(page.getByTestId('chart-ch08-table6-dil')).toBeVisible()
+    await expect(page.getByTestId('chart-ch08-table6-dil')).toContainText(
+      /Nürburgring/i,
+    )
+    const c8Opacity = await page
+      .getByTestId('chart-ch08-table6-dil')
+      .evaluate((el) => getComputedStyle(el).opacity)
+    expect(Number(c8Opacity)).toBeGreaterThan(0.9)
+    await expect(
+      page.locator('[data-testid="chart-ch08-table6-dil"] svg'),
+    ).toBeVisible()
+
+    expect(errors, errors.join('\n')).toEqual([])
+  })
 })

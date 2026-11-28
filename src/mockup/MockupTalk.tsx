@@ -56,15 +56,18 @@ export function MockupTalk() {
 
     let revealObserver: IntersectionObserver | undefined
     if (!reduced) {
+      // threshold 0: any visible pixel reveals. A tall Cap 08 title+charts
+      // wrapper previously used 0.18 and never crossed that ratio in-viewport.
       revealObserver = new IntersectionObserver(
         (entries) => {
           entries.forEach((entry) => {
-            if (entry.isIntersecting) {
+            if (entry.isIntersecting || entry.intersectionRatio > 0) {
               entry.target.classList.add('is-revealed')
+              revealObserver?.unobserve(entry.target)
             }
           })
         },
-        { threshold: 0.18, rootMargin: '0px 0px -8% 0px' },
+        { threshold: [0, 0.01, 0.1], rootMargin: '0px 0px -4% 0px' },
       )
       root.querySelectorAll('.chapter-reveal').forEach((el) => {
         revealObserver!.observe(el)
@@ -83,9 +86,14 @@ export function MockupTalk() {
   }, [])
 
   const onSelect = useCallback((id: string) => {
-    document
-      .getElementById(`chapter-${id}`)
-      ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    const section = document.getElementById(`chapter-${id}`)
+    if (!section) return
+    // Nav jumps land on full-bleed media; force-reveal body so Cap 07/08
+    // never sit as an invisible black void under the banner.
+    section.querySelectorAll('.chapter-reveal').forEach((el) => {
+      el.classList.add('is-revealed')
+    })
+    section.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }, [])
 
   const onExplore = useCallback(() => {
