@@ -204,3 +204,32 @@ input[type="range"].aero-range::-moz-range-thumb {
   background: rgb(0 89 73 / 0.45);
   color: #f2f0ea;
 }
+
+/* Cap 09 — Valhalla 2.5D wheel spin + flow */
+@keyframes valhalla-wheel-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.valhalla-wheel {
+  animation: valhalla-wheel-spin linear infinite;
+  will-change: transform;
+}
+
+@keyframes valhalla-flow-dash {
+  to {
+    stroke-dashoffset: -64;
+  }
+}
+
+.valhalla-flow {
+  animation: valhalla-flow-dash 2.8s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .valhalla-wheel,
+  .valhalla-flow {
+    animation: none;
+  }
+}

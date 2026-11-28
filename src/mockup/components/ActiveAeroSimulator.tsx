@@ -11,10 +11,10 @@ import { aeroPhysics } from '@/math/aeroPhysics'
 import { useAeroStore } from '@/store/aeroStore'
 import type { AeroMode } from '@/types/aero'
 import {
-  EDUCATIONAL_DISCLAIMER,
   educationalIndices,
   scheduleAoaPoints,
 } from '../lib/educationalAero'
+import { Valhalla25D } from './Valhalla25D'
 
 const PROGRAMS: { id: AeroMode; label: string; hint: string }[] = [
   {
@@ -282,10 +282,11 @@ export function ActiveAeroSimulator() {
 
         {/* Visual + chart */}
         <div className="space-y-6">
-          <SimulatorVisual
+          <Valhalla25D
             aoaDeg={aoaDegEffective}
             splitter={splitter}
             mode={mode}
+            speedKmh={speedKmh}
             dragIndex={edu.dragIndex}
             frontDfIndex={edu.frontDfIndex}
             rearDfIndex={edu.rearDfIndex}
@@ -300,179 +301,6 @@ export function ActiveAeroSimulator() {
           />
         </div>
       </div>
-    </div>
-  )
-}
-
-function SimulatorVisual({
-  aoaDeg,
-  splitter,
-  mode,
-  dragIndex,
-  frontDfIndex,
-  rearDfIndex,
-}: {
-  aoaDeg: number
-  splitter: string
-  mode: AeroMode
-  dragIndex: number
-  frontDfIndex: number
-  rearDfIndex: number
-}) {
-  const wingRot = -aoaDeg // nose-up wing for positive AOA (side view, left=front)
-  const dragLen = 28 + dragIndex * 70
-  const fDfLen = 20 + frontDfIndex * 55
-  const rDfLen = 20 + rearDfIndex * 55
-
-  return (
-    <div
-      className="relative overflow-hidden border border-aero-ivory/8 bg-gradient-to-br from-aero-ink to-aero-void p-4 md:p-5"
-      data-testid="sim-visual"
-    >
-      <p className="font-ui mb-3 text-[10px] tracking-[0.55px] text-aero-mist/45 uppercase">
-        Feedback vizual · {mode} · splitter {splitter}
-      </p>
-      <svg
-        viewBox="0 0 520 220"
-        className="h-auto w-full"
-        role="img"
-        aria-label={`Aripa AOA ${aoaDeg.toFixed(1)} grade, splitter ${splitter}`}
-      >
-        <defs>
-          <linearGradient id="sim-road" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#0b0e14" />
-            <stop offset="100%" stopColor="#05070a" />
-          </linearGradient>
-        </defs>
-        <rect width="520" height="220" fill="url(#sim-road)" />
-        <line
-          x1="24"
-          y1="168"
-          x2="496"
-          y2="168"
-          stroke="rgba(248,247,244,0.12)"
-          strokeWidth="1"
-        />
-
-        {/* Body silhouette */}
-        <g transform="translate(70,78)" fill="none" stroke="#f8f7f4" strokeWidth="1.4">
-          <path
-            d="M20 70 C40 40 90 28 160 26 C230 24 300 30 360 48 C390 58 400 72 395 82 L40 86 C28 86 18 80 20 70 Z"
-            fill="rgba(0,102,94,0.18)"
-          />
-          <circle cx="110" cy="88" r="18" fill="#05070a" stroke="#8b929a" />
-          <circle cx="320" cy="88" r="18" fill="#05070a" stroke="#8b929a" />
-          {/* Splitter */}
-          <path
-            d={
-              splitter === 'OPEN'
-                ? 'M28 78 L8 86 L28 86 Z'
-                : 'M32 80 L18 84 L32 84 Z'
-            }
-            fill={splitter === 'OPEN' ? '#c4df00' : 'rgba(248,247,244,0.35)'}
-            stroke="none"
-          />
-          {/* Rear wing */}
-          <g transform={`translate(355,38) rotate(${wingRot})`}>
-            <rect
-              x="-28"
-              y="-3"
-              width="56"
-              height="6"
-              rx="1"
-              fill="#c4df00"
-              opacity="0.9"
-            />
-            <line
-              x1="0"
-              y1="3"
-              x2="0"
-              y2="22"
-              stroke="#8b929a"
-              strokeWidth="1.5"
-            />
-          </g>
-        </g>
-
-        {/* Educational force arrows */}
-        <g strokeLinecap="round">
-          {/* Drag → */}
-          <line
-            x1="260"
-            y1="118"
-            x2={260 + dragLen}
-            y2="118"
-            stroke="#e8e4dc"
-            strokeWidth="2"
-            opacity="0.85"
-          />
-          <polygon
-            points={`${260 + dragLen},118 ${260 + dragLen - 8},113 ${260 + dragLen - 8},123`}
-            fill="#e8e4dc"
-          />
-          <text
-            x={260 + dragLen / 2}
-            y="108"
-            fill="#8b929a"
-            fontSize="9"
-            fontFamily="AstonMartinSans, sans-serif"
-            textAnchor="middle"
-          >
-            drag idx
-          </text>
-          {/* Front DF ↓ */}
-          <line
-            x1="180"
-            y1="150"
-            x2="180"
-            y2={150 + fDfLen * 0.55}
-            stroke="#00665e"
-            strokeWidth="2"
-          />
-          <text
-            x="180"
-            y={150 + fDfLen * 0.55 + 12}
-            fill="#8b929a"
-            fontSize="9"
-            fontFamily="AstonMartinSans, sans-serif"
-            textAnchor="middle"
-          >
-            F-DF
-          </text>
-          {/* Rear DF ↓ */}
-          <line
-            x1="400"
-            y1="150"
-            x2="400"
-            y2={150 + rDfLen * 0.55}
-            stroke="#c4df00"
-            strokeWidth="2"
-          />
-          <text
-            x="400"
-            y={150 + rDfLen * 0.55 + 12}
-            fill="#8b929a"
-            fontSize="9"
-            fontFamily="AstonMartinSans, sans-serif"
-            textAnchor="middle"
-          >
-            R-DF
-          </text>
-        </g>
-
-        <text
-          x="24"
-          y="28"
-          fill="#c4df00"
-          fontSize="12"
-          fontFamily="AstonMartinFlare, sans-serif"
-        >
-          AOA {aoaDeg.toFixed(1)}°
-        </text>
-      </svg>
-      <p className="font-ui mt-2 text-[9px] tracking-[0.35px] text-aero-mist/40">
-        {EDUCATIONAL_DISCLAIMER}
-      </p>
     </div>
   )
 }
