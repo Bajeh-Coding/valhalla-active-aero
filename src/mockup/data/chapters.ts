@@ -101,11 +101,11 @@ export const MOCK_CHAPTERS: readonly MockChapter[] = [
     headline:
       'Sisteme Integrate de Aerodinamică Activă și Control Mecatronic pe Hypercar-ul Aston Martin Valhalla',
     bullets: [
-      'Subtitlu: De la simulări multicorp (14 DOF) și optimizare AI (PI-ROM) la modelul de serie PHEV 1,079 PS',
-      'Autori & Afiliere: Departamentul de Inginerie Mecanică și Aerospațială (Politecnico di Torino) & Aston Martin Lagonda Ltd.',
-      'Pilon: Depășirea limitei de aderență a anvelopelor fără masă inerțială adăugată.',
-      'Pilon: Control mecatronic în 3 stări: DRS, Aerobrake și MaxP Aero-Balance.',
-      'Pilon: Predicție aerodinamică sub-milisecundă (< 0.1 ms) prin Rețele Neuronale (PI-ROM).',
+      'De la simulări multicorp (14 DOF) și optimizare AI (PI-ROM) la modelul de serie PHEV 1,079 PS.',
+      'Politecnico di Torino — Inginerie Mecanică și Aerospațială, în parteneriat cu Aston Martin Lagonda Ltd.',
+      'Depășirea limitei de aderență a anvelopelor, fără masă inerțială adăugată.',
+      'Control mecatronic în trei stări: DRS, Aerobrake și MaxP Aero-Balance.',
+      'Predicție aerodinamică sub-milisecundă (< 0.1 ms) prin rețele neuronale (PI-ROM).',
     ],
     image: {
       src: '/images/am-official/am-ch01-intro.jpg',
@@ -115,13 +115,13 @@ export const MOCK_CHAPTERS: readonly MockChapter[] = [
     },
     notes: [
       {
-        text: '💬 Context (Slide 1): Sistemele de siguranță activă tradiționale (ESP, Torque Vectoring, AFS) acționează prin modularea forțelor de la pata de contact a anvelopei, dar sunt limitate de cercul de frecare al lui Kamm (Fy,max = μ * Fz).',
+        text: 'Sistemele de siguranță activă tradiționale (ESP, Torque Vectoring, AFS) modulează forțele la pata de contact a anvelopei — dar rămân limitate de cercul de frecare Kamm (Fy,max = μ * Fz).',
       },
       {
-        text: 'Aerodinamica activă oferă o cale complet nouă: mărește forța normală Fz prin generarea de apăsare aerodinamică (Downforce FL), extinzând aderența fără a adăuga masă inerțială vehiculului.',
+        text: 'Aerodinamica activă mărește forța normală Fz prin downforce (FL), extinzând aderența fără a adăuga masă inerțială.',
       },
       {
-        text: 'Această prezentare unește două dimensiuni: (1) Studiul mecatronic de bază dezvoltat în mediul VI-CarRealTime și validat pe simulatorul DIL, și (2) Aplicarea sa industrială directă pe hypercar-ul de serie Aston Martin Valhalla.',
+        text: 'Prezentarea unește studiul mecatronic din VI-CarRealTime, validat pe simulatorul DIL, cu aplicarea industrială pe Aston Martin Valhalla de serie.',
       },
     ],
   },
@@ -135,9 +135,9 @@ export const MOCK_CHAPTERS: readonly MockChapter[] = [
       'Downforce Increases Tire Grip (Fy,max = μ * Fz) Without Adding Inertial Mass',
     headline: 'Cadrul Teoretic — Fizica Aerodinamicii și Limitele Pasive',
     bullets: [
-      'Limita Fizică Pasivă: Forța laterală la anvelopă este limitată strict de aderență: Fy,max = μ * Fz. Sistemele tradiționale nu pot depăși această limită când anvelopa se saturează.',
-      'Penalizarea Energetică a Drag-ului: La viteze mari, peste 50% din energia vehiculului este consumată pentru învingerea rezistenței aerodinamice FD.',
-      'Ipoteza Regimului Cvasi-Static: Până la o frecvență de acționare de 2 Hz, tranzițiile aerodinamice sunt cvasi-statice, permițând superpoziția liniară a forțelor.',
+      'Forța laterală la anvelopă e limitată de aderență: Fy,max = μ * Fz. Sistemele tradiționale nu pot depăși această limită când anvelopa se saturează.',
+      'La viteze mari, peste 50% din energia vehiculului e consumată pentru învingerea rezistenței aerodinamice FD.',
+      'Până la 2 Hz, tranzițiile aerodinamice sunt cvasi-statice — superpoziție liniară a forțelor.',
     ],
     equations: [
       'FD = 0.5 * ρ * v² * A * CD  [N]',
@@ -153,13 +153,13 @@ export const MOCK_CHAPTERS: readonly MockChapter[] = [
     diagrams: ['kamm'],
     notes: [
       {
-        text: '💬 Context (Slide 2): Dificultatea majoră pe vehiculele pasive este compromisul dintre Drag și Downforce. Un eleron fix cu unghi mare oferă aderență în viraje, dar frânează mașina pe liniile drepte.',
+        text: 'Pe vehiculele pasive, compromisul Drag–Downforce e rigid: un eleron fix cu unghi mare oferă aderență în viraje, dar frânează pe drepte.',
       },
       {
-        text: 'Soluția este acționarea mecatronică activă: schimbarea unghiului de atac (AOA) în funcție de regimul de rulare.',
+        text: 'Soluția: acționare mecatronică activă — unghiul de atac (AOA) se schimbă după regimul de rulare.',
       },
       {
-        text: 'Validarea ipotezei cvasi-statice de până la 2 Hz este esențială deoarece confirmă că actuatorul hidraulic sau electric poate ajusta eleronul în timp real fără a declanșa desprinderi de flux turbulente imprevizibile.',
+        text: 'Validarea cvasi-statică până la 2 Hz confirmă că actuatorul hidraulic sau electric poate ajusta eleronul în timp real, fără desprinderi de flux turbulente imprevizibile.',
       },
     ],
   },
