@@ -65,6 +65,8 @@ export interface MockChapter {
   actionTitle: string
   /** Principal RO title (slide text). */
   headline: string
+  /** Optional RO subtitle under the headline (Cap 01 guide Subtitlu). */
+  subtitle?: string
   /** Synthetic bullet points from guide §1. */
   bullets: readonly string[]
   /** Optional equations / HUD lines. */
@@ -101,8 +103,9 @@ export const MOCK_CHAPTERS: readonly MockChapter[] = [
       'Optimizing Hypercar Performance via Active Aerodynamics & Mechatronic Control',
     headline:
       'Sisteme Integrate de Aerodinamică Activă și Control Mecatronic pe Hypercar-ul Aston Martin Valhalla',
-    bullets: [
+    subtitle:
       'De la simulări multicorp (14 DOF) și optimizare AI (PI-ROM) la modelul de serie PHEV 1,079 PS.',
+    bullets: [
       'Politecnico di Torino — Inginerie Mecanică și Aerospațială, în parteneriat cu Aston Martin Lagonda Ltd.',
       'Depășirea limitei de aderență a anvelopelor, fără masă inerțială adăugată.',
       'Control mecatronic în trei stări: DRS, Aerobrake și MaxP Aero-Balance.',
