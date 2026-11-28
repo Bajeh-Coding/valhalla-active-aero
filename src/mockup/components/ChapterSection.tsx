@@ -8,8 +8,12 @@ interface ChapterSectionProps {
 export function ChapterSection({ chapter }: ChapterSectionProps) {
   const n = String(chapter.number).padStart(2, '0')
   const hasNotes = Boolean(chapter.notes?.length)
+  const hasDof = Boolean(chapter.dofBreakdown?.length)
+  const hasSpecs = Boolean(chapter.specs?.rows.length)
   const titleWidth =
-    chapter.number === 1 ? 'max-w-[920px]' : 'max-w-[640px]'
+    chapter.number === 1 || chapter.number === 2
+      ? 'max-w-[920px]'
+      : 'max-w-[640px]'
 
   return (
     <section
@@ -37,6 +41,59 @@ export function ChapterSection({ chapter }: ChapterSectionProps) {
           <p className="font-ui mt-8 max-w-[640px] text-base leading-relaxed tracking-[0.55px] text-aero-mist/90 md:text-lg">
             {chapter.body}
           </p>
+
+          {hasDof ? (
+            <ul
+              className="mt-10 max-w-[640px] space-y-3 border-t border-aero-ivory/10 pt-8"
+              aria-label="Distribuție 14 DOF"
+              data-testid={`chapter-${chapter.id}-dof`}
+            >
+              {chapter.dofBreakdown!.map((item) => (
+                <li
+                  key={item.dof + item.detail}
+                  className="flex gap-4 items-baseline"
+                >
+                  <span className="font-display shrink-0 text-sm tracking-normal text-aero-lime/85">
+                    {item.dof}
+                  </span>
+                  <span className="font-ui text-sm leading-relaxed tracking-[0.55px] text-aero-mist/80">
+                    {item.detail}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          ) : null}
+
+          {hasSpecs ? (
+            <div
+              className="mt-10 max-w-[640px] border-t border-aero-ivory/10 pt-8"
+              data-testid={`chapter-${chapter.id}-specs`}
+            >
+              <p className="font-ui mb-5 text-[10px] font-medium tracking-[0.55px] text-aero-mist/45 uppercase">
+                {chapter.specs!.caption}
+              </p>
+              <table className="w-full border-collapse text-left">
+                <tbody>
+                  {chapter.specs!.rows.map((row) => (
+                    <tr
+                      key={row.parameter}
+                      className="border-b border-aero-ivory/8 last:border-b-0"
+                    >
+                      <th
+                        scope="row"
+                        className="font-ui py-2.5 pr-4 text-[12px] font-medium tracking-[0.55px] text-aero-mist/65"
+                      >
+                        {row.parameter}
+                      </th>
+                      <td className="font-display py-2.5 text-sm font-normal tracking-normal text-aero-ivory">
+                        {row.value}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : null}
 
           {hasNotes ? (
             <aside

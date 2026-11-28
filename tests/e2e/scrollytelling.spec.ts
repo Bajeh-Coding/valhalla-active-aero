@@ -61,7 +61,7 @@ test.describe('Mockup 10 capitole E2E', () => {
     expect(errors, errors.join('\n')).toEqual([])
   })
 
-  test('renders Cap 01 content and remaining placeholders', async ({
+  test('renders Cap 01–02 content and remaining placeholders', async ({
     page,
   }) => {
     const errors = await attachErrorTrap(page)
@@ -80,8 +80,42 @@ test.describe('Mockup 10 capitole E2E', () => {
     await expect(page.getByTestId('chapter-introducere-notes')).toContainText(
       /Aston Martin Vantage 2019/i,
     )
+    await expect(intro).not.toContainText(/14 DOF/i)
 
-    for (const id of CHAPTER_IDS.slice(1)) {
+    const modelare = page.getByTestId('chapter-problema')
+    await modelare.scrollIntoViewIfNeeded()
+    await expect(modelare).toBeVisible()
+    await expect(modelare).toContainText(
+      /Modelarea Dinamică Multicorp \(14 DOF\)/i,
+    )
+    await expect(modelare).toContainText(/VI-CarRealTime/i)
+    await expect(page.getByTestId('chapter-problema-dof')).toContainText(
+      /6 DOF/i,
+    )
+    await expect(page.getByTestId('chapter-problema-dof')).toContainText(
+      /4 DOF/i,
+    )
+    await expect(page.getByTestId('chapter-problema-specs')).toContainText(
+      /2050 kg/i,
+    )
+    await expect(page.getByTestId('chapter-problema-specs')).toContainText(
+      /1257 kW/i,
+    )
+    await expect(page.getByTestId('chapter-problema-specs')).toContainText(
+      /2691 mm/i,
+    )
+    await expect(page.getByTestId('chapter-problema-specs')).toContainText(
+      /2\.1 m²/i,
+    )
+    await expect(page.getByTestId('chapter-problema-notes')).toContainText(
+      /p\.2 — Vehicle Model/i,
+    )
+    await expect(page.getByTestId('chapter-problema-notes')).toContainText(
+      /p\.3 — Table 1/i,
+    )
+    await expect(page.getByTestId('nav-problema')).toContainText(/Modelare/i)
+
+    for (const id of CHAPTER_IDS.slice(2)) {
       const section = page.getByTestId(`chapter-${id}`)
       await section.scrollIntoViewIfNeeded()
       await expect(section).toBeVisible()
