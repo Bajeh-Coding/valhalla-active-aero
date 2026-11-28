@@ -61,7 +61,7 @@ test.describe('Mockup 10 capitole E2E', () => {
     expect(errors, errors.join('\n')).toEqual([])
   })
 
-  test('renders Cap 01–03 content and remaining placeholders', async ({
+  test('renders Cap 01–04 content and remaining placeholders', async ({
     page,
   }) => {
     const errors = await attachErrorTrap(page)
@@ -132,11 +132,38 @@ test.describe('Mockup 10 capitole E2E', () => {
       /pp\.4–6/i,
     )
 
-    const placeholderIds = CHAPTER_IDS.filter(
-      (id) =>
-        id !== 'introducere' && id !== 'problema' && id !== 'fundamente',
+    const mec = page.getByTestId('chapter-mecanisme')
+    await mec.scrollIntoViewIfNeeded()
+    await expect(mec).toBeVisible()
+    await expect(mec).toContainText(
+      /Optimizarea Traiectoriei & Performanța pe Tur/i,
     )
-    for (const id of placeholderIds) {
+    await expect(mec).toContainText(/−2\.55s Nürburgring GP/)
+    await expect(mec).toContainText(/VI-Grade DIL/)
+    await expect(page.getByTestId('chapter-mecanisme-notes')).toContainText(
+      /SAE 2020-36-0079 Table 6/i,
+    )
+    await expect(page.getByTestId('chapter-mecanisme-notes')).toContainText(
+      /131\.61s/,
+    )
+    await expect(page.getByTestId('chapter-mecanisme-notes')).toContainText(
+      /129\.06s/,
+    )
+    await expect(page.getByTestId('chapter-mecanisme-notes')).toContainText(
+      /Trajectory Optimization — Pieter de Buck \(URL\)/,
+    )
+    await expect(page.getByTestId('chapter-mecanisme-notes')).toContainText(
+      /OpenMDAO, Dymos, IPOPT/,
+    )
+
+    const authored = new Set([
+      'introducere',
+      'problema',
+      'fundamente',
+      'mecanisme',
+    ])
+    for (const id of CHAPTER_IDS) {
+      if (authored.has(id)) continue
       const section = page.getByTestId(`chapter-${id}`)
       await section.scrollIntoViewIfNeeded()
       await expect(section).toBeVisible()

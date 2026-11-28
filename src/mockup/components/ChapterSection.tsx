@@ -12,7 +12,10 @@ export function ChapterSection({ chapter }: ChapterSectionProps) {
   const hasSpecs = Boolean(chapter.specs?.rows.length)
   const hasModes = Boolean(chapter.modes?.length)
   const titleWidth =
-    chapter.number === 1 || chapter.number === 2 || chapter.number === 3
+    chapter.number === 1 ||
+    chapter.number === 2 ||
+    chapter.number === 3 ||
+    chapter.number === 4
       ? 'max-w-[920px]'
       : 'max-w-[640px]'
 

@@ -1,5 +1,5 @@
 /**
- * Presentation chapter shell — Cap 01–03 have authored content; others remain placeholders.
+ * Presentation chapter shell — Cap 01–04 have authored content; others remain placeholders.
  * Imagery: official Aston Martin Valhalla page assets (downloaded, not hotlinked).
  */
 
@@ -175,15 +175,24 @@ export const MOCK_CHAPTERS: readonly MockChapter[] = [
     id: 'mecanisme',
     number: 4,
     label: 'Mecanisme',
-    kicker: 'Capitol 04 — placeholder',
-    headline: 'Cum se mișcă aerul',
-    body: 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum. Capitol 04 — placeholder pentru mecanisme; diagrama va veni mai târziu.',
+    kicker: 'Capitol 04',
+    headline:
+      'Optimizarea Traiectoriei & Performanța pe Tur (−2.55s Nürburgring GP)',
+    body: 'Reducerea timpului pe tur cu −2.55 secunde pentru pilotul uman pe simulatorul profesional VI-Grade DIL pe circuitul Nürburgring GP.',
     image: {
       src: '/images/am-official/am-ch04-mecanisme.jpg',
       objectPosition: '50% 45%',
       sourceUrl:
         'https://www.astonmartin.com/-/media/models---valhalla-2026-relaunch/driver-tile.jpg',
     },
+    notes: [
+      {
+        text: 'SAE 2020-36-0079 Table 6 (pp.6–7): Passive New 131.61s → ACTIVE MaxP 129.06s (human DIL) → delta −2.55s.',
+      },
+      {
+        text: 'Trajectory Optimization — Pieter de Buck (URL) — NLP formulation using OpenMDAO, Dymos, IPOPT for ideal line + AOA/torque vectoring optimization.',
+      },
+    ],
   },
   {
     id: 'control',
