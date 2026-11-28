@@ -61,11 +61,27 @@ test.describe('Mockup 10 capitole E2E', () => {
     expect(errors, errors.join('\n')).toEqual([])
   })
 
-  test('renders exactly 10 chapters with placeholders', async ({ page }) => {
+  test('renders Cap 01 content and remaining placeholders', async ({
+    page,
+  }) => {
     const errors = await attachErrorTrap(page)
     await gotoApp(page)
 
-    for (const id of CHAPTER_IDS) {
+    const intro = page.getByTestId('chapter-introducere')
+    await intro.scrollIntoViewIfNeeded()
+    await expect(intro).toBeVisible()
+    await expect(intro).toContainText(
+      /Aston Martin Valhalla — Active Aerodynamics & Mechatronic Control/i,
+    )
+    await expect(intro).toContainText(/Aston Martin Vantage/i)
+    await expect(page.getByTestId('chapter-introducere-notes')).toContainText(
+      /SAE Technical Paper 2020-36-0079/i,
+    )
+    await expect(page.getByTestId('chapter-introducere-notes')).toContainText(
+      /Aston Martin Vantage 2019/i,
+    )
+
+    for (const id of CHAPTER_IDS.slice(1)) {
       const section = page.getByTestId(`chapter-${id}`)
       await section.scrollIntoViewIfNeeded()
       await expect(section).toBeVisible()

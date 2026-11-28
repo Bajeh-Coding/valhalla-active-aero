@@ -1,7 +1,14 @@
 /**
- * Mockup-only chapter shell — placeholders, no scientific claims.
+ * Presentation chapter shell — Cap 01 has authored content; others remain placeholders.
  * Imagery: official Aston Martin Valhalla page assets (downloaded, not hotlinked).
  */
+
+export interface MockChapterNote {
+  /** Visible citation / footnote line (luxury caption style). */
+  text: string
+  /** Optional emphasis quote nested under the note. */
+  quote?: string
+}
 
 export interface MockChapter {
   id: string
@@ -11,6 +18,8 @@ export interface MockChapter {
   headline: string
   body: string
   image: { src: string; objectPosition?: string; sourceUrl: string }
+  /** Optional discreet footnotes — Cap 01 SAE citations. */
+  notes?: readonly MockChapterNote[]
 }
 
 export const MOCK_CHAPTERS: readonly MockChapter[] = [
@@ -18,15 +27,26 @@ export const MOCK_CHAPTERS: readonly MockChapter[] = [
     id: 'introducere',
     number: 1,
     label: 'Introducere',
-    kicker: 'Capitol 01 — placeholder',
-    headline: 'Cadru și intenție',
-    body: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Placeholder pentru introducerea tematică — fără conținut științific real. Vestibulum ante ipsum primis in faucibus orci luctus.',
+    kicker: 'Capitol 01',
+    headline:
+      'Aston Martin Valhalla — Active Aerodynamics & Mechatronic Control',
+    body: 'Dezvoltarea integrată a pachetului aerodinamic activ și control mecatronic pe caroseria de referință Aston Martin Vantage (4WD Electric Hypercar).',
     image: {
       src: '/images/am-official/am-ch01-intro.jpg',
       objectPosition: '50% 40%',
       sourceUrl:
         'https://www.astonmartin.com/-/media/models---valhalla-2026-relaunch/exterior-banner.jpg',
     },
+    notes: [
+      {
+        text: 'SAE Technical Paper 2020-36-0079 — Integrated Design and Control of Active Aerodynamic Features for High Performance Electric Vehicles (Henrique de Carvalho Pinheiro, Alessandro Ferraris, Alessandro Messana, Massimiliana Carello, Davide De Cupis, Lorenzo Sisca, Andrea Giancarlo Airale).',
+      },
+      {
+        text: 'SAE 2020-36-0079, p.3 — Baseline Aerodynamic and Surfaces Design / Fig.3:',
+        quote:
+          'From the aerodynamic point of view, the reference vehicle body shape selected for this paper is the Aston Martin Vantage 2019...',
+      },
+    ],
   },
   {
     id: 'problema',
