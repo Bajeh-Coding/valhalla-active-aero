@@ -1,5 +1,5 @@
 /**
- * Presentation chapter shell — Cap 01–05 have authored content; others remain placeholders.
+ * Presentation chapter shell — Cap 01–06 have authored content; others remain placeholders.
  * Imagery: official Aston Martin Valhalla page assets (downloaded, not hotlinked).
  */
 
@@ -39,7 +39,7 @@ export interface MockChapter {
   headline: string
   body: string
   image: { src: string; objectPosition?: string; sourceUrl: string }
-  /** Optional discreet footnotes — SAE citations. */
+  /** Optional discreet footnotes — SAE / Gao / Subramanian citations. */
   notes?: readonly MockChapterNote[]
   /** Optional 14 DOF breakdown (Cap 02). */
   dofBreakdown?: readonly MockChapterDofItem[]
@@ -219,16 +219,24 @@ export const MOCK_CHAPTERS: readonly MockChapter[] = [
   {
     id: 'regimuri',
     number: 6,
-    label: 'Regimuri',
-    kicker: 'Capitol 06 — placeholder',
-    headline: 'Stări și tranziții',
-    body: 'Sunt in culpa qui officia deserunt mollit anim id est laborum. Capitol 06 — placeholder pentru regimuri de operare.',
+    label: 'Cadrul teoretic',
+    kicker: 'Capitol 06',
+    headline: 'Cadrul Teoretic General (Frecare & Saturație Anvelope)',
+    body: 'Limitele sistemelor pasive/tradiționale cauzate de saturația cercului de frecare Kamm (Fy,max = μ FZ).',
     image: {
       src: '/images/am-official/am-ch06-regimuri.jpg',
       objectPosition: '50% 40%',
       sourceUrl:
         'https://www.astonmartin.com/-/media/models---valhalla-2026-relaunch/valhalla-explore-tile-3.jpg',
     },
+    notes: [
+      {
+        text: 'Wei Gao et al., 2021 — Journal of Physics; 1fbd01b59b71746ed236baedf6ea44c4.pdf.',
+      },
+      {
+        text: 'pp.1–2 Intro & 2.1 Fuel consumption: tire physical limit; aerodynamic downforce (FL) extends adhesion limit without added mass.',
+      },
+    ],
   },
   {
     id: 'studiu-de-caz',
