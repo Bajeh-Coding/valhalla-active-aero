@@ -12,6 +12,34 @@ const LIME = '#c4df00'
 const ZERO = 'rgb(232 228 220 / 0.28)'
 const FONT = 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace'
 
+/** Cap 05 mode rows — guide facts only (Bajeh pick: Variant A mode cards). */
+const MODE_ROWS = [
+  {
+    id: 'drs',
+    title: 'DRS',
+    sub: 'Low Drag',
+    hardware: 'AOA 0° · Splitter DESCHIS',
+    trigger: 'v > 110 km/h · accel > 70% · |ay| < 1g',
+    effect: 'CD = 0.31 · 0–300 în 10.650s',
+  },
+  {
+    id: 'aerobrake',
+    title: 'AEROBRAKE',
+    sub: 'Frânare',
+    hardware: 'AOA 19°–25° · Splitter ÎNCHIS',
+    trigger: 'v > 70 km/h · frână > 40% · |ay| < 1g',
+    effect: 'Decelerație + downforce spate',
+  },
+  {
+    id: 'maxp',
+    title: 'MAXP',
+    sub: 'Cornering',
+    hardware: 'AOA 0°–4.5° dinamic · Splitter ÎNCHIS',
+    trigger: 'Viraj stabil · 100–300 km/h · CoP↔CoG',
+    effect: 'Aero-balance · max ay',
+  },
+] as const
+
 /** Cap 02 — Cercul de frecare Kamm extins de FL (Slide 2). */
 export function KammCircleDiagram() {
   const W = 720
@@ -341,95 +369,85 @@ export function Dof14Diagram() {
   )
 }
 
-/** Cap 05 — Diagrama de stări a controllerului. */
+/**
+ * Cap 05 — Diagrama de stări.
+ * Locked to Variant A (horizontal mode cards) per Bajeh pick — no A/B/C toggle.
+ */
 export function StateMachineDiagram() {
   return (
     <figure
-      className="mt-10 max-w-[920px] border-t border-aero-ivory/10 pt-8"
+      className="state-diagram mt-10 max-w-[1000px] border-t border-aero-ivory/10 pt-8"
       data-testid="diagram-state-machine"
+      data-variant="cards"
     >
       <figcaption className="font-ui mb-5 text-[10px] font-medium tracking-[0.55px] text-aero-mist/45 uppercase">
         Diagramă stări — controller mecatronic (MATLAB/Simulink)
       </figcaption>
-      <svg
-        viewBox="0 0 720 220"
-        className="w-full"
+      <div
+        className="state-var-cards overflow-hidden bg-aero-ink/80"
+        data-testid="diagram-state-variant-view-A"
         role="img"
-        aria-label="State machine: DRS, Aerobrake, MaxP pe baza semnalelor CAN"
+        aria-label="State machine: carduri orizontale DRS, Aerobrake, MaxP din CAN-bus"
       >
-        <rect width="720" height="220" fill="#0B0E14" rx="2" />
-        {/* Input */}
-        <rect x="20" y="80" width="120" height="60" fill="none" stroke="#8A9099" strokeWidth="1.25" rx="2" />
-        <text x="80" y="105" textAnchor="middle" fill="#8A9099" fontSize="10" fontFamily="ui-monospace, monospace">
-          CAN-bus
-        </text>
-        <text x="80" y="122" textAnchor="middle" fill="#F5F2EA" fontSize="10" fontFamily="ui-monospace, monospace">
-          v · pedale · G
-        </text>
-        <line x1="140" y1="110" x2="190" y2="110" stroke="#005949" strokeWidth="1.5" markerEnd="url(#arrow)" />
-
-        {/* Modes */}
-        {[
-          { x: 200, label: 'DRS', sub: 'Low Drag', y: 30 },
-          { x: 380, label: 'AEROBRAKE', sub: 'Frânare', y: 30 },
-          { x: 560, label: 'MAXP', sub: 'Cornering', y: 30 },
-        ].map((m) => (
-          <g key={m.label}>
-            <rect
-              x={m.x}
-              y={m.y}
-              width="140"
-              height="70"
-              fill="none"
-              stroke="#005949"
-              strokeWidth="2"
-              rx="2"
+        <div className="flex flex-col gap-0 border border-aero-ivory/8 md:flex-row md:items-stretch">
+          <div className="flex shrink-0 flex-col justify-center border-b border-aero-ivory/8 px-5 py-6 md:w-[148px] md:border-r md:border-b-0">
+            <p className="font-ui text-[9px] font-medium tracking-[0.6px] text-aero-mist/45 uppercase">
+              Intrare
+            </p>
+            <p className="font-display mt-2 text-base tracking-normal text-aero-ivory">
+              CAN-bus
+            </p>
+            <p className="font-ui mt-2 text-[11px] leading-relaxed tracking-[0.35px] text-aero-mist/70">
+              v · pedale · G
+            </p>
+            <div
+              className="mt-4 hidden h-px w-10 bg-aero-amr md:block"
+              aria-hidden
             />
-            <text
-              x={m.x + 70}
-              y={m.y + 30}
-              textAnchor="middle"
-              fill="#F5F2EA"
-              fontSize="13"
-              fontFamily="ui-monospace, monospace"
-            >
-              {m.label}
-            </text>
-            <text
-              x={m.x + 70}
-              y={m.y + 50}
-              textAnchor="middle"
-              fill="#8A9099"
-              fontSize="11"
-              fontFamily="ui-monospace, monospace"
-            >
-              {m.sub}
-            </text>
-          </g>
-        ))}
+          </div>
 
-        {/* Mutual transitions hint */}
-        <text
-          x="360"
-          y="150"
-          textAnchor="middle"
-          fill="#8A9099"
-          fontSize="11"
-          fontFamily="ui-monospace, monospace"
-        >
-          comutare automată pe praguri viteză / accelerație / frână / ay
-        </text>
-        <text
-          x="360"
-          y="180"
-          textAnchor="middle"
-          fill="#005949"
-          fontSize="11"
-          fontFamily="ui-monospace, monospace"
-        >
-          AOA eleron + splitter binar
-        </text>
-      </svg>
+          <div className="grid flex-1 md:grid-cols-3">
+            {MODE_ROWS.map((m, i) => (
+              <div
+                key={m.id}
+                className={`state-var-card relative px-5 py-6 ${
+                  i < MODE_ROWS.length - 1
+                    ? 'border-b border-aero-ivory/8 md:border-r md:border-b-0'
+                    : ''
+                }`}
+                style={{ animationDelay: `${i * 80}ms` }}
+              >
+                <div className="flex items-baseline justify-between gap-2">
+                  <p className="font-display text-xl tracking-normal text-aero-ivory">
+                    {m.title}
+                  </p>
+                  <span className="font-ui text-[9px] tracking-[0.55px] text-aero-amr uppercase">
+                    {m.sub}
+                  </span>
+                </div>
+                <p className="font-ui mt-4 text-[10px] font-medium tracking-[0.55px] text-aero-mist/40 uppercase">
+                  Hardware
+                </p>
+                <p className="font-ui mt-1 text-[12px] leading-snug tracking-[0.3px] text-aero-mist/85">
+                  {m.hardware}
+                </p>
+                <p className="font-ui mt-3 text-[10px] font-medium tracking-[0.55px] text-aero-mist/40 uppercase">
+                  Activare
+                </p>
+                <p className="font-ui mt-1 text-[12px] leading-snug tracking-[0.3px] text-aero-mist/85">
+                  {m.trigger}
+                </p>
+                <p className="font-ui mt-4 border-t border-aero-amr/30 pt-3 text-[12px] leading-snug tracking-[0.3px] text-aero-signal/90">
+                  {m.effect}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+        <p className="font-ui mt-3 px-1 text-[11px] tracking-[0.35px] text-aero-mist/50">
+          Comutare automată · AOA eleron + splitter binar
+        </p>
+      </div>
     </figure>
   )
 }

@@ -205,7 +205,43 @@ input[type="range"].aero-range::-moz-range-thumb {
   color: #f2f0ea;
 }
 
+/* Cap 01 — electric neon subtitle (not Aston Racing #005949) */
+.chapter-subtitle--neon {
+  color: #39ff14;
+  text-shadow:
+    0 0 8px rgb(57 255 20 / 0.55),
+    0 0 22px rgb(57 255 20 / 0.28);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chapter-subtitle--neon {
+    text-shadow: 0 0 6px rgb(57 255 20 / 0.35);
+  }
+}
+
 /* Cap 09 — Valhalla 3D stage shell */
 .valhalla-stage {
   background: #05070a;
+}
+
+/* Cap 05 — state diagram (Variant A mode cards) */
+@keyframes state-var-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.state-var-card {
+  animation: state-var-in 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .state-var-card {
+    animation: none;
+  }
 }

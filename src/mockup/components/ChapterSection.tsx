@@ -10,7 +10,6 @@ interface ChapterSectionProps {
 
 export function ChapterSection({ chapter }: ChapterSectionProps) {
   const n = String(chapter.number).padStart(2, '0')
-  const hasNotes = Boolean(chapter.notes?.length)
   const hasDof = Boolean(chapter.dofBreakdown?.length)
   const hasSpecs = Boolean(chapter.specs?.rows.length)
   const hasModeColumns = Boolean(chapter.modeColumns?.length)
@@ -47,6 +46,14 @@ export function ChapterSection({ chapter }: ChapterSectionProps) {
           <h2 className="font-display mt-3 text-[clamp(1.75rem,3.8vw,3rem)] leading-[1.15] font-normal tracking-normal text-aero-ivory">
             {chapter.headline}
           </h2>
+          {chapter.subtitle ? (
+            <p
+              className="chapter-subtitle chapter-subtitle--neon font-ui mt-4 max-w-[720px] text-base leading-snug tracking-[0.35px] md:text-lg"
+              data-testid={`chapter-${chapter.id}-subtitle`}
+            >
+              {chapter.subtitle}
+            </p>
+          ) : null}
           <p className="font-ui mt-3 max-w-[720px] text-[13px] font-medium leading-snug tracking-[0.35px] text-aero-amr/90 md:text-sm">
             {chapter.actionTitle}
           </p>
@@ -297,66 +304,7 @@ export function ChapterSection({ chapter }: ChapterSectionProps) {
         {hasSimulator ? (
           <div className="chapter-reveal is-revealed">
             <ActiveAeroSimulator />
-            {hasNotes ? (
-              <aside
-                className="mt-12 max-w-[720px] border-t border-aero-ivory/10 pt-6"
-                aria-label="Note prezentator"
-                data-testid={`chapter-${chapter.id}-notes`}
-              >
-                <p className="font-ui mb-4 text-[10px] font-medium tracking-[0.55px] text-aero-mist/45 uppercase">
-                  Note prezentator
-                </p>
-                <ol className="space-y-4">
-                  {chapter.notes!.map((note, i) => (
-                    <li key={i} className="flex gap-3">
-                      <span className="font-ui shrink-0 text-[10px] tracking-[0.2em] text-aero-mist/40">
-                        {String(i + 1).padStart(2, '0')}
-                      </span>
-                      <div className="min-w-0">
-                        <p className="font-ui text-[11px] leading-relaxed tracking-[0.35px] text-aero-mist/55">
-                          {note.text}
-                        </p>
-                        {note.quote ? (
-                          <blockquote className="font-ui mt-2 border-l border-aero-amr/50 pl-3 text-[11px] leading-relaxed tracking-[0.35px] text-aero-mist/70 italic">
-                            &ldquo;{note.quote}&rdquo;
-                          </blockquote>
-                        ) : null}
-                      </div>
-                    </li>
-                  ))}
-                </ol>
-              </aside>
-            ) : null}
           </div>
-        ) : hasNotes ? (
-          <aside
-            className="chapter-reveal mt-12 max-w-[720px] border-t border-aero-ivory/10 pt-6"
-            aria-label="Note prezentator"
-            data-testid={`chapter-${chapter.id}-notes`}
-          >
-            <p className="font-ui mb-4 text-[10px] font-medium tracking-[0.55px] text-aero-mist/45 uppercase">
-              Note prezentator
-            </p>
-            <ol className="space-y-4">
-              {chapter.notes!.map((note, i) => (
-                <li key={i} className="flex gap-3">
-                  <span className="font-ui shrink-0 text-[10px] tracking-[0.2em] text-aero-mist/40">
-                    {String(i + 1).padStart(2, '0')}
-                  </span>
-                  <div className="min-w-0">
-                    <p className="font-ui text-[11px] leading-relaxed tracking-[0.35px] text-aero-mist/55">
-                      {note.text}
-                    </p>
-                    {note.quote ? (
-                      <blockquote className="font-ui mt-2 border-l border-aero-amr/50 pl-3 text-[11px] leading-relaxed tracking-[0.35px] text-aero-mist/70 italic">
-                        &ldquo;{note.quote}&rdquo;
-                      </blockquote>
-                    ) : null}
-                  </div>
-                </li>
-              ))}
-            </ol>
-          </aside>
         ) : null}
       </div>
     </section>
