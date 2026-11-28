@@ -28,7 +28,6 @@ const CHAPTER_IDS = [
   'nurburgring',
   'valhalla-serie',
   'pi-rom',
-  'simulator',
   'discutii',
   'concluzii',
 ] as const
@@ -71,7 +70,7 @@ test.describe('Boot splash', () => {
   })
 })
 
-test.describe('Mockup 11 capitole E2E (ghid)', () => {
+test.describe('Mockup 10 capitole E2E (ghid)', () => {
   test('boots hero without console errors', async ({ page }) => {
     const errors = await attachErrorTrap(page)
     await gotoApp(page)
@@ -92,7 +91,7 @@ test.describe('Mockup 11 capitole E2E (ghid)', () => {
     expect(errors, errors.join('\n')).toEqual([])
   })
 
-  test('renders all 11 guide chapters with required visuals', async ({
+  test('renders all 10 guide chapters with required visuals', async ({
     page,
   }) => {
     const errors = await attachErrorTrap(page)
@@ -168,6 +167,12 @@ test.describe('Mockup 11 capitole E2E (ghid)', () => {
       /10\.650s/,
     )
     await expect(page.getByTestId('diagram-state-machine')).toBeVisible()
+    await expect(page.getByTestId('diagram-state-machine')).toHaveAttribute(
+      'data-variant',
+      'cards',
+    )
+    await expect(page.getByTestId('cap05-simulator-slot')).toBeVisible()
+    await expect(page.getByTestId('active-aero-simulator')).toBeVisible()
 
     const dil = page.getByTestId('chapter-nurburgring')
     await dil.scrollIntoViewIfNeeded()
@@ -214,11 +219,6 @@ test.describe('Mockup 11 capitole E2E (ghid)', () => {
       /2\.4081/,
     )
 
-    const sim = page.getByTestId('chapter-simulator')
-    await sim.scrollIntoViewIfNeeded()
-    await expect(sim).toBeVisible()
-    await expect(page.getByTestId('active-aero-simulator')).toBeVisible()
-
     const disc = page.getByTestId('chapter-discutii')
     await disc.scrollIntoViewIfNeeded()
     await expect(disc).toBeVisible()
@@ -245,22 +245,27 @@ test.describe('Mockup 11 capitole E2E (ghid)', () => {
       await expect(section).not.toContainText(/placeholder/i)
     }
 
-    expect(CHAPTER_IDS).toHaveLength(11)
+    expect(CHAPTER_IDS).toHaveLength(10)
+    expect(page.getByTestId('chapter-simulator')).toHaveCount(0)
     expect(errors, errors.join('\n')).toEqual([])
   })
 
-  test('Cap 09 Active Aero simulator responds to mode and speed', async ({
+  test('Cap 05 Active Aero simulator responds to mode and speed', async ({
     page,
   }) => {
     const errors = await attachErrorTrap(page)
     await gotoApp(page)
 
-    await page.getByTestId('nav-simulator').click()
+    await page.getByTestId('nav-state-machine').click()
     await page.waitForTimeout(700)
-    const chapter = page.getByTestId('chapter-simulator')
+    const chapter = page.getByTestId('chapter-state-machine')
     await expect(chapter).toBeVisible()
-    await expect(chapter).toContainText(/Simulator Active Aero/i)
-    await expect(page.getByTestId('nav-simulator')).toContainText(/Simulator/i)
+    await expect(chapter).toContainText(/State Machine|Logica Mecatronică/i)
+    await expect(page.getByTestId('nav-state-machine')).toContainText(/Stări/i)
+
+    const slot = page.getByTestId('cap05-simulator-slot')
+    await slot.scrollIntoViewIfNeeded()
+    await expect(slot).toBeVisible()
 
     const sim = page.getByTestId('active-aero-simulator')
     await expect(sim).toBeVisible()
@@ -296,6 +301,10 @@ test.describe('Mockup 11 capitole E2E (ghid)', () => {
       'OPEN',
     )
 
+    await expect(page.getByTestId('diagram-state-machine')).toHaveAttribute(
+      'data-variant',
+      'cards',
+    )
     expect(errors, errors.join('\n')).toEqual([])
   })
 
@@ -323,6 +332,8 @@ test.describe('Mockup 11 capitole E2E (ghid)', () => {
     await page.waitForTimeout(700)
     await expect(page.getByTestId('chapter-state-machine-modes')).toBeVisible()
     await expect(page.getByTestId('diagram-state-machine')).toBeVisible()
+    await expect(page.getByTestId('cap05-simulator-slot')).toBeVisible()
+    await expect(page.getByTestId('active-aero-simulator')).toBeVisible()
 
     expect(errors, errors.join('\n')).toEqual([])
   })

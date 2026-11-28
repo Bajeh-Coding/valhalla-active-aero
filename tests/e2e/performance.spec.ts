@@ -79,7 +79,7 @@ test.describe('Mockup performance probe', () => {
     console.log(`PERF_JSON ${JSON.stringify(result)}`)
 
     expect(result.hasMockup).toBe(true)
-    expect(result.chapterCount).toBe(11)
+    expect(result.chapterCount).toBe(10)
     expect(result.valhallaImgCount).toBeGreaterThan(0)
     expect(result.sampleCount).toBeGreaterThan(0)
     expect(result.avgFps).toBeGreaterThan(2)

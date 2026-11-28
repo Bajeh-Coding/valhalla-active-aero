@@ -1,5 +1,5 @@
 import type { MockChapter } from '../data/chapters'
-import { ActiveAeroSimulator } from './ActiveAeroSimulator'
+import { Cap05SimulatorSlot } from './Cap05SimulatorSlot'
 import { GuideChart } from './GuideCharts'
 import { GuideDiagram } from './GuideDiagrams'
 import { ChapterMedia } from './ChapterMedia'
@@ -22,7 +22,7 @@ export function ChapterSection({ chapter }: ChapterSectionProps) {
   const hasSummary = Boolean(chapter.summary?.length)
   const hasBullets = Boolean(chapter.bullets?.length)
   const titleWidth =
-    chapter.number >= 1 && chapter.number <= 11
+    chapter.number >= 1 && chapter.number <= 10
       ? 'max-w-[920px]'
       : 'max-w-[640px]'
 
@@ -293,18 +293,15 @@ export function ChapterSection({ chapter }: ChapterSectionProps) {
           ? chapter.diagrams!.map((id) => <GuideDiagram key={id} id={id} />)
           : null}
 
+        {/* Cap 05: simulator after mode table + state-machine diagram — dedicated slot file. */}
+        {hasSimulator ? <Cap05SimulatorSlot /> : null}
+
         {hasFigure ? (
           <GuideChart
             id={chapter.figure!.chartId}
             caption={chapter.figure!.caption}
             chapterId={chapter.id}
           />
-        ) : null}
-
-        {hasSimulator ? (
-          <div className="chapter-reveal is-revealed">
-            <ActiveAeroSimulator />
-          </div>
         ) : null}
       </div>
     </section>
