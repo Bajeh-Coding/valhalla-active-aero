@@ -14,8 +14,8 @@ await mkdir(artifacts, { recursive: true })
 
 const shots = [
   { name: 'hero', scroll: null, wait: 900 },
-  { name: 'chapter-nav', scroll: 'chapter-control', wait: 700, clipNav: true },
-  { name: 'mid-chapter', scroll: 'chapter-control', wait: 700 },
+  { name: 'chapter-nav', scroll: 'chapter-state-machine', wait: 700, clipNav: true },
+  { name: 'mid-chapter', scroll: 'chapter-state-machine', wait: 700 },
 ]
 
 const server = await createServer({

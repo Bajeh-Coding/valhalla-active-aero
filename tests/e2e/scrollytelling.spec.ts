@@ -20,16 +20,17 @@ async function attachErrorTrap(page: Page) {
 }
 
 const CHAPTER_IDS = [
-  'introducere',
-  'problema',
-  'fundamente',
-  'mecanisme',
-  'control',
-  'regimuri',
-  'studiu-de-caz',
-  'rezultate',
-  'insight-uri',
-  'surse',
+  'cadru',
+  'kamm',
+  'modelare-14dof',
+  'pachet-aero',
+  'state-machine',
+  'nurburgring',
+  'valhalla-serie',
+  'pi-rom',
+  'simulator',
+  'discutii',
+  'concluzii',
 ] as const
 
 async function gotoApp(page: Page) {
@@ -40,7 +41,7 @@ async function gotoApp(page: Page) {
   await page.waitForTimeout(500)
 }
 
-test.describe('Mockup 10 capitole E2E', () => {
+test.describe('Mockup 11 capitole E2E (ghid)', () => {
   test('boots hero without console errors', async ({ page }) => {
     const errors = await attachErrorTrap(page)
     await gotoApp(page)
@@ -61,209 +62,133 @@ test.describe('Mockup 10 capitole E2E', () => {
     expect(errors, errors.join('\n')).toEqual([])
   })
 
-  test('renders all 10 authored chapters', async ({
+  test('renders all 11 guide chapters with required visuals', async ({
     page,
   }) => {
     const errors = await attachErrorTrap(page)
     await gotoApp(page)
 
-    const intro = page.getByTestId('chapter-introducere')
-    await intro.scrollIntoViewIfNeeded()
-    await expect(intro).toBeVisible()
-    await expect(intro).toContainText(
-      /Aston Martin Valhalla — Active Aerodynamics & Mechatronic Control/i,
+    const cadru = page.getByTestId('chapter-cadru')
+    await cadru.scrollIntoViewIfNeeded()
+    await expect(cadru).toBeVisible()
+    await expect(cadru).toContainText(
+      /Sisteme Integrate de Aerodinamică Activă/i,
     )
-    await expect(intro).toContainText(/Aston Martin Vantage/i)
-    await expect(page.getByTestId('chapter-introducere-notes')).toContainText(
-      /SAE Technical Paper 2020-36-0079/i,
+    await expect(cadru).toContainText(
+      /Optimizing Hypercar Performance via Active Aerodynamics/i,
     )
-    await expect(page.getByTestId('chapter-introducere-notes')).toContainText(
-      /Aston Martin Vantage 2019/i,
+    await expect(page.getByTestId('chapter-cadru-bullets')).toContainText(
+      /PI-ROM/i,
     )
-    await expect(intro).not.toContainText(/14 DOF/i)
+    await expect(page.getByTestId('chapter-cadru-notes')).toContainText(
+      /Kamm/i,
+    )
 
-    const modelare = page.getByTestId('chapter-problema')
-    await modelare.scrollIntoViewIfNeeded()
-    await expect(modelare).toBeVisible()
-    await expect(modelare).toContainText(
-      /Modelarea Dinamică Multicorp \(14 DOF\)/i,
+    const kamm = page.getByTestId('chapter-kamm')
+    await kamm.scrollIntoViewIfNeeded()
+    await expect(kamm).toBeVisible()
+    await expect(kamm).toContainText(/Fy,max = μ \* Fz/)
+    await expect(page.getByTestId('chapter-kamm-equations')).toContainText(
+      /FD = 0\.5/,
     )
-    await expect(modelare).toContainText(/VI-CarRealTime/i)
-    await expect(page.getByTestId('chapter-problema-dof')).toContainText(
+    await expect(page.getByTestId('diagram-kamm')).toBeVisible()
+
+    const dof = page.getByTestId('chapter-modelare-14dof')
+    await dof.scrollIntoViewIfNeeded()
+    await expect(dof).toBeVisible()
+    await expect(page.getByTestId('chapter-modelare-14dof-dof')).toContainText(
       /6 DOF/i,
     )
-    await expect(page.getByTestId('chapter-problema-dof')).toContainText(
-      /4 DOF/i,
-    )
-    await expect(page.getByTestId('chapter-problema-specs')).toContainText(
+    await expect(page.getByTestId('chapter-modelare-14dof-specs')).toContainText(
       /2050 kg/i,
     )
-    await expect(page.getByTestId('chapter-problema-specs')).toContainText(
+    await expect(page.getByTestId('chapter-modelare-14dof-specs')).toContainText(
       /1257 kW/i,
     )
-    await expect(page.getByTestId('chapter-problema-specs')).toContainText(
+    await expect(page.getByTestId('chapter-modelare-14dof-specs')).toContainText(
       /2691 mm/i,
     )
-    await expect(page.getByTestId('chapter-problema-specs')).toContainText(
-      /2\.1 m²/i,
+    await expect(page.getByTestId('chapter-modelare-14dof-specs')).toContainText(
+      /43% Față/i,
     )
-    await expect(page.getByTestId('chapter-problema-notes')).toContainText(
-      /p\.2 — Vehicle Model/i,
-    )
-    await expect(page.getByTestId('chapter-problema-notes')).toContainText(
-      /p\.3 — Table 1/i,
-    )
-    await expect(page.getByTestId('nav-problema')).toContainText(/Modelare/i)
+    await expect(page.getByTestId('diagram-dof14')).toBeVisible()
 
-    const fundamente = page.getByTestId('chapter-fundamente')
-    await fundamente.scrollIntoViewIfNeeded()
-    await expect(fundamente).toBeVisible()
-    await expect(fundamente).toContainText(
-      /Sistemul de Control prin Stări \(DRS, Aerobrake, MaxP\)/i,
+    const pachet = page.getByTestId('chapter-pachet-aero')
+    await pachet.scrollIntoViewIfNeeded()
+    await expect(pachet).toBeVisible()
+    await expect(pachet).toContainText(/788 N/)
+    await expect(page.getByTestId('chapter-pachet-aero-figure')).toContainText(
+      /Figura 4\.1/i,
     )
-    await expect(fundamente).toContainText(/State Machine/i)
-    await expect(page.getByTestId('chapter-fundamente-modes')).toContainText(
+    await expect(
+      pachet.locator('img[src*="/images/guide/fig-4-1"]'),
+    ).toBeVisible()
+
+    const states = page.getByTestId('chapter-state-machine')
+    await states.scrollIntoViewIfNeeded()
+    await expect(states).toBeVisible()
+    await expect(page.getByTestId('chapter-state-machine-modes')).toContainText(
       /AOA = 0°/,
     )
-    await expect(page.getByTestId('chapter-fundamente-modes')).toContainText(
-      /AOA = 4\.5°/,
+    await expect(page.getByTestId('chapter-state-machine-modes')).toContainText(
+      /10\.650s/,
     )
-    await expect(page.getByTestId('chapter-fundamente-notes')).toContainText(
-      /pp\.4–6/i,
-    )
+    await expect(page.getByTestId('diagram-state-machine')).toBeVisible()
 
-    const mec = page.getByTestId('chapter-mecanisme')
-    await mec.scrollIntoViewIfNeeded()
-    await expect(mec).toBeVisible()
-    await expect(mec).toContainText(
-      /Optimizarea Traiectoriei & Performanța pe Tur/i,
-    )
-    await expect(mec).toContainText(/−2\.55s Nürburgring GP/)
-    await expect(mec).toContainText(/VI-Grade DIL/)
-    await expect(page.getByTestId('chapter-mecanisme-notes')).toContainText(
-      /SAE 2020-36-0079 Table 6/i,
-    )
-    await expect(page.getByTestId('chapter-mecanisme-notes')).toContainText(
-      /131\.61s/,
-    )
-    await expect(page.getByTestId('chapter-mecanisme-notes')).toContainText(
-      /129\.06s/,
-    )
-    await expect(page.getByTestId('chapter-mecanisme-notes')).toContainText(
-      /Trajectory Optimization — Pieter de Buck \(URL\)/,
-    )
-    await expect(page.getByTestId('chapter-mecanisme-notes')).toContainText(
-      /OpenMDAO, Dymos, IPOPT/,
-    )
-
-    const control = page.getByTestId('chapter-control')
-    await control.scrollIntoViewIfNeeded()
-    await expect(control).toBeVisible()
-    await expect(control).toContainText(
-      /Modelul de Predicție AI în Timp Real \(PI-ROM\)/i,
-    )
-    await expect(control).toContainText(/sub 1 ms/i)
-    await expect(page.getByTestId('chapter-control-notes')).toContainText(
-      /subramanian_activeaeroROM_preprint\.pdf/i,
-    )
-    await expect(page.getByTestId('chapter-control-notes')).toContainText(
-      /0\.0906 ms/i,
-    )
-    await expect(page.getByTestId('chapter-control-notes')).toContainText(
-      /26\.58/i,
+    const dil = page.getByTestId('chapter-nurburgring')
+    await dil.scrollIntoViewIfNeeded()
+    await expect(dil).toBeVisible()
+    await expect(dil).toContainText(/-2\.55/)
+    await expect(page.getByTestId('chapter-nurburgring-figure')).toContainText(
+      /Figura 6\.1/i,
     )
     await expect(
-      control.locator('img[src*="/images/am-official/am-ch05-control"]'),
+      dil.locator('img[src*="/images/guide/fig-6-1"]'),
     ).toBeVisible()
 
-    const cap06 = page.getByTestId('chapter-regimuri')
-    await cap06.scrollIntoViewIfNeeded()
-    await expect(cap06).toBeVisible()
-    await expect(cap06).toContainText(
-      /Cadrul Teoretic General \(Frecare & Saturație Anvelope\)/i,
-    )
-    await expect(cap06).toContainText(/cercului de frecare Kamm/i)
-    await expect(cap06).toContainText(/Fy,max = μ FZ/)
-    await expect(page.getByTestId('chapter-regimuri-notes')).toContainText(
-      /Wei Gao et al\., 2021/i,
-    )
-    await expect(page.getByTestId('chapter-regimuri-notes')).toContainText(
-      /1fbd01b59b71746ed236baedf6ea44c4\.pdf/,
-    )
-    await expect(page.getByTestId('chapter-regimuri-notes')).toContainText(
-      /aerodynamic downforce \(FL\)/i,
-    )
-
-    const caseStudy = page.getByTestId('chapter-studiu-de-caz')
-    await caseStudy.scrollIntoViewIfNeeded()
-    await expect(caseStudy).toBeVisible()
-    await expect(caseStudy).toContainText(
-      /Active Aero — Aston Martin Valhalla/i,
-    )
-    await expect(caseStudy).not.toContainText(/placeholder/i)
+    const valhalla = page.getByTestId('chapter-valhalla-serie')
+    await valhalla.scrollIntoViewIfNeeded()
+    await expect(valhalla).toBeVisible()
+    await expect(valhalla).toContainText(/1,079 PS|1079 PS/)
     await expect(
-      page.getByTestId('chapter-studiu-de-caz-surfaces'),
+      page.getByTestId('chapter-valhalla-serie-figure'),
+    ).toContainText(/Figura 7\.1/i)
+    await expect(
+      valhalla.locator('img[src*="/images/guide/fig-7-1"]'),
     ).toBeVisible()
-    await expect(page.getByTestId('surface-front-wing')).toContainText(
-      /Active front wing/i,
-    )
-    await expect(page.getByTestId('surface-rear-wing')).toContainText(
-      /T-wing/i,
-    )
-    await expect(page.getByTestId('surface-front-splitter')).toContainText(
-      /front splitter/i,
-    )
-    await expect(page.getByTestId('surface-air-dam')).toContainText(
-      /air-dam/i,
-    )
-    await expect(page.getByTestId('surface-underbody')).toContainText(
-      /venturi/i,
-    )
-    await expect(page.getByTestId('surface-rear-diffuser')).toContainText(
-      /diffuser/i,
-    )
-    await expect(page.getByTestId('surface-door-ducts')).toContainText(
-      /Dihedral door/i,
-    )
-    await expect(page.getByTestId('chapter-studiu-de-caz-notes')).toContainText(
-      /Aston Martin official/i,
-    )
 
-    const rezultate = page.getByTestId('chapter-rezultate')
-    await rezultate.scrollIntoViewIfNeeded()
-    await expect(rezultate).toBeVisible()
-    await expect(rezultate).toContainText(
-      /Grafice relevante — de ce Active Aero/i,
-    )
-    await expect(rezultate).toContainText(/Cum funcționează/i)
-    await expect(rezultate).toContainText(/De ce este necesar/i)
-    await expect(rezultate).toContainText(/−2\.55/i)
-    await expect(page.getByTestId('chapter-rezultate-charts')).toBeVisible()
-    await expect(page.getByTestId('chart-ch08-table6-dil')).toBeVisible()
-    await expect(page.getByTestId('chart-ch08-maxp-aoa')).toBeVisible()
-    await expect(page.getByTestId('chart-ch08-pi-rom-xfoil')).toBeVisible()
-    await expect(page.getByTestId('chart-ch08-kamm-fl')).toBeVisible()
-    await expect(page.getByTestId('chapter-rezultate-notes')).toContainText(
-      /Table 6/i,
+    const pirom = page.getByTestId('chapter-pi-rom')
+    await pirom.scrollIntoViewIfNeeded()
+    await expect(pirom).toBeVisible()
+    await expect(pirom).toContainText(/0\.0906 ms/)
+    await expect(page.getByTestId('chapter-pi-rom-figure')).toContainText(
+      /Figura 8\.1/i,
     )
     await expect(
-      rezultate.locator('img[src*="/images/am-official/am-ch08-rezultate"]'),
+      pirom.locator('img[src*="/images/guide/fig-8-1"]'),
     ).toBeVisible()
 
-    const concluzii = page.getByTestId('chapter-surse')
-    await concluzii.scrollIntoViewIfNeeded()
-    await expect(concluzii).toBeVisible()
-    await expect(concluzii).toContainText(/Concluzii/i)
-    await expect(page.getByTestId('chapter-surse-summary')).toContainText(
-      /14 DOF/i,
+    const sim = page.getByTestId('chapter-simulator')
+    await sim.scrollIntoViewIfNeeded()
+    await expect(sim).toBeVisible()
+    await expect(page.getByTestId('active-aero-simulator')).toBeVisible()
+
+    const disc = page.getByTestId('chapter-discutii')
+    await disc.scrollIntoViewIfNeeded()
+    await expect(disc).toBeVisible()
+    await expect(disc).toContainText(/Concurrent Engineering/i)
+    await expect(page.getByTestId('diagram-synergy')).toBeVisible()
+
+    const concl = page.getByTestId('chapter-concluzii')
+    await concl.scrollIntoViewIfNeeded()
+    await expect(concl).toBeVisible()
+    await expect(page.getByTestId('chapter-concluzii-kpi')).toContainText(
+      /−2\.55|−2.55|-2\.55/,
     )
-    await expect(page.getByTestId('chapter-surse-summary')).toContainText(
-      /−2\.55|−2.55|-2\.55|-2.55/,
+    await expect(page.getByTestId('chapter-concluzii-references')).toContainText(
+      /SAE 2020-36-0079/i,
     )
-    await expect(page.getByTestId('chapter-surse-notes')).toContainText(
-      /SAE Technical Paper 2020-36-0079/i,
-    )
-    await expect(page.getByTestId('chapter-surse-notes')).toContainText(
+    await expect(page.getByTestId('chapter-concluzii-references')).toContainText(
       /Subramanian/i,
     )
 
@@ -274,10 +199,9 @@ test.describe('Mockup 10 capitole E2E', () => {
       await expect(section).not.toContainText(/placeholder/i)
     }
 
-    expect(CHAPTER_IDS).toHaveLength(10)
+    expect(CHAPTER_IDS).toHaveLength(11)
     expect(errors, errors.join('\n')).toEqual([])
   })
-
 
   test('Cap 09 Active Aero simulator responds to mode and speed', async ({
     page,
@@ -285,14 +209,12 @@ test.describe('Mockup 10 capitole E2E', () => {
     const errors = await attachErrorTrap(page)
     await gotoApp(page)
 
-    await page.getByTestId('nav-insight-uri').click()
+    await page.getByTestId('nav-simulator').click()
     await page.waitForTimeout(700)
-    const chapter = page.getByTestId('chapter-insight-uri')
+    const chapter = page.getByTestId('chapter-simulator')
     await expect(chapter).toBeVisible()
     await expect(chapter).toContainText(/Simulator Active Aero/i)
-    await expect(page.getByTestId('nav-insight-uri')).toContainText(
-      /Simulator/i,
-    )
+    await expect(page.getByTestId('nav-simulator')).toContainText(/Simulator/i)
 
     const sim = page.getByTestId('active-aero-simulator')
     await expect(sim).toBeVisible()
@@ -313,7 +235,6 @@ test.describe('Mockup 10 capitole E2E', () => {
     await expect(page.getByTestId('sim-table3-anchor')).toBeVisible()
     await expect(page.getByTestId('sim-table3-anchor')).toContainText(/788/)
 
-    // 3D Valhalla HUD surfaces respond to mode / AOA / splitter
     await expect(page.getByTestId('sim-surface-rear-wing')).toBeVisible()
     await expect(page.getByTestId('sim-surface-front-wing')).toBeVisible()
     await expect(page.getByTestId('sim-surface-splitter')).toBeVisible()
@@ -329,9 +250,7 @@ test.describe('Mockup 10 capitole E2E', () => {
       'OPEN',
     )
 
-    await expect(page.getByTestId('chapter-insight-uri-notes')).toContainText(
-      /Table 3/i,
-    )
+    await expect(page.getByTestId('chapter-simulator-notes')).toBeVisible()
     expect(errors, errors.join('\n')).toEqual([])
   })
 
@@ -339,46 +258,26 @@ test.describe('Mockup 10 capitole E2E', () => {
     const errors = await attachErrorTrap(page)
     await gotoApp(page)
 
-    await page.getByTestId('nav-control').click()
+    await page.getByTestId('nav-state-machine').click()
     await page.waitForTimeout(600)
-    await expect(page.getByTestId('chapter-control')).toBeInViewport()
+    await expect(page.getByTestId('chapter-state-machine')).toBeInViewport()
 
     expect(errors, errors.join('\n')).toEqual([])
   })
 
-  test('Cap 07 surfaces and Cap 08 charts are visible after nav', async ({
-    page,
-  }) => {
+  test('guide figures and Cap 05 modes visible after nav', async ({ page }) => {
     const errors = await attachErrorTrap(page)
     await gotoApp(page)
 
-    await page.getByTestId('nav-studiu-de-caz').click()
+    await page.getByTestId('nav-pachet-aero').click()
     await page.waitForTimeout(700)
-    await page.getByTestId('surface-front-wing').scrollIntoViewIfNeeded()
-    await expect(page.getByTestId('surface-front-wing')).toBeVisible()
-    await expect(page.getByTestId('surface-front-wing')).toContainText(
-      /Active front wing/i,
-    )
-    const c7Opacity = await page
-      .getByTestId('surface-front-wing')
-      .evaluate((el) => getComputedStyle(el).opacity)
-    expect(Number(c7Opacity)).toBeGreaterThan(0.9)
+    await page.getByTestId('chapter-pachet-aero-figure').scrollIntoViewIfNeeded()
+    await expect(page.getByTestId('chapter-pachet-aero-figure')).toBeVisible()
 
-    await page.getByTestId('nav-rezultate').click()
+    await page.getByTestId('nav-state-machine').click()
     await page.waitForTimeout(700)
-    await page.getByTestId('chart-ch08-table6-dil').scrollIntoViewIfNeeded()
-    await expect(page.getByTestId('chapter-rezultate-charts')).toBeVisible()
-    await expect(page.getByTestId('chart-ch08-table6-dil')).toBeVisible()
-    await expect(page.getByTestId('chart-ch08-table6-dil')).toContainText(
-      /Nürburgring/i,
-    )
-    const c8Opacity = await page
-      .getByTestId('chart-ch08-table6-dil')
-      .evaluate((el) => getComputedStyle(el).opacity)
-    expect(Number(c8Opacity)).toBeGreaterThan(0.9)
-    await expect(
-      page.locator('[data-testid="chart-ch08-table6-dil"] svg'),
-    ).toBeVisible()
+    await expect(page.getByTestId('chapter-state-machine-modes')).toBeVisible()
+    await expect(page.getByTestId('diagram-state-machine')).toBeVisible()
 
     expect(errors, errors.join('\n')).toEqual([])
   })
