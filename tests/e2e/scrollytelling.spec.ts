@@ -61,7 +61,7 @@ test.describe('Mockup 10 capitole E2E', () => {
     expect(errors, errors.join('\n')).toEqual([])
   })
 
-  test('renders Cap 01–02 content and remaining placeholders', async ({
+  test('renders Cap 01, 02, and 05 content; other chapters stay placeholders', async ({
     page,
   }) => {
     const errors = await attachErrorTrap(page)
@@ -115,7 +115,29 @@ test.describe('Mockup 10 capitole E2E', () => {
     )
     await expect(page.getByTestId('nav-problema')).toContainText(/Modelare/i)
 
-    for (const id of CHAPTER_IDS.slice(2)) {
+    const control = page.getByTestId('chapter-control')
+    await control.scrollIntoViewIfNeeded()
+    await expect(control).toBeVisible()
+    await expect(control).toContainText(
+      /Modelul de Predicție AI în Timp Real \(PI-ROM\)/i,
+    )
+    await expect(control).toContainText(/sub 1 ms/i)
+    await expect(page.getByTestId('chapter-control-notes')).toContainText(
+      /subramanian_activeaeroROM_preprint\.pdf/i,
+    )
+    await expect(page.getByTestId('chapter-control-notes')).toContainText(
+      /0\.0906 ms/i,
+    )
+    await expect(page.getByTestId('chapter-control-notes')).toContainText(
+      /26\.58/i,
+    )
+    await expect(
+      control.locator('img[src*="/images/am-official/am-ch05-control"]'),
+    ).toBeVisible()
+
+    const authored = new Set(['introducere', 'problema', 'control'])
+    for (const id of CHAPTER_IDS) {
+      if (authored.has(id)) continue
       const section = page.getByTestId(`chapter-${id}`)
       await section.scrollIntoViewIfNeeded()
       await expect(section).toBeVisible()
