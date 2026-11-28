@@ -36,6 +36,13 @@ const WHEEL_BONE_NAMES = [
   'Wheel Rear R',
 ] as const
 
+const WHEEL_MESH_NAMES = [
+  'Wheel1A_LF',
+  'Wheel1A_RF',
+  'Wheel1A_LR',
+  'Wheel1A_RR',
+] as const
+
 /** Spoiler skeleton nodes driven by SpoilerClose (GLB has no front-wing / splitter bones). */
 const SPOILER_TRACK_RE = /Spoiler/i
 const SPOILER_EXCLUDE_RE =
@@ -46,7 +53,6 @@ const SIDE_CAM = {
   position: [6.85, 1.05, 0.05] as [number, number, number],
   target: [0, 0.55, 0] as [number, number, number],
   fov: 28,
-  /** Keep orbit near the side (±~55°) so a drag doesn't jump to rear¾. */
   minAzimuth: Math.PI / 2 - 0.95,
   maxAzimuth: Math.PI / 2 + 0.95,
 }
@@ -64,8 +70,9 @@ export interface Valhalla3DProps {
 
 /**
  * Cap 09 — luxury Three.js / R3F Valhalla stage.
- * Side-profile default, SpoilerClose scrubbed (lerped) by AOA, wheel bones spin
- * with speed. Splitter / front wing / air-dam are HUD-only — not separable in GLB.
+ * Side-profile default. SpoilerClose scrubbed by AOA via paused Action.time +
+ * mixer.update(0) — NEVER mixer.setTime (that zeros paused actions back to t=0).
+ * Wheel bones spin with ω=v/r after the mixer pose is applied.
  */
 export function Valhalla3D({
   aoaDeg,
@@ -86,6 +93,8 @@ export function Valhalla3D({
     readyRef.current = true
     setReady(true)
   })
+  /** DOM telemetry for Playwright — bone angles / spoiler scrub time. */
+  const telemetryRef = useRef<HTMLDivElement>(null)
 
   return (
     <div
@@ -97,7 +106,20 @@ export function Valhalla3D({
       data-mode={mode}
       data-splitter={splitter}
       data-aoa={aoaDeg.toFixed(1)}
+      data-speed={String(speedKmh)}
     >
+      <div
+        ref={telemetryRef}
+        data-testid="sim-anim-telemetry"
+        data-spoiler-time="0"
+        data-spoiler-target="0"
+        data-wheel-angle="0"
+        data-wheel-count="0"
+        data-spoiler-tracks="0"
+        className="pointer-events-none absolute h-px w-px overflow-hidden opacity-0"
+        aria-hidden
+      />
+
       <div className="flex items-center justify-between gap-3 border-b border-aero-ivory/8 px-4 py-2.5 md:px-5">
         <p className="font-ui text-[10px] tracking-[0.55px] text-aero-mist/50 uppercase">
           Valhalla 3D · {mode} · AOA {aoaDeg.toFixed(1)}° · splitter {splitter}
@@ -120,6 +142,7 @@ export function Valhalla3D({
         <Canvas
           className="absolute inset-0"
           dpr={[1, 1.75]}
+          frameloop="always"
           gl={{
             antialias: true,
             alpha: true,
@@ -144,6 +167,7 @@ export function Valhalla3D({
               mode={mode}
               splitterOpen={splitterOpen}
               onReadyRef={onReadyRef}
+              telemetryRef={telemetryRef}
             />
           </Suspense>
         </Canvas>
@@ -207,7 +231,7 @@ export function Valhalla3D({
           className="pointer-events-none absolute bottom-3 left-3 font-ui text-[9px] tracking-[0.35px] text-aero-mist/35 md:bottom-4 md:left-4"
           data-testid="sim-wheel-rear"
         >
-          Side view · orbit near profile · wheels ∝ speed · spoiler ← AOA
+          Side view · wheels ∝ speed · rear spoiler ← AOA (GLB)
         </p>
       </div>
 
@@ -260,7 +284,6 @@ function SideOrbitControls() {
     c.target.set(...SIDE_CAM.target)
     c.minAzimuthAngle = SIDE_CAM.minAzimuth
     c.maxAzimuthAngle = SIDE_CAM.maxAzimuth
-    // Force true side azimuth (π/2) on first frame — avoids rear¾ start.
     c.setAzimuthalAngle(Math.PI / 2)
     c.setPolarAngle(Math.PI * 0.42)
     c.update()
@@ -284,27 +307,41 @@ function SideOrbitControls() {
   )
 }
 
+type WheelSpinTarget = {
+  bone: THREE.Object3D
+  /** Rest local quaternion (bind / post-mixer base). */
+  rest: THREE.Quaternion
+}
+
 function ValhallaScene({
   aoaDeg,
   speedKmh,
   mode,
   splitterOpen,
   onReadyRef,
+  telemetryRef,
 }: {
   aoaDeg: number
   speedKmh: number
   mode: AeroMode
   splitterOpen: boolean
   onReadyRef: MutableRefObject<() => void>
+  telemetryRef: MutableRefObject<HTMLDivElement | null>
 }) {
   const gltf = useGLTF(MODEL_URL)
   const mixer = useRef<THREE.AnimationMixer | null>(null)
   const action = useRef<THREE.AnimationAction | null>(null)
-  const wheels = useRef<THREE.Object3D[]>([])
+  const wheels = useRef<WheelSpinTarget[]>([])
   const clipDuration = useRef(1)
   const spoilerTime = useRef(0)
+  const wheelAngle = useRef(0)
+  const spoilerTrackCount = useRef(0)
   const speedRef = useRef(speedKmh)
   const aoaRef = useRef(aoaDeg)
+  const hingeBone = useRef<THREE.Object3D | null>(null)
+  const qSpin = useMemo(() => new THREE.Quaternion(), [])
+  const qOut = useMemo(() => new THREE.Quaternion(), [])
+  const axle = useMemo(() => new THREE.Vector3(1, 0, 0), [])
 
   useEffect(() => {
     speedRef.current = speedKmh
@@ -321,15 +358,14 @@ function ValhallaScene({
       const n = t.name
       return SPOILER_TRACK_RE.test(n) && !SPOILER_EXCLUDE_RE.test(n)
     })
-    return new THREE.AnimationClip(
-      'SpoilerAoa',
-      source.duration,
-      tracks.length ? tracks : source.tracks,
-    )
+    // Never fall back to the full Body clip — that rebinds wheel bones every frame.
+    if (!tracks.length) return null
+    return new THREE.AnimationClip('SpoilerAoa', source.duration, tracks)
   }, [gltf.animations])
 
   useLayoutEffect(() => {
     const root = gltf.scene
+    spoilerTrackCount.current = spoilerClip?.tracks.length ?? 0
     root.traverse((obj) => {
       obj.castShadow = true
       obj.receiveShadow = true
@@ -348,28 +384,35 @@ function ValhallaScene({
       }
     })
 
-    // Identity pose — side camera frames the silhouette.
     root.position.set(0, -0.02, 0)
     root.rotation.set(0, 0, 0)
 
-    const found: THREE.Object3D[] = []
+    hingeBone.current =
+      (root.getObjectByName('Animate_Spoiler_Hinge_1') as THREE.Object3D) ??
+      null
+
+    // Prefer skeleton wheel bones (meshes are skinned to them). Mesh names are
+    // a last-resort fallback if bones are missing from a different LOD.
+    const found: WheelSpinTarget[] = []
     for (const name of WHEEL_BONE_NAMES) {
       const bone = root.getObjectByName(name)
-      if (bone) found.push(bone)
+      if (bone) {
+        found.push({
+          bone,
+          rest: bone.quaternion.clone(),
+        })
+      }
     }
-    // Fallback: if bones missing, spin the Wheel1A_* mesh roots (skinned).
     if (found.length === 0) {
-      for (const name of [
-        'Wheel1A_LF',
-        'Wheel1A_RF',
-        'Wheel1A_LR',
-        'Wheel1A_RR',
-      ]) {
+      for (const name of WHEEL_MESH_NAMES) {
         const mesh = root.getObjectByName(name)
-        if (mesh) found.push(mesh)
+        if (mesh) {
+          found.push({ bone: mesh, rest: mesh.quaternion.clone() })
+        }
       }
     }
     wheels.current = found
+    wheelAngle.current = 0
 
     if (spoilerClip) {
       const mix = new THREE.AnimationMixer(root)
@@ -379,40 +422,72 @@ function ValhallaScene({
       act.clampWhenFinished = true
       act.play()
       act.paused = true
+      act.weight = 1
       mixer.current = mix
       action.current = act
       clipDuration.current = Math.max(spoilerClip.duration, 0.001)
-      // Seed scrub from current AOA (deployed at t=0).
       const deploy = Math.min(1, Math.max(0, aoaRef.current / AOA_DEPLOY_REF))
       spoilerTime.current = (1 - deploy) * clipDuration.current
+      // Apply pose without mixer.setTime (setTime zeros paused actions → t=0 forever).
       act.time = spoilerTime.current
-      mix.setTime(spoilerTime.current)
+      mix.update(0)
+      // Capture rest quaternions AFTER the first spoiler pose so spin is relative
+      // to the post-mixer bind (wheels are not in the spoiler clip, so rest ≈ bind).
+      for (const w of wheels.current) {
+        w.rest.copy(w.bone.quaternion)
+      }
+    } else {
+      mixer.current = null
+      action.current = null
     }
 
     onReadyRef.current()
   }, [gltf.scene, spoilerClip, onReadyRef])
 
   useFrame((_, dt) => {
+    const safeDt = Math.min(Math.max(dt, 0), 0.05)
     const act = action.current
     const mix = mixer.current
+
+    // --- Spoiler scrub (AOA) ---
+    let targetT = 0
     if (act && mix) {
-      // SpoilerClose: t=0 deployed → t=end stowed. High AOA → early time.
       const deploy = Math.min(1, Math.max(0, aoaRef.current / AOA_DEPLOY_REF))
-      const target = (1 - deploy) * clipDuration.current
-      // Smooth exponential lerp — visible when switching modes / scrubbing speed.
-      const alpha = 1 - Math.exp(-7.5 * Math.min(dt, 0.05))
-      spoilerTime.current += (target - spoilerTime.current) * alpha
+      // SpoilerClose: t≈0 deployed (high AOA) → t=end stowed (AOA 0°).
+      targetT = (1 - deploy) * clipDuration.current
+      const alpha = 1 - Math.exp(-8 * safeDt)
+      spoilerTime.current += (targetT - spoilerTime.current) * alpha
+      act.enabled = true
+      act.paused = true
       act.time = spoilerTime.current
-      mix.setTime(spoilerTime.current)
+      // Critical: update(0) evaluates the paused action at action.time.
+      // Do NOT call mix.setTime — it resets every paused action to t=0.
+      mix.update(0)
     }
 
-    // Wheel spin — local X; ω = v / r (km/h → m/s → rad/s).
+    // --- Wheel spin AFTER mixer, so pose isn't overwritten ---
     const v = speedRef.current
     if (v > 0.5 && wheels.current.length > 0) {
       const radPerSec = v / 3.6 / WHEEL_RADIUS_M
-      const step = radPerSec * dt
-      for (const bone of wheels.current) {
-        bone.rotateX(step)
+      wheelAngle.current += radPerSec * safeDt
+      qSpin.setFromAxisAngle(axle, wheelAngle.current)
+      for (const w of wheels.current) {
+        // rest ⊗ spin — absolute set, not rotateX accumulate (safer vs mixer).
+        qOut.copy(w.rest).multiply(qSpin)
+        w.bone.quaternion.copy(qOut)
+      }
+    }
+
+    // DOM telemetry for Playwright proofs
+    const el = telemetryRef.current
+    if (el) {
+      el.dataset.spoilerTime = spoilerTime.current.toFixed(4)
+      el.dataset.spoilerTarget = targetT.toFixed(4)
+      el.dataset.wheelAngle = wheelAngle.current.toFixed(4)
+      el.dataset.wheelCount = String(wheels.current.length)
+      el.dataset.spoilerTracks = String(spoilerTrackCount.current)
+      if (hingeBone.current) {
+        el.dataset.hingeY = hingeBone.current.position.y.toFixed(4)
       }
     }
   })
