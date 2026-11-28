@@ -8,8 +8,11 @@ interface ChapterSectionProps {
 export function ChapterSection({ chapter }: ChapterSectionProps) {
   const n = String(chapter.number).padStart(2, '0')
   const hasNotes = Boolean(chapter.notes?.length)
+  const hasSummary = Boolean(chapter.summary?.length)
   const titleWidth =
-    chapter.number === 1 ? 'max-w-[920px]' : 'max-w-[640px]'
+    chapter.number === 1 || chapter.number === 10
+      ? 'max-w-[920px]'
+      : 'max-w-[640px]'
 
   return (
     <section
@@ -37,6 +40,22 @@ export function ChapterSection({ chapter }: ChapterSectionProps) {
           <p className="font-ui mt-8 max-w-[640px] text-base leading-relaxed tracking-[0.55px] text-aero-mist/90 md:text-lg">
             {chapter.body}
           </p>
+
+          {hasSummary ? (
+            <ol
+              className="mt-10 max-w-[720px] space-y-3"
+              data-testid={`chapter-${chapter.id}-summary`}
+            >
+              {chapter.summary!.map((line, i) => (
+                <li
+                  key={i}
+                  className="font-ui text-[13px] leading-relaxed tracking-[0.4px] text-aero-mist/75 md:text-sm"
+                >
+                  {line}
+                </li>
+              ))}
+            </ol>
+          ) : null}
 
           {hasNotes ? (
             <aside
