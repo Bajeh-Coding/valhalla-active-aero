@@ -3,6 +3,15 @@
  * (Kamm, 14 DOF, state machine, mechatronic synergy, KPI). No invented numbers.
  */
 
+const VOID = '#05070a'
+const INK = '#0b0e14'
+const IVORY = '#f8f7f4'
+const MIST = '#8b929a'
+const AMR = '#0a7a62'
+const LIME = '#c4df00'
+const ZERO = 'rgb(232 228 220 / 0.28)'
+const FONT = 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace'
+
 /** Cap 05 mode rows — guide facts only (Bajeh pick: Variant A mode cards). */
 const MODE_ROWS = [
   {
@@ -31,77 +40,215 @@ const MODE_ROWS = [
   },
 ] as const
 
-/** Cap 02 — Cercul de frecare Kamm extins de FL. */
+/** Cap 02 — Cercul de frecare Kamm extins de FL (Slide 2). */
 export function KammCircleDiagram() {
+  const W = 720
+  const H = 400
+  const cx = 210
+  const cy = 190
+  const rPasiv = 72
+  const rActiv = 118
+
   return (
     <figure
-      className="mt-10 max-w-[720px] border-t border-aero-ivory/10 pt-8"
+      className="mt-12 max-w-[1000px] border-t border-aero-ivory/10 pt-8"
       data-testid="diagram-kamm"
     >
       <figcaption className="font-ui mb-5 text-[10px] font-medium tracking-[0.55px] text-aero-mist/45 uppercase">
         Diagramă — Cercul de frecare Kamm (Fy,max = μ · Fz) + FL
       </figcaption>
-      <svg
-        viewBox="0 0 640 360"
-        className="w-full text-aero-ivory"
-        role="img"
-        aria-label="Cercul de frecare Kamm: raza crește cu Fz când se adaugă downforce FL"
-      >
-        <rect width="640" height="360" fill="#0B0E14" rx="2" />
-        {/* Axes */}
-        <line x1="80" y1="180" x2="300" y2="180" stroke="#8A9099" strokeWidth="1" />
-        <line x1="190" y1="70" x2="190" y2="290" stroke="#8A9099" strokeWidth="1" />
-        <text x="305" y="184" fill="#8A9099" fontSize="11" fontFamily="ui-monospace, monospace">
-          Fx
-        </text>
-        <text x="196" y="66" fill="#8A9099" fontSize="11" fontFamily="ui-monospace, monospace">
-          Fy
-        </text>
+      <div className="overflow-hidden rounded-[2px] border border-aero-ivory/8 bg-aero-ink">
+        <svg
+          viewBox={`0 0 ${W} ${H}`}
+          className="h-auto w-full"
+          role="img"
+          aria-label="Cercul de frecare Kamm: raza crește cu Fz când se adaugă downforce FL"
+        >
+          <title>Cercul de frecare Kamm extins de downforce FL</title>
+          <rect width={W} height={H} fill={INK} />
+          <defs>
+            <marker
+              id="kamm-arrow"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M 0 1.5 L 9 5 L 0 8.5 Z" fill={LIME} />
+            </marker>
+            <marker
+              id="kamm-arrow-amr"
+              viewBox="0 0 10 10"
+              refX="9"
+              refY="5"
+              markerWidth="7"
+              markerHeight="7"
+              orient="auto-start-reverse"
+            >
+              <path d="M 0 1.5 L 9 5 L 0 8.5 Z" fill={AMR} />
+            </marker>
+          </defs>
 
-        {/* Inner circle — without FL */}
-        <circle
-          cx="190"
-          cy="180"
-          r="70"
-          fill="none"
-          stroke="#8A9099"
-          strokeWidth="1.5"
-          strokeDasharray="4 3"
-          opacity="0.7"
-        />
-        {/* Outer circle — with FL (larger Fz) */}
-        <circle
-          cx="190"
-          cy="180"
-          r="110"
-          fill="none"
-          stroke="#005949"
-          strokeWidth="2.5"
-        />
-        <text x="78" y="320" fill="#8A9099" fontSize="11" fontFamily="ui-monospace, monospace">
-          μ·Fz (pasiv)
-        </text>
-        <text x="200" y="320" fill="#005949" fontSize="11" fontFamily="ui-monospace, monospace">
-          μ·(Fz + FL) cu downforce
-        </text>
+          {/* Axes */}
+          <line
+            x1={cx - 150}
+            x2={cx + 150}
+            y1={cy}
+            y2={cy}
+            stroke={ZERO}
+            strokeWidth={1.25}
+          />
+          <line
+            x1={cx}
+            x2={cx}
+            y1={cy - 150}
+            y2={cy + 150}
+            stroke={ZERO}
+            strokeWidth={1.25}
+          />
+          <text x={cx + 158} y={cy + 4} fill={MIST} fontSize={12} fontFamily={FONT}>
+            Fx
+          </text>
+          <text x={cx + 8} y={cy - 158} fill={MIST} fontSize={12} fontFamily={FONT}>
+            Fy
+          </text>
 
-        {/* Equations HUD */}
-        <text x="360" y="100" fill="#F5F2EA" fontSize="13" fontFamily="ui-monospace, monospace">
-          Fy,max = μ · Fz
-        </text>
-        <text x="360" y="140" fill="#8A9099" fontSize="12" fontFamily="ui-monospace, monospace">
-          FD = 0.5 · ρ · v² · A · CD
-        </text>
-        <text x="360" y="168" fill="#8A9099" fontSize="12" fontFamily="ui-monospace, monospace">
-          FL = 0.5 · ρ · v² · A · |CL|
-        </text>
-        <text x="360" y="210" fill="#005949" fontSize="12" fontFamily="ui-monospace, monospace">
-          FL ↑ → Fz ↑ → Fy,max ↑
-        </text>
-        <text x="360" y="236" fill="#8A9099" fontSize="11" fontFamily="ui-monospace, monospace">
-          fără masă inerțială adăugată
-        </text>
-      </svg>
+          {/* Outer circle — μ·(Fz + FL) */}
+          <circle
+            cx={cx}
+            cy={cy}
+            r={rActiv}
+            fill="rgb(10 122 98 / 0.14)"
+            stroke={AMR}
+            strokeWidth={2.5}
+          />
+          {/* Inner circle — μ·Fz pasiv */}
+          <circle
+            cx={cx}
+            cy={cy}
+            r={rPasiv}
+            fill={VOID}
+            stroke="rgb(139 146 154 / 0.9)"
+            strokeWidth={1.75}
+            strokeDasharray="5 4"
+          />
+
+          {/* Passive radius marker (left-up) — stop at rim, label outside */}
+          <line
+            x1={cx}
+            x2={cx - rPasiv * 0.7}
+            y1={cy}
+            y2={cy - rPasiv * 0.71}
+            stroke="rgb(139 146 154 / 0.55)"
+            strokeWidth={1}
+            strokeDasharray="3 3"
+          />
+          <text
+            x={cx - rActiv - 8}
+            y={cy - rPasiv * 0.35}
+            textAnchor="end"
+            fill={MIST}
+            fontSize={11}
+            fontFamily={FONT}
+          >
+            Fy,max = μ · Fz
+          </text>
+
+          {/* Active radius marker (right-up) */}
+          <line
+            x1={cx}
+            x2={cx + rActiv * 0.78}
+            y1={cy}
+            y2={cy - rActiv * 0.62}
+            stroke={AMR}
+            strokeWidth={1.5}
+            markerEnd="url(#kamm-arrow-amr)"
+          />
+          <text
+            x={cx + rActiv * 0.78 + 12}
+            y={cy - rActiv * 0.62}
+            fill={AMR}
+            fontSize={11}
+            fontFamily={FONT}
+          >
+            μ · (Fz + FL)
+          </text>
+
+          {/* Example grip vector in expanded annulus (lower-right) */}
+          <line
+            x1={cx}
+            x2={cx + 88}
+            y1={cy}
+            y2={cy + 48}
+            stroke={LIME}
+            strokeWidth={1.75}
+            markerEnd="url(#kamm-arrow)"
+          />
+          <text
+            x={cx + 108}
+            y={cy + 62}
+            fill={LIME}
+            fontSize={11}
+            fontFamily={FONT}
+          >
+            √(Fx² + Fy²)
+          </text>
+
+          {/* Legend under plot */}
+          <text
+            x={cx - 146}
+            y={cy + rActiv + 32}
+            fill={MIST}
+            fontSize={11}
+            fontFamily={FONT}
+          >
+            μ·Fz (pasiv)
+          </text>
+          <text
+            x={cx + 8}
+            y={cy + rActiv + 32}
+            fill={AMR}
+            fontSize={11}
+            fontFamily={FONT}
+          >
+            μ·(Fz + FL) cu downforce
+          </text>
+
+          {/* HUD equations — Slide 2 */}
+          <g transform="translate(430, 88)">
+            <text x={0} y={0} fill={IVORY} fontSize={14} fontFamily={FONT}>
+              Fy,max = μ · Fz
+            </text>
+            <text x={0} y={36} fill={MIST} fontSize={12} fontFamily={FONT}>
+              FD = 0.5 · ρ · v² · A · CD
+            </text>
+            <text x={0} y={58} fill={MIST} fontSize={12} fontFamily={FONT}>
+              FL = 0.5 · ρ · v² · A · |CL|
+            </text>
+            <text x={0} y={96} fill={AMR} fontSize={13} fontFamily={FONT}>
+              FL ↑ → Fz ↑ → Fy,max ↑
+            </text>
+            <text x={0} y={122} fill={MIST} fontSize={11} fontFamily={FONT}>
+              fără masă inerțială adăugată
+            </text>
+            <rect
+              x={0}
+              y={148}
+              width={240}
+              height={1}
+              fill="rgb(232 228 220 / 0.12)"
+            />
+            <text x={0} y={176} fill={LIME} fontSize={11} fontFamily={FONT}>
+              cercul Kamm se extinde cu FL
+            </text>
+            <text x={0} y={196} fill={MIST} fontSize={11} fontFamily={FONT}>
+              fără a adăuga masă pe Fz static
+            </text>
+          </g>
+        </svg>
+      </div>
     </figure>
   )
 }
