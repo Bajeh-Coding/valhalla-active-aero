@@ -28,8 +28,8 @@ interface Hotspot {
 const HOTSPOTS: readonly Hotspot[] = [
   {
     id: 'monocoque',
-    x: 48,
-    y: 38,
+    x: 50,
+    y: 42,
     label: 'Monococă',
     dof: '6 DOF',
     detail: 'Șasiu — translații x, y, z + rotații roll, pitch, yaw',
@@ -38,8 +38,8 @@ const HOTSPOTS: readonly Hotspot[] = [
   },
   {
     id: 'susp-front',
-    x: 72,
-    y: 58,
+    x: 71,
+    y: 52,
     label: 'Suspensie față',
     dof: '4 DOF',
     detail: 'Cursa verticală a suspensiilor la fiecare roată (1 DOF × 4)',
@@ -48,8 +48,8 @@ const HOTSPOTS: readonly Hotspot[] = [
   },
   {
     id: 'susp-rear',
-    x: 26,
-    y: 56,
+    x: 29,
+    y: 50,
     label: 'Suspensie spate',
     dof: '4 DOF',
     detail: 'Cursa verticală a suspensiilor la fiecare roată (1 DOF × 4)',
@@ -58,8 +58,8 @@ const HOTSPOTS: readonly Hotspot[] = [
   },
   {
     id: 'wheel-front',
-    x: 76,
-    y: 78,
+    x: 74,
+    y: 64,
     label: 'Roată față',
     dof: '4 DOF',
     detail: 'Dinamica de rotație și alunecarea longitudinală a roților (1 DOF × 4)',
@@ -68,8 +68,8 @@ const HOTSPOTS: readonly Hotspot[] = [
   },
   {
     id: 'wheel-rear',
-    x: 22,
-    y: 78,
+    x: 26,
+    y: 64,
     label: 'Roată spate',
     dof: '4 DOF',
     detail: 'Dinamica de rotație și alunecarea longitudinală a roților (1 DOF × 4)',

@@ -23,11 +23,14 @@ useGLTF.setDecoderPath('/draco/')
 
 const MODEL_URL = '/models/valhalla/valhalla.glb'
 
-/** Same Cap 05 side profile — camera on +X; locked (no orbit). */
+/**
+ * Cap 05 side profile (camera on +X), slightly tighter for the wide Cap3 frame.
+ * Locked — no orbit.
+ */
 const SIDE_CAM = {
-  position: [6.85, 1.05, 0.05] as [number, number, number],
-  target: [0, 0.55, 0] as [number, number, number],
-  fov: 28,
+  position: [5.9, 0.92, 0.04] as [number, number, number],
+  target: [0, 0.48, 0] as [number, number, number],
+  fov: 26,
 }
 
 export interface Cap03DofViewerProps {
@@ -45,7 +48,7 @@ export function Cap03DofViewer({ className }: Cap03DofViewerProps) {
 
   return (
     <div
-      className={cn('relative aspect-[940/360] w-full bg-aero-void', className)}
+      className={cn('relative aspect-[16/7] w-full bg-aero-void md:aspect-[21/8]', className)}
       data-testid="cap03-dof-viewer"
       aria-hidden
     >
