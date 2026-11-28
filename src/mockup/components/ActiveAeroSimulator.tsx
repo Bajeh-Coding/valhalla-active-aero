@@ -14,7 +14,7 @@ import {
   educationalIndices,
   scheduleAoaPoints,
 } from '../lib/educationalAero'
-import { Valhalla25D } from './Valhalla25D'
+import { Valhalla3D } from './Valhalla3D'
 
 const PROGRAMS: { id: AeroMode; label: string; hint: string }[] = [
   {
@@ -282,7 +282,7 @@ export function ActiveAeroSimulator() {
 
         {/* Visual + chart */}
         <div className="space-y-6">
-          <Valhalla25D
+          <Valhalla3D
             aoaDeg={aoaDegEffective}
             splitter={splitter}
             mode={mode}
