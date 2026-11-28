@@ -4,7 +4,7 @@ import {
   OrbitControls,
   useGLTF,
 } from '@react-three/drei'
-import { Canvas, useFrame } from '@react-three/fiber'
+import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import {
   Suspense,
   useEffect,
@@ -14,6 +14,7 @@ import {
   useState,
   type MutableRefObject,
 } from 'react'
+import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib'
 import * as THREE from 'three'
 import { cn } from '@/lib/utils'
 import type { AeroMode, SplitterState } from '@/types/aero'
@@ -22,8 +23,11 @@ useGLTF.setDecoderPath('/draco/')
 
 const MODEL_URL = '/models/valhalla/valhalla.glb'
 
-/** Aerobrake reference AOA — maps to fully deployed spoiler. */
+/** Aerobrake reference AOA — maps to fully deployed spoiler (SpoilerClose t→0). */
 const AOA_DEPLOY_REF = 19
+
+/** ~335 mm rolling radius — km/h → rad/s via v/r. */
+const WHEEL_RADIUS_M = 0.335
 
 const WHEEL_BONE_NAMES = [
   'Wheel Front L',
@@ -31,6 +35,21 @@ const WHEEL_BONE_NAMES = [
   'Wheel Rear L',
   'Wheel Rear R',
 ] as const
+
+/** Spoiler skeleton nodes driven by SpoilerClose (GLB has no front-wing / splitter bones). */
+const SPOILER_TRACK_RE = /Spoiler/i
+const SPOILER_EXCLUDE_RE =
+  /Wheel|Steering|Door|Hood|Calliper|Body_lod|Root_Bone|Animate_Body|DoorRock/i
+
+/** True side profile — camera on +X, car silhouette + rear wing AOA readable. */
+const SIDE_CAM = {
+  position: [6.85, 1.05, 0.05] as [number, number, number],
+  target: [0, 0.55, 0] as [number, number, number],
+  fov: 28,
+  /** Keep orbit near the side (±~55°) so a drag doesn't jump to rear¾. */
+  minAzimuth: Math.PI / 2 - 0.95,
+  maxAzimuth: Math.PI / 2 + 0.95,
+}
 
 export interface Valhalla3DProps {
   aoaDeg: number
@@ -45,8 +64,8 @@ export interface Valhalla3DProps {
 
 /**
  * Cap 09 — luxury Three.js / R3F Valhalla stage.
- * Draco+WebP GLB, SpoilerClose scrubbed by AOA, wheel bones spin with speed,
- * soft studio lighting + restrained orbit. Splitter is HUD-only (no separable mesh).
+ * Side-profile default, SpoilerClose scrubbed (lerped) by AOA, wheel bones spin
+ * with speed. Splitter / front wing / air-dam are HUD-only — not separable in GLB.
  */
 export function Valhalla3D({
   aoaDeg,
@@ -89,7 +108,6 @@ export function Valhalla3D({
       </div>
 
       <div className="valhalla-stage relative aspect-[16/10] w-full md:aspect-[21/11]">
-        {/* Atmosphere wash — not a card, just depth behind the canvas */}
         <div
           className="pointer-events-none absolute inset-0"
           style={{
@@ -109,7 +127,12 @@ export function Valhalla3D({
             toneMapping: THREE.ACESFilmicToneMapping,
             toneMappingExposure: 1.05,
           }}
-          camera={{ position: [4.8, 1.35, -3.6], fov: 30, near: 0.1, far: 80 }}
+          camera={{
+            position: SIDE_CAM.position,
+            fov: SIDE_CAM.fov,
+            near: 0.1,
+            far: 80,
+          }}
           onCreated={({ gl }) => {
             gl.setClearColor(0x000000, 0)
           }}
@@ -136,7 +159,6 @@ export function Valhalla3D({
           </div>
         ) : null}
 
-        {/* HUD — AOA / splitter / surfaces (DOM, not SVG grotesque overlays) */}
         <div
           className="pointer-events-none absolute top-3 right-3 flex flex-col items-end gap-1.5 md:top-4 md:right-4"
           data-testid="sim-hud"
@@ -156,7 +178,13 @@ export function Valhalla3D({
           <HudPill
             testId="sim-surface-front-wing"
             label="Front wing"
-            value={`${(aoaDeg * 0.55).toFixed(1)}°`}
+            value={
+              mode === 'DRS' && splitterOpen
+                ? 'bleed'
+                : mode === 'AEROBRAKE'
+                  ? 'max DF'
+                  : 'SAE'
+            }
             hot={mode !== 'DRS'}
           />
           <HudPill
@@ -179,7 +207,7 @@ export function Valhalla3D({
           className="pointer-events-none absolute bottom-3 left-3 font-ui text-[9px] tracking-[0.35px] text-aero-mist/35 md:bottom-4 md:left-4"
           data-testid="sim-wheel-rear"
         >
-          Orbit · drag to inspect · wheels follow speed
+          Side view · orbit near profile · wheels ∝ speed · spoiler ← AOA
         </p>
       </div>
 
@@ -189,7 +217,13 @@ export function Valhalla3D({
       >
         <LegendItem
           label="Front wing"
-          value={`${(aoaDeg * 0.55).toFixed(1)}°`}
+          value={
+            mode === 'DRS' && splitterOpen
+              ? 'bleed'
+              : mode === 'AEROBRAKE'
+                ? 'max DF'
+                : 'SAE'
+          }
           hot={mode !== 'DRS'}
         />
         <LegendItem
@@ -214,6 +248,42 @@ export function Valhalla3D({
   )
 }
 
+function SideOrbitControls() {
+  const controls = useRef<OrbitControlsImpl>(null)
+  const { camera } = useThree()
+
+  useLayoutEffect(() => {
+    camera.position.set(...SIDE_CAM.position)
+    camera.lookAt(...SIDE_CAM.target)
+    const c = controls.current
+    if (!c) return
+    c.target.set(...SIDE_CAM.target)
+    c.minAzimuthAngle = SIDE_CAM.minAzimuth
+    c.maxAzimuthAngle = SIDE_CAM.maxAzimuth
+    // Force true side azimuth (π/2) on first frame — avoids rear¾ start.
+    c.setAzimuthalAngle(Math.PI / 2)
+    c.setPolarAngle(Math.PI * 0.42)
+    c.update()
+  }, [camera])
+
+  return (
+    <OrbitControls
+      ref={controls}
+      makeDefault
+      enablePan={false}
+      minPolarAngle={Math.PI * 0.32}
+      maxPolarAngle={Math.PI * 0.5}
+      minDistance={5.2}
+      maxDistance={9.5}
+      target={SIDE_CAM.target}
+      enableDamping
+      dampingFactor={0.06}
+      minAzimuthAngle={SIDE_CAM.minAzimuth}
+      maxAzimuthAngle={SIDE_CAM.maxAzimuth}
+    />
+  )
+}
+
 function ValhallaScene({
   aoaDeg,
   speedKmh,
@@ -227,25 +297,29 @@ function ValhallaScene({
   splitterOpen: boolean
   onReadyRef: MutableRefObject<() => void>
 }) {
-  const group = useRef<THREE.Group>(null)
   const gltf = useGLTF(MODEL_URL)
   const mixer = useRef<THREE.AnimationMixer | null>(null)
   const action = useRef<THREE.AnimationAction | null>(null)
   const wheels = useRef<THREE.Object3D[]>([])
   const clipDuration = useRef(1)
+  const spoilerTime = useRef(0)
+  const speedRef = useRef(speedKmh)
+  const aoaRef = useRef(aoaDeg)
+
+  useEffect(() => {
+    speedRef.current = speedKmh
+  }, [speedKmh])
+
+  useEffect(() => {
+    aoaRef.current = aoaDeg
+  }, [aoaDeg])
 
   const spoilerClip = useMemo(() => {
     const source = gltf.animations[0]
     if (!source) return null
     const tracks = source.tracks.filter((t) => {
       const n = t.name
-      // Keep spoiler articulation only — avoid fighting wheel spin / doors / body.
-      return (
-        /Spoiler/i.test(n) &&
-        !/Wheel|Steering|Door|Hood|Calliper|Body_lod|Root_Bone|Animate_Body|DoorRock/i.test(
-          n,
-        )
-      )
+      return SPOILER_TRACK_RE.test(n) && !SPOILER_EXCLUDE_RE.test(n)
     })
     return new THREE.AnimationClip(
       'SpoilerAoa',
@@ -274,13 +348,28 @@ function ValhallaScene({
       }
     })
 
-    // Frame model — slight lift; yaw kept near identity so rear¾ camera sees T-wing.
+    // Identity pose — side camera frames the silhouette.
     root.position.set(0, -0.02, 0)
     root.rotation.set(0, 0, 0)
 
-    wheels.current = WHEEL_BONE_NAMES.map(
-      (name) => root.getObjectByName(name) as THREE.Object3D | undefined,
-    ).filter(Boolean) as THREE.Object3D[]
+    const found: THREE.Object3D[] = []
+    for (const name of WHEEL_BONE_NAMES) {
+      const bone = root.getObjectByName(name)
+      if (bone) found.push(bone)
+    }
+    // Fallback: if bones missing, spin the Wheel1A_* mesh roots (skinned).
+    if (found.length === 0) {
+      for (const name of [
+        'Wheel1A_LF',
+        'Wheel1A_RF',
+        'Wheel1A_LR',
+        'Wheel1A_RR',
+      ]) {
+        const mesh = root.getObjectByName(name)
+        if (mesh) found.push(mesh)
+      }
+    }
+    wheels.current = found
 
     if (spoilerClip) {
       const mix = new THREE.AnimationMixer(root)
@@ -293,31 +382,34 @@ function ValhallaScene({
       mixer.current = mix
       action.current = act
       clipDuration.current = Math.max(spoilerClip.duration, 0.001)
+      // Seed scrub from current AOA (deployed at t=0).
+      const deploy = Math.min(1, Math.max(0, aoaRef.current / AOA_DEPLOY_REF))
+      spoilerTime.current = (1 - deploy) * clipDuration.current
+      act.time = spoilerTime.current
+      mix.setTime(spoilerTime.current)
     }
 
     onReadyRef.current()
   }, [gltf.scene, spoilerClip, onReadyRef])
 
-  // SpoilerClose: t=0 deployed → t=end stowed. High AOA → early time.
-  useEffect(() => {
+  useFrame((_, dt) => {
     const act = action.current
     const mix = mixer.current
-    if (!act || !mix) return
-    const deploy = Math.min(1, Math.max(0, aoaDeg / AOA_DEPLOY_REF))
-    const t = (1 - deploy) * clipDuration.current
-    act.time = t
-    mix.setTime(t)
-  }, [aoaDeg])
-
-  useFrame((_, dt) => {
-    // Soft idle breathe on the whole car
-    if (group.current) {
-      group.current.rotation.y = Math.sin(performance.now() * 0.00015) * 0.025
+    if (act && mix) {
+      // SpoilerClose: t=0 deployed → t=end stowed. High AOA → early time.
+      const deploy = Math.min(1, Math.max(0, aoaRef.current / AOA_DEPLOY_REF))
+      const target = (1 - deploy) * clipDuration.current
+      // Smooth exponential lerp — visible when switching modes / scrubbing speed.
+      const alpha = 1 - Math.exp(-7.5 * Math.min(dt, 0.05))
+      spoilerTime.current += (target - spoilerTime.current) * alpha
+      act.time = spoilerTime.current
+      mix.setTime(spoilerTime.current)
     }
 
-    // Wheel spin — local X (Blender Y-up car kits typically spin on X)
-    if (speedKmh > 0.5) {
-      const radPerSec = (speedKmh / 3.6) / 0.33 // ~330 mm radius
+    // Wheel spin — local X; ω = v / r (km/h → m/s → rad/s).
+    const v = speedRef.current
+    if (v > 0.5 && wheels.current.length > 0) {
+      const radPerSec = v / 3.6 / WHEEL_RADIUS_M
       const step = radPerSec * dt
       for (const bone of wheels.current) {
         bone.rotateX(step)
@@ -355,9 +447,7 @@ function ValhallaScene({
 
       <Environment preset="city" environmentIntensity={0.35} />
 
-      <group ref={group}>
-        <primitive object={gltf.scene} />
-      </group>
+      <primitive object={gltf.scene} />
 
       <ContactShadows
         position={[0, -0.02, 0]}
@@ -367,17 +457,7 @@ function ValhallaScene({
         far={4}
       />
 
-      <OrbitControls
-        makeDefault
-        enablePan={false}
-        minPolarAngle={Math.PI * 0.28}
-        maxPolarAngle={Math.PI * 0.52}
-        minDistance={4.2}
-        maxDistance={9}
-        target={[0, 0.62, 0]}
-        enableDamping
-        dampingFactor={0.06}
-      />
+      <SideOrbitControls />
     </>
   )
 }
