@@ -1,7 +1,10 @@
 /**
- * Presentation chapter shell — Cap 01–07 have authored content; others remain placeholders.
+ * Presentation chapter shell — Cap 01–08 have authored content; others remain placeholders.
  * Imagery: official Aston Martin Valhalla page assets (downloaded, not hotlinked).
  */
+
+import type { Cap08ChartSpec } from './cap08Charts'
+import { CAP08_CHARTS } from './cap08Charts'
 
 export interface MockChapterNote {
   /** Visible citation / footnote line (luxury caption style). */
@@ -50,6 +53,8 @@ export interface MockChapter {
   kicker: string
   headline: string
   body: string
+  /** Optional secondary paragraphs (Cap 08 how/why prose). */
+  bodyExtra?: readonly string[]
   image: { src: string; objectPosition?: string; sourceUrl: string }
   /** Optional discreet footnotes — SAE / Gao / Subramanian citations. */
   notes?: readonly MockChapterNote[]
@@ -64,6 +69,8 @@ export interface MockChapter {
   modes?: readonly MockChapterMode[]
   /** Cap 07 — per-surface visual blocks (OEM/marketing only). */
   surfaces?: readonly MockAeroSurface[]
+  /** Optional Cap 08 SVG chart specs (paper-exact only). */
+  charts?: readonly Cap08ChartSpec[]
 }
 
 export const MOCK_CHAPTERS: readonly MockChapter[] = [
@@ -379,17 +386,34 @@ export const MOCK_CHAPTERS: readonly MockChapter[] = [
   {
     id: 'rezultate',
     number: 8,
-    label: 'Rezultate',
-    kicker: 'Capitol 08 — placeholder',
-    headline: 'Ce observăm',
-    body: 'Nulla facilisi. Capitol 08 — placeholder pentru rezultate; sloturi pentru grafice HUD, fără inventat date.',
+    label: 'Grafice',
+    kicker: 'Capitol 08',
+    headline: 'Grafice relevante — de ce Active Aero',
+    body: 'Sinteză ilustrativă a Cap. 1–6: proiectare integrată și control mecatronic pe caroseria de referință Vantage, plantă 14 DOF, mașina de stări DRS / Aerobrake / MaxP, validare Nürburgring (−2.55 s), predicție PI-ROM și limita anvelopei (cerc Kamm / FL).',
+    bodyExtra: [
+      'Cum funcționează. Pe modelul multicorp 14 DOF (VI-CarRealTime), controlul aero nu optimizează continuu coeficienții, ci selectează stări discrete: DRS (AOA 0°, splitter deschis peste 110 km/h) pentru drag minim la accelerație; Aerobrake (AOA 19°) pentru forță de frânare aerodinamică; MaxP cu schedule empiric de AOA pe benzi de viteză (0° / 3° / 4.5°) pentru balanță aero când DRS și Aerobrake sunt inactive. Unde e nevoie de predicție rapidă a coeficienților, PI-ROM evaluează în ~0.09 ms — cu un ordin de mărime sub XFOIL.',
+      'De ce este necesar. Aero pasivă fixează un singur compromis drag–downforce pe întreaga tură. La limita anvelopei, forțele longitudinale (FL / Fx) și laterale (Fy) sunt constrânse de cercul de frecare Kamm: √(Fx² + Fy²) ≤ μ·Fz. Downforce-ul activ crește Fz și, odată cu el, raza utilizabilă a cercului — fără a inventa valori OEM Valhalla. Rezultatul măsurat în SAE pe DIL Nürburgring GP: Passive–New 131.61 s → Active–MaxP 129.06 s (−2.55 s). Graficele de mai jos sunt ilustrative, citate din sursele Cap. 1–6.',
+    ],
     image: {
       src: '/images/am-official/am-ch08-rezultate.jpg',
       objectPosition: '50% 45%',
       sourceUrl:
         'https://www.astonmartin.com/-/media/models---valhalla-2026-relaunch/valhalla-explore-tile-2.jpg',
     },
+    charts: CAP08_CHARTS,
+    notes: [
+      {
+        text: 'SAE Technical Paper 2020-36-0079 — Table 1 (specs), Table 3 (forțe @ 160 km/h), pp.5–6 (DRS / Aerobrake / MaxP), Table 6 (Nürburgring GP · −2.55 s DIL). Body shape de referință: Aston Martin Vantage 2019 — nu claim-uri OEM Valhalla.',
+      },
+      {
+        text: 'subramanian_activeaeroROM_preprint.pdf, Table 2 — PI-ROM 0.0906 ms vs XFOIL CFD 2.4081 ms (26.58×).',
+      },
+      {
+        text: 'Asperti, Vignati, Sabbioni — On Torque Vectoring Control: Review and Comparison — friction circle / ellipse ca limital anvelopei (diagramă conceptuală Cap. 08; fără μ inventat).',
+      },
+    ],
   },
+
   {
     id: 'insight-uri',
     number: 9,

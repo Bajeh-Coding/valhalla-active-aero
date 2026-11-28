@@ -1,5 +1,6 @@
 import type { MockChapter } from '../data/chapters'
 import { AeroSurfaces } from './AeroSurfaces'
+import { Cap08Charts } from './Cap08Charts'
 import { ChapterMedia } from './ChapterMedia'
 
 interface ChapterSectionProps {
@@ -13,8 +14,10 @@ export function ChapterSection({ chapter }: ChapterSectionProps) {
   const hasSpecs = Boolean(chapter.specs?.rows.length)
   const hasModes = Boolean(chapter.modes?.length)
   const hasSurfaces = Boolean(chapter.surfaces?.length)
+  const hasCharts = Boolean(chapter.charts?.length)
+  const hasExtra = Boolean(chapter.bodyExtra?.length)
   const titleWidth =
-    chapter.number >= 1 && chapter.number <= 7
+    chapter.number >= 1 && chapter.number <= 8
       ? 'max-w-[920px]'
       : 'max-w-[640px]'
 
@@ -44,6 +47,21 @@ export function ChapterSection({ chapter }: ChapterSectionProps) {
           <p className="font-ui mt-8 max-w-[640px] text-base leading-relaxed tracking-[0.55px] text-aero-mist/90 md:text-lg">
             {chapter.body}
           </p>
+
+          {hasExtra
+            ? chapter.bodyExtra!.map((para) => (
+                <p
+                  key={para.slice(0, 48)}
+                  className="font-ui mt-6 max-w-[640px] text-base leading-relaxed tracking-[0.55px] text-aero-mist/85 md:text-lg"
+                >
+                  {para}
+                </p>
+              ))
+            : null}
+
+          {hasCharts ? (
+            <Cap08Charts charts={chapter.charts!} chapterId={chapter.id} />
+          ) : null}
 
           {hasDof ? (
             <ul
