@@ -40,7 +40,8 @@ const PROGRAMS: { id: AeroMode; label: string; hint: string }[] = [
 ]
 
 /**
- * Cap 09 — interactive Active Aero simulator (SAE state machine + educational indices).
+ * Cap 05 — interactive Active Aero simulator (SAE state machine + educational indices).
+ * Mounted via Cap05SimulatorSlot after the Cap 05 mode table/diagram.
  * Absolute forces only at Table 3 @160 km/h; otherwise relative indices, not OEM N.
  */
 export function ActiveAeroSimulator() {

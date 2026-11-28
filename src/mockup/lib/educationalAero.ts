@@ -1,5 +1,5 @@
 /**
- * Educational relative aero indices for Cap 09 simulator.
+ * Educational relative aero indices for Cap 05 simulator.
  * Derived only from SAE mode setpoints (AOA + splitter) — NOT absolute forces,
  * NOT Valhalla OEM numbers. Absolute N appear only via Table 3 @160 km/h.
  */
