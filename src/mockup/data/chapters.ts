@@ -7,11 +7,12 @@
 import type { GuideDiagramId } from '../components/GuideDiagrams'
 import type { GuideChartId } from './guideCharts'
 
-/** Legacy Cap 07 OEM surface block (kept for AeroSurfaces component types). */
+/** Cap 07 OEM surface block — official EN copy from astonmartin.com/en/models/valhalla. */
 export interface MockAeroSurface {
   id: string
   oemName: string
-  roleRo: string
+  /** Exact English from the official Valhalla model page (RO translation later). */
+  descriptionEn: string
   facts?: readonly string[]
   image: { src: string; objectPosition?: string; alt: string }
 }
@@ -85,6 +86,8 @@ export interface MockChapter {
   summary?: readonly string[]
   references?: readonly string[]
   simulator?: boolean
+  /** Cap 07 only — official Valhalla active aero surfaces (right rail). */
+  surfaces?: readonly MockAeroSurface[]
 }
 
 export const MOCK_CHAPTERS: readonly MockChapter[] = [
@@ -346,6 +349,95 @@ export const MOCK_CHAPTERS: readonly MockChapter[] = [
       caption:
         'Figura 7.1: Curba de Apăsare Aerodinamică (Downforce) pe Modelul de Serie Valhalla',
     },
+    // Exact EN from https://www.astonmartin.com/en/models/valhalla
+    // (Aerodynamics specs + Aerodynamic Directives). RO translation later.
+    surfaces: [
+      {
+        id: 'front-wing',
+        oemName: 'Active front wing',
+        descriptionEn:
+          'Active front wing (hidden behind grille) part of active aero system, reactive within 0.5 secs.',
+        facts: [
+          'Active aerodynamics (front and rear)',
+          'Hidden behind grille',
+          'Reactive within 0.5 secs',
+        ],
+        image: {
+          src: '/images/am-official/am-ch07-grille-front.jpg',
+          objectPosition: '50% 45%',
+          alt: 'Aston Martin Valhalla — grille concealing active front wing (official)',
+        },
+      },
+      {
+        id: 'rear-wing',
+        oemName: 'Active Equilibrium',
+        descriptionEn:
+          "The active rear dual-element 'T' wing is the most explicit signature of the car's aerodynamic focus. In Race mode, the rear wing extends upwards by 255 mm on powerful hydraulic rams, adjusting its angle of attack dynamically to optimise downforce. Under heavy braking, the wing deploys in under 0.5 seconds as a dominant airbrake, working in tandem with the front wing to shift the centre of pressure and maintain absolute high-speed braking stability.",
+        facts: [
+          'Raises by 255mm in race mode',
+          'Reactive within 0.5 secs',
+          'Airbrake · centre of pressure',
+        ],
+        image: {
+          src: '/images/am-official/am-ch07-rear-wing.jpg',
+          objectPosition: '50% 40%',
+          alt: 'Aston Martin Valhalla — active rear dual-element T-wing (official)',
+        },
+      },
+      {
+        id: 'front-splitter',
+        oemName: 'Carbon fibre front splitter',
+        descriptionEn: 'Carbon fibre front splitter',
+        facts: ['Carbon fibre/composite body panels'],
+        image: {
+          src: '/images/am-official/am-ch07-front.jpg',
+          objectPosition: '50% 55%',
+          alt: 'Aston Martin Valhalla — carbon fibre front splitter (official)',
+        },
+      },
+      {
+        id: 'underbody',
+        oemName: 'Venturi Velocity',
+        descriptionEn:
+          "Beneath the elegant bodywork lies a highly sophisticated underbody architecture designed by Aston Martin Performance Technologies (AMPT). A concave front under-floor and massive rear venturi tunnels accelerate high-velocity air beneath the car to create a low-pressure zone. This system achieves and maintains in excess of 600 kg of downforce from 240 km/h all the way to Valhalla's 350 km/h maximum speed, anchoring the car without requiring an overly stiff suspension setup.",
+        facts: [
+          'Significant underbody aero effect, with flat floor design',
+          'In excess of 600kg downforce at 150 mph (achieved in race mode)',
+        ],
+        image: {
+          src: '/images/am-official/am-ch07-underbody.jpg',
+          objectPosition: '50% 50%',
+          alt: 'Aston Martin Valhalla — underbody / venturi tunnels (official)',
+        },
+      },
+      {
+        id: 'rear-diffuser',
+        oemName: 'Carbon fibre rear diffuser',
+        descriptionEn: 'Carbon fibre rear diffuser and active rear wing',
+        facts: ['Body · carbon fibre rear diffuser and active rear wing'],
+        image: {
+          src: '/images/am-official/am-ch07-rear.jpg',
+          objectPosition: '50% 55%',
+          alt: 'Aston Martin Valhalla — carbon fibre rear diffuser (official)',
+        },
+      },
+      {
+        id: 'door-ducts',
+        oemName: 'Concealed Extraction',
+        descriptionEn:
+          "The profile of the Valhalla features dramatic, forward-hinged dihedral doors that ensure hypercar theatre while facilitating effortless ingress and egress. The inner surfaces of the doors are sculpted to act as hidden aerodynamic ducts, guiding air exiting the front wheel arches along the car's flanks and directly into the engine and transmission oil coolers, improving thermal efficiency by 50% without requiring visible side scoops.",
+        facts: [
+          'Dihedral doors with roof cut out',
+          'Hidden aerodynamic ducts',
+          '+50% thermal efficiency',
+        ],
+        image: {
+          src: '/images/am-official/am-ch07-doors.jpg',
+          objectPosition: '50% 45%',
+          alt: 'Aston Martin Valhalla — dihedral door ducts / Concealed Extraction (official)',
+        },
+      },
+    ],
   },
 
   {
