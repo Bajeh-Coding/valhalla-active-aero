@@ -9,7 +9,9 @@ export function ChapterSection({ chapter }: ChapterSectionProps) {
   const n = String(chapter.number).padStart(2, '0')
   const hasNotes = Boolean(chapter.notes?.length)
   const titleWidth =
-    chapter.number === 1 ? 'max-w-[920px]' : 'max-w-[640px]'
+    chapter.number === 1 || chapter.number === 6
+      ? 'max-w-[920px]'
+      : 'max-w-[640px]'
 
   return (
     <section
