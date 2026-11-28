@@ -61,7 +61,7 @@ test.describe('Mockup 10 capitole E2E', () => {
     expect(errors, errors.join('\n')).toEqual([])
   })
 
-  test('renders Cap 01–08 content and remaining placeholders', async ({
+  test('renders Cap 01–09 content and remaining placeholders', async ({
     page,
   }) => {
     const errors = await attachErrorTrap(page)
@@ -259,6 +259,7 @@ test.describe('Mockup 10 capitole E2E', () => {
       'regimuri',
       'studiu-de-caz',
       'rezultate',
+      'insight-uri',
     ])
     for (const id of CHAPTER_IDS) {
       if (authored.has(id)) continue
@@ -269,6 +270,47 @@ test.describe('Mockup 10 capitole E2E', () => {
     }
 
     expect(CHAPTER_IDS).toHaveLength(10)
+    expect(errors, errors.join('\n')).toEqual([])
+  })
+
+
+  test('Cap 09 Active Aero simulator responds to mode and speed', async ({
+    page,
+  }) => {
+    const errors = await attachErrorTrap(page)
+    await gotoApp(page)
+
+    await page.getByTestId('nav-insight-uri').click()
+    await page.waitForTimeout(700)
+    const chapter = page.getByTestId('chapter-insight-uri')
+    await expect(chapter).toBeVisible()
+    await expect(chapter).toContainText(/Simulator Active Aero/i)
+    await expect(page.getByTestId('nav-insight-uri')).toContainText(
+      /Simulator/i,
+    )
+
+    const sim = page.getByTestId('active-aero-simulator')
+    await expect(sim).toBeVisible()
+    await expect(page.getByTestId('sim-visual')).toBeVisible()
+    await expect(page.getByTestId('sim-chart')).toBeVisible()
+
+    await page.getByTestId('sim-mode-DRS').click()
+    await expect(page.getByTestId('sim-metric-mode')).toHaveText(/DRS|STANDARD/)
+    await expect(page.getByTestId('sim-throttle')).toBeVisible()
+
+    await page.getByTestId('sim-mode-AEROBRAKE').click()
+    await expect(page.getByTestId('sim-metric-mode')).toHaveText(/AEROBRAKE/)
+    await expect(page.getByTestId('sim-brake')).toBeVisible()
+    await expect(page.getByTestId('sim-metric-aoa')).toContainText(/19/)
+
+    await page.getByTestId('sim-mode-MAXP').click()
+    await page.getByTestId('sim-speed').fill('160')
+    await expect(page.getByTestId('sim-table3-anchor')).toBeVisible()
+    await expect(page.getByTestId('sim-table3-anchor')).toContainText(/788/)
+
+    await expect(page.getByTestId('chapter-insight-uri-notes')).toContainText(
+      /Table 3/i,
+    )
     expect(errors, errors.join('\n')).toEqual([])
   })
 

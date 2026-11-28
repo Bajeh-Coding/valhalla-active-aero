@@ -1,4 +1,5 @@
 import type { MockChapter } from '../data/chapters'
+import { ActiveAeroSimulator } from './ActiveAeroSimulator'
 import { AeroSurfaces } from './AeroSurfaces'
 import { Cap08Charts } from './Cap08Charts'
 import { ChapterMedia } from './ChapterMedia'
@@ -16,8 +17,9 @@ export function ChapterSection({ chapter }: ChapterSectionProps) {
   const hasSurfaces = Boolean(chapter.surfaces?.length)
   const hasCharts = Boolean(chapter.charts?.length)
   const hasExtra = Boolean(chapter.bodyExtra?.length)
+  const hasSimulator = Boolean(chapter.simulator)
   const titleWidth =
-    chapter.number >= 1 && chapter.number <= 8
+    chapter.number >= 1 && chapter.number <= 9
       ? 'max-w-[920px]'
       : 'max-w-[640px]'
 
@@ -153,7 +155,41 @@ export function ChapterSection({ chapter }: ChapterSectionProps) {
           />
         ) : null}
 
-        {hasNotes ? (
+        {hasSimulator ? (
+          <div className="chapter-reveal is-revealed">
+            <ActiveAeroSimulator />
+            {hasNotes ? (
+              <aside
+                className="mt-12 max-w-[720px] border-t border-aero-ivory/10 pt-6"
+                aria-label="Surse"
+                data-testid={`chapter-${chapter.id}-notes`}
+              >
+                <p className="font-ui mb-4 text-[10px] font-medium tracking-[0.55px] text-aero-mist/45 uppercase">
+                  Surse
+                </p>
+                <ol className="space-y-4">
+                  {chapter.notes!.map((note, i) => (
+                    <li key={i} className="flex gap-3">
+                      <span className="font-ui shrink-0 text-[10px] tracking-[0.2em] text-aero-mist/40">
+                        {String(i + 1).padStart(2, '0')}
+                      </span>
+                      <div className="min-w-0">
+                        <p className="font-ui text-[11px] leading-relaxed tracking-[0.35px] text-aero-mist/55">
+                          {note.text}
+                        </p>
+                        {note.quote ? (
+                          <blockquote className="font-ui mt-2 border-l border-aero-amr/50 pl-3 text-[11px] leading-relaxed tracking-[0.35px] text-aero-mist/70 italic">
+                            &ldquo;{note.quote}&rdquo;
+                          </blockquote>
+                        ) : null}
+                      </div>
+                    </li>
+                  ))}
+                </ol>
+              </aside>
+            ) : null}
+          </div>
+        ) : hasNotes ? (
           <aside
             className="chapter-reveal mt-12 max-w-[720px] border-t border-aero-ivory/10 pt-6"
             aria-label="Surse"

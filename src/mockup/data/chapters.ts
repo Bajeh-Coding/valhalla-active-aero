@@ -1,5 +1,5 @@
 /**
- * Presentation chapter shell — Cap 01–08 have authored content; others remain placeholders.
+ * Presentation chapter shell — Cap 01–09 have authored content; Cap 10 remains placeholder until integration.
  * Imagery: official Aston Martin Valhalla page assets (downloaded, not hotlinked).
  */
 
@@ -71,6 +71,8 @@ export interface MockChapter {
   surfaces?: readonly MockAeroSurface[]
   /** Optional Cap 08 SVG chart specs (paper-exact only). */
   charts?: readonly Cap08ChartSpec[]
+  /** Cap 09 — embed interactive Active Aero simulator. */
+  simulator?: boolean
 }
 
 export const MOCK_CHAPTERS: readonly MockChapter[] = [
@@ -417,17 +419,27 @@ export const MOCK_CHAPTERS: readonly MockChapter[] = [
   {
     id: 'insight-uri',
     number: 9,
-    label: 'Insight-uri',
-    kicker: 'Capitol 09 — placeholder',
-    headline: 'Lecturi utile',
-    body: 'Pellentesque habitant morbi tristique senectus. Capitol 09 — placeholder pentru insight-uri și implicații.',
+    label: 'Simulator',
+    kicker: 'Capitol 09',
+    headline: 'Simulator Active Aero',
+    body: 'Explorează programele SAE DRS, Aerobrake și MaxP: ajustează viteza, AOA, splitter și pedalele; vezi feedback vizual și indici educaționali relativi (forțe absolute doar la ancora Table 3 @ 160 km/h).',
     image: {
       src: '/images/am-official/am-ch09-insight.jpg',
       objectPosition: '50% 45%',
       sourceUrl:
         'https://www.astonmartin.com/-/media/models---valhalla-2026-relaunch/interior-banner.jpg',
     },
+    simulator: true,
+    notes: [
+      {
+        text: 'SAE 2020-36-0079 — modes DRS / Aerobrake / MaxP / Standard: AOA setpoints, splitter OPEN|CLOSED, throttle/brake/|ay| gates (S1-F020–F051).',
+      },
+      {
+        text: 'SAE 2020-36-0079, Table 3 @ 160 km/h (New Pack): absolute drag / front DF / rear DF anchors only — no invented Valhalla OEM forces away from this speed.',
+      },
+    ],
   },
+
   {
     id: 'surse',
     number: 10,
