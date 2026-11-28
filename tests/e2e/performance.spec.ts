@@ -6,7 +6,12 @@ import { expect, test } from '@playwright/test'
  */
 test.describe('Mockup performance probe', () => {
   test('measures rAF FPS during chapter scroll', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' })
     await page.goto('/', { waitUntil: 'networkidle' })
+    await expect(page.getByTestId('boot-splash-start')).toBeVisible({
+      timeout: 15_000,
+    })
+    await page.getByTestId('boot-splash-start').click()
     await expect(page.getByTestId('mockup-talk')).toBeVisible({
       timeout: 30_000,
     })
