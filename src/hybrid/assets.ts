@@ -1,6 +1,6 @@
 /**
  * Real Aston Martin Valhalla stills — Wikimedia Commons (CC BY / CC BY-SA).
- * Zero Unsplash. Provenance documented for congress presentation use.
+ * Zero Unsplash. No AM CDN hotlinks.
  */
 
 export type ValhallaAssetKey =
@@ -15,7 +15,6 @@ export interface ValhallaAsset {
   src: string
   alt: string
   objectPosition: string
-  /** Commons file title / attribution. */
   credit: string
   license: 'CC BY 4.0' | 'CC BY-SA 4.0'
   commonsUrl: string
@@ -24,7 +23,7 @@ export interface ValhallaAsset {
 export const VALHALLA_ASSETS: Record<ValhallaAssetKey, ValhallaAsset> = {
   hero: {
     src: '/images/valhalla/hero.jpg',
-    alt: 'Aston Martin Valhalla — verde, showroom, unghi față-trei-sferturi',
+    alt: 'Aston Martin Valhalla — verde, showroom',
     objectPosition: '55% 45%',
     credit: 'Aston Martin Valhalla at Miller Motorcars, front view',
     license: 'CC BY-SA 4.0',
@@ -33,7 +32,7 @@ export const VALHALLA_ASSETS: Record<ValhallaAssetKey, ValhallaAsset> = {
   },
   showroom: {
     src: '/images/valhalla/showroom.jpg',
-    alt: 'Aston Martin Valhalla — teal iridescent, showroom',
+    alt: 'Aston Martin Valhalla — teal iridescent',
     objectPosition: '50% 40%',
     credit: '2026 Aston Martin Valhalla',
     license: 'CC BY-SA 4.0',
@@ -42,7 +41,7 @@ export const VALHALLA_ASSETS: Record<ValhallaAssetKey, ValhallaAsset> = {
   },
   front: {
     src: '/images/valhalla/front.jpg',
-    alt: 'Aston Martin Valhalla — splitter față și canalizare aer',
+    alt: 'Aston Martin Valhalla — splitter față',
     objectPosition: '45% 50%',
     credit: '2025 Aston Martin Valhalla 5',
     license: 'CC BY-SA 4.0',
@@ -51,7 +50,7 @@ export const VALHALLA_ASSETS: Record<ValhallaAssetKey, ValhallaAsset> = {
   },
   side: {
     src: '/images/valhalla/side.jpg',
-    alt: 'Aston Martin Valhalla — profil, prize laterale și skirt',
+    alt: 'Aston Martin Valhalla — profil',
     objectPosition: '50% 45%',
     credit: '2025 Aston Martin Valhalla 11',
     license: 'CC BY-SA 4.0',
@@ -60,7 +59,7 @@ export const VALHALLA_ASSETS: Record<ValhallaAssetKey, ValhallaAsset> = {
   },
   rear: {
     src: '/images/valhalla/rear.jpg',
-    alt: 'Aston Martin Valhalla — aripă spate și siluetă',
+    alt: 'Aston Martin Valhalla — aripă spate',
     objectPosition: '60% 40%',
     credit: '2025 Aston Martin Valhalla 6',
     license: 'CC BY-SA 4.0',
@@ -69,7 +68,7 @@ export const VALHALLA_ASSETS: Record<ValhallaAssetKey, ValhallaAsset> = {
   },
   prototype: {
     src: '/images/valhalla/prototype.jpg',
-    alt: 'Aston Martin Valhalla Prototype — studiu formă',
+    alt: 'Aston Martin Valhalla Prototype',
     objectPosition: '50% 50%',
     credit: 'Aston Martin Valhalla Prototype (1)',
     license: 'CC BY-SA 4.0',
@@ -77,3 +76,13 @@ export const VALHALLA_ASSETS: Record<ValhallaAssetKey, ValhallaAsset> = {
       'https://commons.wikimedia.org/wiki/File:Aston_Martin_Valhalla_Prototype_(1).jpg',
   },
 }
+
+/** Still-scrub sequence for optional cinematic pacing (local Commons frames). */
+export const SCRUB_SEQUENCE: ValhallaAssetKey[] = [
+  'hero',
+  'front',
+  'side',
+  'rear',
+  'showroom',
+  'prototype',
+]

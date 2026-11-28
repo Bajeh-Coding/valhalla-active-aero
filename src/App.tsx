@@ -1,5 +1,5 @@
-import { CongressTalk } from '@/congress'
+import { HybridTalk } from '@/hybrid'
 
 export default function App() {
-  return <CongressTalk />
+  return <HybridTalk />
 }

@@ -1,9 +1,10 @@
 @import "tailwindcss";
 
 /*
-  Congress talk — Valhalla Active Aero
-  Display: Cinzel · Body: Cormorant · UI: Plus Jakarta · Mono: JetBrains
-  Palette: void / ink / mist / ivory / amr / lime / signal
+  Hybrid AM — Valhalla official digital language (approximated)
+  Display: Cinzel (elegant serif weight ≈ AM model titles)
+  Body: Cormorant Garamond · UI/data: Plus Jakarta · Mono: JetBrains
+  Palette: near-black void · ivory · racing-green whisper · lime rare
 */
 @theme {
   --color-aero-bg: #05070a;
@@ -56,7 +57,10 @@ html {
 
 body {
   margin: 0;
-  background: var(--void);
+  background:
+    radial-gradient(ellipse 120% 80% at 70% -10%, rgb(0 89 73 / 0.12), transparent 55%),
+    radial-gradient(ellipse 80% 50% at 10% 100%, rgb(11 14 20 / 0.9), transparent 50%),
+    var(--void);
   color: var(--ivory);
   font-family: var(--font-serif);
   -webkit-font-smoothing: antialiased;
@@ -113,10 +117,10 @@ input[type="range"].aero-range::-moz-range-thumb {
 @keyframes luxury-breathe {
   0%,
   100% {
-    opacity: 0.35;
+    opacity: 0.3;
   }
   50% {
-    opacity: 0.8;
+    opacity: 0.75;
   }
 }
 
@@ -127,18 +131,11 @@ input[type="range"].aero-range::-moz-range-thumb {
 @media (prefers-reduced-motion: reduce) {
   .luxury-pulse {
     animation: none;
-    opacity: 0.55;
+    opacity: 0.5;
   }
 }
 
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
+::selection {
+  background: rgb(0 89 73 / 0.45);
+  color: #f2f0ea;
 }
