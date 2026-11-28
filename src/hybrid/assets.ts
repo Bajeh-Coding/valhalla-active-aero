@@ -1,6 +1,5 @@
 /**
- * Real Aston Martin Valhalla stills — Wikimedia Commons (CC BY / CC BY-SA).
- * Zero Unsplash. No AM CDN hotlinks.
+ * Valhalla stills — official Aston Martin page assets (local copies).
  */
 
 export type ValhallaAssetKey =
@@ -16,68 +15,67 @@ export interface ValhallaAsset {
   alt: string
   objectPosition: string
   credit: string
-  license: 'CC BY 4.0' | 'CC BY-SA 4.0'
+  license: string
   commonsUrl: string
 }
 
 export const VALHALLA_ASSETS: Record<ValhallaAssetKey, ValhallaAsset> = {
   hero: {
-    src: '/images/valhalla/hero.jpg',
-    alt: 'Aston Martin Valhalla — verde, showroom',
+    src: '/images/am-official/am-hero.jpg',
+    alt: 'Aston Martin Valhalla — official hero still',
     objectPosition: '55% 45%',
-    credit: 'Aston Martin Valhalla at Miller Motorcars, front view',
-    license: 'CC BY-SA 4.0',
+    credit: 'astonmartin.com Valhalla hero video still',
+    license: 'Aston Martin media (mockup local copy)',
     commonsUrl:
-      'https://commons.wikimedia.org/wiki/File:Aston_Martin_Valhalla_at_Miller_Motorcars,_front_view.jpg',
+      'https://www.astonmartin.com/-/media/models---valhalla-2026-relaunch/valhalla-white-16x9-web.mp4',
   },
   showroom: {
-    src: '/images/valhalla/showroom.jpg',
-    alt: 'Aston Martin Valhalla — teal iridescent',
+    src: '/images/am-official/am-ch01-intro.jpg',
+    alt: 'Aston Martin Valhalla — exterior banner',
     objectPosition: '50% 40%',
-    credit: '2026 Aston Martin Valhalla',
-    license: 'CC BY-SA 4.0',
+    credit: 'exterior-banner.jpg',
+    license: 'Aston Martin media (mockup local copy)',
     commonsUrl:
-      'https://commons.wikimedia.org/wiki/File:2026_Aston_Martin_Valhalla.jpg',
+      'https://www.astonmartin.com/-/media/models---valhalla-2026-relaunch/exterior-banner.jpg',
   },
   front: {
-    src: '/images/valhalla/front.jpg',
-    alt: 'Aston Martin Valhalla — splitter față',
-    objectPosition: '45% 50%',
-    credit: '2025 Aston Martin Valhalla 5',
-    license: 'CC BY-SA 4.0',
+    src: '/images/am-official/am-ch02-problema.jpg',
+    alt: 'Aston Martin Valhalla — specification banner',
+    objectPosition: '50% 45%',
+    credit: 'valhalla-specification-banner-desktop.jpg',
+    license: 'Aston Martin media (mockup local copy)',
     commonsUrl:
-      'https://commons.wikimedia.org/wiki/File:2025_Aston_Martin_Valhalla_5.jpg',
+      'https://www.astonmartin.com/-/media/models---valhalla/2026-redesign/valhalla-specification-banner-desktop.jpg',
   },
   side: {
-    src: '/images/valhalla/side.jpg',
-    alt: 'Aston Martin Valhalla — profil',
-    objectPosition: '50% 45%',
-    credit: '2025 Aston Martin Valhalla 11',
-    license: 'CC BY-SA 4.0',
+    src: '/images/am-official/am-ch05-control.jpg',
+    alt: 'Aston Martin Valhalla — LFT image',
+    objectPosition: '55% 42%',
+    credit: 'valhalla-lft-image.jpg',
+    license: 'Aston Martin media (mockup local copy)',
     commonsUrl:
-      'https://commons.wikimedia.org/wiki/File:2025_Aston_Martin_Valhalla_11.jpg',
+      'https://www.astonmartin.com/-/media/models---valhalla-2026-relaunch/valhalla-lft-image.jpg',
   },
   rear: {
-    src: '/images/valhalla/rear.jpg',
-    alt: 'Aston Martin Valhalla — aripă spate',
-    objectPosition: '60% 40%',
-    credit: '2025 Aston Martin Valhalla 6',
-    license: 'CC BY-SA 4.0',
+    src: '/images/am-official/am-ch07-caz.jpg',
+    alt: 'Aston Martin Valhalla — engineering banner',
+    objectPosition: '50% 40%',
+    credit: 'engineering-banner-desktop.jpg',
+    license: 'Aston Martin media (mockup local copy)',
     commonsUrl:
-      'https://commons.wikimedia.org/wiki/File:2025_Aston_Martin_Valhalla_6.jpg',
+      'https://www.astonmartin.com/-/media/models---valhalla-2026-relaunch/engineering-banner-desktop.jpg',
   },
   prototype: {
-    src: '/images/valhalla/prototype.jpg',
-    alt: 'Aston Martin Valhalla Prototype',
-    objectPosition: '50% 50%',
-    credit: 'Aston Martin Valhalla Prototype (1)',
-    license: 'CC BY-SA 4.0',
+    src: '/images/am-official/am-ch09-insight.jpg',
+    alt: 'Aston Martin Valhalla — interior banner',
+    objectPosition: '50% 45%',
+    credit: 'interior-banner.jpg',
+    license: 'Aston Martin media (mockup local copy)',
     commonsUrl:
-      'https://commons.wikimedia.org/wiki/File:Aston_Martin_Valhalla_Prototype_(1).jpg',
+      'https://www.astonmartin.com/-/media/models---valhalla-2026-relaunch/interior-banner.jpg',
   },
 }
 
-/** Still-scrub sequence for optional cinematic pacing (local Commons frames). */
 export const SCRUB_SEQUENCE: ValhallaAssetKey[] = [
   'hero',
   'front',

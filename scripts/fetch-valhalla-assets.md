@@ -1,17 +1,10 @@
-# Valhalla asset provenance
+# Official Aston Martin Valhalla assets (mockup)
 
-Local files under `public/images/valhalla/` were downloaded from Wikimedia Commons
-(Special:FilePath, width≈2400) on 2026-11-27. License: CC BY-SA 4.0 (see each Commons page).
+Downloaded from https://www.astonmartin.com/en/models/valhalla into
+`public/images/am-official/` for offline mockup use (not hotlinked).
 
-| File | Commons source |
-|------|----------------|
-| `hero.jpg` | Aston Martin Valhalla at Miller Motorcars, front view |
-| `showroom.jpg` | 2026 Aston Martin Valhalla |
-| `front.jpg` | 2025 Aston Martin Valhalla 5 |
-| `side.jpg` | 2025 Aston Martin Valhalla 11 |
-| `rear.jpg` | 2025 Aston Martin Valhalla 6 |
-| `prototype.jpg` | Aston Martin Valhalla Prototype (1) |
+Fonts self-hosted from theme:
+`https://www.astonmartin.com/theme/10.3.54.0.1/assets/astonmartin/fonts/`
+→ `public/fonts/aston-martin/` (`AstonMartinFlare`, `AstonMartinSans`).
 
-Machine-readable credits: `src/congress/assets.ts`.
-
-**Do not** reintroduce Unsplash car placeholders.
+See project doc `docs/mockup-10-capitole.md` for the full URL table.

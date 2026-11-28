@@ -1,5 +1,5 @@
-import { HybridTalk } from '@/hybrid'
+import { MockupTalk } from '@/mockup'
 
 export default function App() {
-  return <HybridTalk />
+  return <MockupTalk />
 }
