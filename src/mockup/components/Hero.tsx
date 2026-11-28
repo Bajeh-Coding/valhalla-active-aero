@@ -1,4 +1,4 @@
-import { VALHALLA_SRC } from '../data/chapters'
+import { HERO_IMAGE } from '../data/chapters'
 
 interface HeroProps {
   onExplore: () => void
@@ -7,7 +7,6 @@ interface HeroProps {
 /**
  * First viewport: thematic brand title + one line + optional CTAs.
  * Valhalla is the full-bleed visual plane — never the page title.
- * No overlays, badges, cards, or stats on hero media.
  */
 export function Hero({ onExplore }: HeroProps) {
   return (
@@ -18,27 +17,27 @@ export function Hero({ onExplore }: HeroProps) {
     >
       <div className="absolute inset-0" aria-hidden>
         <img
-          src={VALHALLA_SRC.hero}
+          src={HERO_IMAGE.src}
           alt=""
           className="hero-ambient h-full w-full object-cover"
-          style={{ objectPosition: '55% 42%' }}
+          style={{ objectPosition: HERO_IMAGE.objectPosition }}
           decoding="async"
           fetchPriority="high"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-aero-void via-aero-void/45 to-aero-void/25" />
-        <div className="absolute inset-0 bg-gradient-to-r from-aero-void/55 via-transparent to-aero-void/20" />
+        <div className="absolute inset-0 bg-gradient-to-t from-aero-void via-aero-void/55 to-aero-void/30" />
+        <div className="absolute inset-0 bg-gradient-to-r from-aero-void/70 via-aero-void/15 to-transparent" />
       </div>
 
       <div className="relative z-10 mx-auto w-full max-w-[1400px] px-6 pb-16 pt-28 md:px-10 md:pb-24">
-        <p className="font-ui mb-5 text-[11px] tracking-[0.42em] text-aero-mist/80 uppercase">
+        <p className="font-ui mb-5 text-[11px] font-medium tracking-[0.42em] text-aero-mist/80 uppercase">
           Prezentare · Mockup
         </p>
 
-        <h1 className="font-display hero-title-reveal max-w-[18ch] text-[clamp(2.75rem,8vw,5.75rem)] leading-[0.95] font-normal tracking-[0.04em] text-aero-ivory uppercase">
+        <h1 className="font-display hero-title-reveal max-w-[16ch] text-[clamp(2.85rem,8.5vw,5.85rem)] leading-[0.92] font-light tracking-[0.02em] text-aero-ivory uppercase">
           Aerodinamică Activă
         </h1>
 
-        <p className="font-serif mt-6 max-w-[36ch] text-lg text-aero-mist/90 md:text-xl">
+        <p className="font-sans mt-6 max-w-[38ch] text-base font-light leading-relaxed text-aero-mist/90 md:text-lg">
           Controlul aerului ca limbaj de performanță — schelet vizual, fără
           conținut științific.
         </p>
@@ -47,14 +46,14 @@ export function Hero({ onExplore }: HeroProps) {
           <button
             type="button"
             onClick={onExplore}
-            className="font-ui border border-aero-ivory/80 bg-aero-ivory px-7 py-3 text-[11px] tracking-[0.22em] text-aero-void uppercase transition-colors hover:bg-transparent hover:text-aero-ivory"
+            className="font-ui border border-aero-ivory/80 bg-aero-ivory px-7 py-3 text-[11px] font-medium tracking-[0.24em] text-aero-void uppercase transition-colors hover:bg-transparent hover:text-aero-ivory"
           >
             Explorează
           </button>
           <button
             type="button"
             onClick={onExplore}
-            className="font-ui border border-aero-ivory/35 px-7 py-3 text-[11px] tracking-[0.22em] text-aero-ivory/90 uppercase transition-colors hover:border-aero-ivory/70"
+            className="font-ui border border-aero-ivory/35 px-7 py-3 text-[11px] font-medium tracking-[0.24em] text-aero-ivory/90 uppercase transition-colors hover:border-aero-ivory/70"
           >
             Capitole
           </button>

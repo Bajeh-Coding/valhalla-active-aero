@@ -115,7 +115,7 @@ export function MockupTalk() {
 
       <footer className="border-t border-aero-ivory/8 px-6 py-12 md:px-10">
         <div className="mx-auto flex max-w-[1400px] flex-col gap-3 md:flex-row md:items-end md:justify-between">
-          <p className="font-display text-sm tracking-[0.2em] text-aero-mist/50 uppercase">
+          <p className="font-display text-sm font-light tracking-[0.24em] text-aero-mist/50 uppercase">
             Aerodinamică Activă
           </p>
           <p className="font-ui text-[10px] tracking-[0.2em] text-aero-mist/40 uppercase">

@@ -27,7 +27,10 @@ await server.listen()
 const browser = await chromium.launch()
 const page = await browser.newPage({ viewport: { width: 1440, height: 900 } })
 await page.goto('http://127.0.0.1:5198/', { waitUntil: 'networkidle' })
-await page.waitForTimeout(1000)
+await page.evaluate(async () => {
+  await document.fonts.ready
+})
+await page.waitForTimeout(1200)
 
 for (const shot of shots) {
   if (shot.scroll) {

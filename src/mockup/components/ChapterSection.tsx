@@ -7,7 +7,6 @@ interface ChapterSectionProps {
 
 /**
  * One job per section: number + headline + short body + one visual plane.
- * No decorative card grids.
  */
 export function ChapterSection({ chapter }: ChapterSectionProps) {
   const n = String(chapter.number).padStart(2, '0')
@@ -23,19 +22,19 @@ export function ChapterSection({ chapter }: ChapterSectionProps) {
 
       <div className="mx-auto max-w-[1400px] px-6 py-16 md:px-10 md:py-24">
         <div className="chapter-reveal max-w-[640px]">
-          <p className="font-ui text-[10px] tracking-[0.32em] text-aero-mist/55 uppercase">
+          <p className="font-ui text-[10px] font-medium tracking-[0.32em] text-aero-mist/55 uppercase">
             {chapter.kicker}
           </p>
-          <p className="font-mono mt-4 text-aero-lime/80 text-sm tracking-[0.2em]">
+          <p className="font-ui mt-4 text-sm font-light tracking-[0.28em] text-aero-lime/85">
             {n}
           </p>
-          <h2 className="font-display mt-3 text-[clamp(1.75rem,4vw,3rem)] leading-[1.05] tracking-[0.06em] text-aero-ivory uppercase">
+          <h2 className="font-display mt-3 text-[clamp(1.85rem,4.2vw,3.15rem)] leading-[1.02] font-light tracking-[0.04em] text-aero-ivory uppercase">
             {chapter.headline}
           </h2>
-          <p className="font-ui mt-2 text-[11px] tracking-[0.28em] text-aero-mist/60 uppercase">
+          <p className="font-ui mt-2 text-[11px] font-medium tracking-[0.28em] text-aero-mist/60 uppercase">
             {chapter.label}
           </p>
-          <p className="font-serif mt-8 text-lg leading-relaxed text-aero-mist/90 md:text-xl">
+          <p className="font-sans mt-8 text-base font-light leading-relaxed text-aero-mist/90 md:text-lg">
             {chapter.body}
           </p>
         </div>

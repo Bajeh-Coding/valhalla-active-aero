@@ -1,9 +1,9 @@
 @import "tailwindcss";
 
 /*
-  Hybrid AM — Valhalla official digital language (approximated)
-  Display: Cinzel (elegant serif weight ≈ AM model titles)
-  Body: Cormorant Garamond · UI/data: Plus Jakarta · Mono: JetBrains
+  Mockup luxury type — Aston-adjacent (Fontshare)
+  Display: Clash Display (light / condensed presence)
+  Sans/UI: Satoshi (refined geometric)
   Palette: near-black void · ivory · racing-green whisper · lime rare
 */
 @theme {
@@ -22,11 +22,11 @@
   --color-aero-signal: #e8e4dc;
   --color-aero-champagne: #e8e4dc;
 
-  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
-  --font-ui: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Cinzel", "Cormorant Garamond", Georgia, serif;
-  --font-serif: "Cormorant Garamond", "Cinzel", Georgia, serif;
-  --font-mono: "JetBrains Mono", ui-monospace, "Cascadia Code", monospace;
+  --font-sans: "Satoshi", "Helvetica Neue", Helvetica, sans-serif;
+  --font-ui: "Satoshi", "Helvetica Neue", Helvetica, sans-serif;
+  --font-display: "Clash Display", "Satoshi", "Helvetica Neue", sans-serif;
+  --font-serif: "Satoshi", "Helvetica Neue", Helvetica, sans-serif;
+  --font-mono: "Satoshi", "Helvetica Neue", Helvetica, sans-serif;
 }
 
 :root {
@@ -62,7 +62,8 @@ body {
     radial-gradient(ellipse 80% 50% at 10% 100%, rgb(11 14 20 / 0.9), transparent 50%),
     var(--void);
   color: var(--ivory);
-  font-family: var(--font-serif);
+  font-family: var(--font-sans);
+  font-weight: 300;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

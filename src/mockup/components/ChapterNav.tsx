@@ -31,7 +31,7 @@ export function ChapterNav({
       data-testid="chapter-nav"
     >
       <div className="mx-auto flex max-w-[1400px] items-center justify-between gap-4 px-4 py-3 md:px-8">
-        <p className="font-ui shrink-0 text-[10px] tracking-[0.32em] text-aero-mist/70 uppercase">
+        <p className="font-ui shrink-0 text-[10px] font-medium tracking-[0.36em] text-aero-mist/70 uppercase">
           Aerodinamică Activă
         </p>
 
@@ -49,13 +49,13 @@ export function ChapterNav({
                   aria-current={active ? 'true' : undefined}
                   data-testid={`nav-${ch.id}`}
                   className={cn(
-                    'font-ui relative px-2 py-2 text-[9px] tracking-[0.16em] uppercase transition-colors md:px-2.5 md:text-[10px] md:tracking-[0.2em]',
+                    'font-ui relative px-2 py-2 text-[9px] font-medium tracking-[0.18em] uppercase transition-colors md:px-2.5 md:text-[10px] md:tracking-[0.22em]',
                     active
                       ? 'text-aero-ivory'
                       : 'text-aero-mist/45 hover:text-aero-mist/80',
                   )}
                 >
-                  <span className="text-aero-mist/55">
+                  <span className="font-light text-aero-mist/55">
                     {String(ch.number).padStart(2, '0')}
                   </span>{' '}
                   <span className="hidden sm:inline">{ch.label}</span>

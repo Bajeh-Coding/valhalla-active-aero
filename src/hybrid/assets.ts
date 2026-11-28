@@ -1,5 +1,5 @@
 /**
- * Real Aston Martin Valhalla stills — Wikimedia Commons (CC BY / CC BY-SA).
+ * Valhalla stills for hybrid talk — local Commons-derived cinematic set.
  * Zero Unsplash. No AM CDN hotlinks.
  */
 
@@ -23,61 +23,60 @@ export interface ValhallaAsset {
 export const VALHALLA_ASSETS: Record<ValhallaAssetKey, ValhallaAsset> = {
   hero: {
     src: '/images/valhalla/hero.jpg',
-    alt: 'Aston Martin Valhalla — verde, showroom',
-    objectPosition: '55% 45%',
-    credit: 'Aston Martin Valhalla at Miller Motorcars, front view',
+    alt: 'Aston Martin Valhalla — cinematic front three-quarter',
+    objectPosition: '58% 48%',
+    credit: '2026 Aston Martin Valhalla SCD26 (graded)',
     license: 'CC BY-SA 4.0',
     commonsUrl:
-      'https://commons.wikimedia.org/wiki/File:Aston_Martin_Valhalla_at_Miller_Motorcars,_front_view.jpg',
+      'https://commons.wikimedia.org/wiki/File:2026_Aston_Martin_Valhalla_SCD26.jpg',
   },
   showroom: {
-    src: '/images/valhalla/showroom.jpg',
-    alt: 'Aston Martin Valhalla — teal iridescent',
+    src: '/images/valhalla/ch01.jpg',
+    alt: 'Aston Martin Valhalla — cool metallic',
     objectPosition: '50% 40%',
-    credit: '2026 Aston Martin Valhalla',
+    credit: '2026 Aston Martin Valhalla CAE26',
     license: 'CC BY-SA 4.0',
     commonsUrl:
-      'https://commons.wikimedia.org/wiki/File:2026_Aston_Martin_Valhalla.jpg',
+      'https://commons.wikimedia.org/wiki/File:2026_Aston_Martin_Valhalla_CAE26.jpg',
   },
   front: {
-    src: '/images/valhalla/front.jpg',
-    alt: 'Aston Martin Valhalla — splitter față',
-    objectPosition: '45% 50%',
-    credit: '2025 Aston Martin Valhalla 5',
+    src: '/images/valhalla/ch02.jpg',
+    alt: 'Aston Martin Valhalla — front three-quarter',
+    objectPosition: '48% 45%',
+    credit: '2022 Aston Martin Valhalla',
     license: 'CC BY-SA 4.0',
     commonsUrl:
-      'https://commons.wikimedia.org/wiki/File:2025_Aston_Martin_Valhalla_5.jpg',
+      'https://commons.wikimedia.org/wiki/File:2022_Aston_Martin_Valhalla.jpg',
   },
   side: {
-    src: '/images/valhalla/side.jpg',
-    alt: 'Aston Martin Valhalla — profil',
-    objectPosition: '50% 45%',
-    credit: '2025 Aston Martin Valhalla 11',
+    src: '/images/valhalla/ch05.jpg',
+    alt: 'Aston Martin Valhalla — olive with lime accents',
+    objectPosition: '55% 45%',
+    credit: '2026 Aston Martin Valhalla SCD26',
     license: 'CC BY-SA 4.0',
     commonsUrl:
-      'https://commons.wikimedia.org/wiki/File:2025_Aston_Martin_Valhalla_11.jpg',
+      'https://commons.wikimedia.org/wiki/File:2026_Aston_Martin_Valhalla_SCD26.jpg',
   },
   rear: {
-    src: '/images/valhalla/rear.jpg',
-    alt: 'Aston Martin Valhalla — aripă spate',
-    objectPosition: '60% 40%',
-    credit: '2025 Aston Martin Valhalla 6',
+    src: '/images/valhalla/ch07.jpg',
+    alt: 'Aston Martin Valhalla — outdoor three-quarter',
+    objectPosition: '50% 40%',
+    credit: 'Aston Martin Valhalla (2026) (55078901719)',
     license: 'CC BY-SA 4.0',
     commonsUrl:
-      'https://commons.wikimedia.org/wiki/File:2025_Aston_Martin_Valhalla_6.jpg',
+      'https://commons.wikimedia.org/wiki/File:Aston_Martin_Valhalla_(2026)_(55078901719).jpg',
   },
   prototype: {
-    src: '/images/valhalla/prototype.jpg',
-    alt: 'Aston Martin Valhalla Prototype',
-    objectPosition: '50% 50%',
-    credit: 'Aston Martin Valhalla Prototype (1)',
+    src: '/images/valhalla/ch09.jpg',
+    alt: 'Aston Martin Valhalla Prototype — detail',
+    objectPosition: '50% 45%',
+    credit: 'Aston Martin Valhalla Prototype (3)',
     license: 'CC BY-SA 4.0',
     commonsUrl:
-      'https://commons.wikimedia.org/wiki/File:Aston_Martin_Valhalla_Prototype_(1).jpg',
+      'https://commons.wikimedia.org/wiki/File:Aston_Martin_Valhalla_Prototype_(3).jpg',
   },
 }
 
-/** Still-scrub sequence for optional cinematic pacing (local Commons frames). */
 export const SCRUB_SEQUENCE: ValhallaAssetKey[] = [
   'hero',
   'front',
