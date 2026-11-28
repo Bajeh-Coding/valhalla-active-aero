@@ -61,7 +61,7 @@ test.describe('Mockup 10 capitole E2E', () => {
     expect(errors, errors.join('\n')).toEqual([])
   })
 
-  test('renders Cap 01 content and remaining placeholders', async ({
+  test('renders Cap 01 and Cap 08 content; other chapters stay placeholders', async ({
     page,
   }) => {
     const errors = await attachErrorTrap(page)
@@ -81,7 +81,30 @@ test.describe('Mockup 10 capitole E2E', () => {
       /Aston Martin Vantage 2019/i,
     )
 
-    for (const id of CHAPTER_IDS.slice(1)) {
+    const rezultate = page.getByTestId('chapter-rezultate')
+    await rezultate.scrollIntoViewIfNeeded()
+    await expect(rezultate).toBeVisible()
+    await expect(rezultate).toContainText(
+      /Grafice relevante — de ce Active Aero/i,
+    )
+    await expect(rezultate).toContainText(/Cum funcționează/i)
+    await expect(rezultate).toContainText(/De ce este necesar/i)
+    await expect(rezultate).toContainText(/−2\.55/i)
+    await expect(page.getByTestId('chapter-rezultate-charts')).toBeVisible()
+    await expect(page.getByTestId('chart-ch08-table6-dil')).toBeVisible()
+    await expect(page.getByTestId('chart-ch08-maxp-aoa')).toBeVisible()
+    await expect(page.getByTestId('chart-ch08-pi-rom-xfoil')).toBeVisible()
+    await expect(page.getByTestId('chart-ch08-kamm-fl')).toBeVisible()
+    await expect(page.getByTestId('chapter-rezultate-notes')).toContainText(
+      /Table 6/i,
+    )
+    await expect(
+      rezultate.locator('img[src*="/images/am-official/am-ch08-rezultate"]'),
+    ).toBeVisible()
+
+    const authored = new Set(['introducere', 'rezultate'])
+    for (const id of CHAPTER_IDS) {
+      if (authored.has(id)) continue
       const section = page.getByTestId(`chapter-${id}`)
       await section.scrollIntoViewIfNeeded()
       await expect(section).toBeVisible()

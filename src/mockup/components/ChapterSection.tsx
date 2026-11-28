@@ -1,4 +1,5 @@
 import type { MockChapter } from '../data/chapters'
+import { Cap08Charts } from './Cap08Charts'
 import { ChapterMedia } from './ChapterMedia'
 
 interface ChapterSectionProps {
@@ -8,8 +9,12 @@ interface ChapterSectionProps {
 export function ChapterSection({ chapter }: ChapterSectionProps) {
   const n = String(chapter.number).padStart(2, '0')
   const hasNotes = Boolean(chapter.notes?.length)
+  const hasCharts = Boolean(chapter.charts?.length)
+  const hasExtra = Boolean(chapter.bodyExtra?.length)
   const titleWidth =
-    chapter.number === 1 ? 'max-w-[920px]' : 'max-w-[640px]'
+    chapter.number === 1 || chapter.number === 8
+      ? 'max-w-[920px]'
+      : 'max-w-[640px]'
 
   return (
     <section
@@ -37,6 +42,21 @@ export function ChapterSection({ chapter }: ChapterSectionProps) {
           <p className="font-ui mt-8 max-w-[640px] text-base leading-relaxed tracking-[0.55px] text-aero-mist/90 md:text-lg">
             {chapter.body}
           </p>
+
+          {hasExtra
+            ? chapter.bodyExtra!.map((para) => (
+                <p
+                  key={para.slice(0, 48)}
+                  className="font-ui mt-6 max-w-[640px] text-base leading-relaxed tracking-[0.55px] text-aero-mist/85 md:text-lg"
+                >
+                  {para}
+                </p>
+              ))
+            : null}
+
+          {hasCharts ? (
+            <Cap08Charts charts={chapter.charts!} chapterId={chapter.id} />
+          ) : null}
 
           {hasNotes ? (
             <aside
