@@ -50,9 +50,13 @@ test.describe('Mockup 10 capitole E2E', () => {
       /Aerodinamică Activă/i,
     )
     await expect(page.getByTestId('chapter-nav')).toBeVisible()
-    await expect(page.locator('img[src*="/images/valhalla/"]')).not.toHaveCount(
-      0,
-    )
+    await expect(
+      page.locator('img[src*="/images/am-official/"]'),
+    ).not.toHaveCount(0)
+    const h1Font = await page
+      .getByRole('heading', { level: 1 })
+      .evaluate((el) => getComputedStyle(el).fontFamily)
+    expect(h1Font).toMatch(/AstonMartinFlare/)
 
     expect(errors, errors.join('\n')).toEqual([])
   })

@@ -3,15 +3,13 @@ import type { MockChapter } from '../data/chapters'
 
 interface ChapterNavProps {
   chapters: readonly MockChapter[]
-  /** Empty while still on hero — no chapter underline yet. */
   activeId: string
   solid: boolean
   onSelect: (id: string) => void
 }
 
 /**
- * Aston Valhalla–style sticky chapter sub-nav:
- * caps, letter-spaced, underline on the active section (scrollspy).
+ * Sticky chapter sub-nav — AstonMartinSans labels (same family as AM sticky nav).
  */
 export function ChapterNav({
   chapters,
@@ -31,7 +29,7 @@ export function ChapterNav({
       data-testid="chapter-nav"
     >
       <div className="mx-auto flex max-w-[1400px] items-center justify-between gap-4 px-4 py-3 md:px-8">
-        <p className="font-ui shrink-0 text-[10px] font-medium tracking-[0.36em] text-aero-mist/70 uppercase">
+        <p className="font-display shrink-0 text-[13px] font-normal tracking-normal text-aero-mist/80">
           Aerodinamică Activă
         </p>
 
@@ -49,19 +47,19 @@ export function ChapterNav({
                   aria-current={active ? 'true' : undefined}
                   data-testid={`nav-${ch.id}`}
                   className={cn(
-                    'font-ui relative px-2 py-2 text-[9px] font-medium tracking-[0.18em] uppercase transition-colors md:px-2.5 md:text-[10px] md:tracking-[0.22em]',
+                    'font-ui relative px-2 py-2 text-[11px] tracking-[0.55px] uppercase transition-colors md:px-2.5 md:text-[12px]',
                     active
                       ? 'text-aero-ivory'
                       : 'text-aero-mist/45 hover:text-aero-mist/80',
                   )}
                 >
-                  <span className="font-light text-aero-mist/55">
+                  <span className="text-aero-mist/55">
                     {String(ch.number).padStart(2, '0')}
                   </span>{' '}
                   <span className="hidden sm:inline">{ch.label}</span>
                   <span
                     className={cn(
-                      'absolute right-2 bottom-0 left-2 h-px origin-left bg-aero-lime transition-transform duration-300',
+                      'absolute right-2 bottom-0 left-2 h-px origin-left bg-aero-amr transition-transform duration-300',
                       active ? 'scale-x-100' : 'scale-x-0',
                     )}
                     aria-hidden

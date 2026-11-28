@@ -1,10 +1,13 @@
 @import "tailwindcss";
 
 /*
-  Mockup luxury type — Aston-adjacent (Fontshare)
-  Display: Clash Display (light / condensed presence)
-  Sans/UI: Satoshi (refined geometric)
-  Palette: near-black void · ivory · racing-green whisper · lime rare
+  Mockup type — exact Aston Martin Valhalla page families (self-hosted)
+  Computed on https://www.astonmartin.com/en/models/valhalla :
+    h1/h2/h3 → font-family: AstonMartinFlare, sans-serif
+    body/nav → font-family: AstonMartinSans, sans-serif
+    --ff-amflare: AstonMartinFlare, sans-serif
+    --ff-amsans: AstonMartinSans, sans-serif
+  Palette: near-black void · ivory · racing-green (#00665e AM) · lime rare
 */
 @theme {
   --color-aero-bg: #05070a;
@@ -12,21 +15,21 @@
   --color-aero-ink: #0b0e14;
   --color-aero-bg-deep: #0b0e14;
   --color-aero-surface: #0b0e14;
-  --color-aero-amr: #005949;
-  --color-aero-amr-deep: #004225;
+  --color-aero-amr: #00665e;
+  --color-aero-amr-deep: #004944;
   --color-aero-lime: #c4df00;
   --color-aero-mist: #8b929a;
   --color-aero-muted: #8b929a;
-  --color-aero-ivory: #f2f0ea;
-  --color-aero-text: #f2f0ea;
+  --color-aero-ivory: #f8f7f4;
+  --color-aero-text: #f8f7f4;
   --color-aero-signal: #e8e4dc;
   --color-aero-champagne: #e8e4dc;
 
-  --font-sans: "Satoshi", "Helvetica Neue", Helvetica, sans-serif;
-  --font-ui: "Satoshi", "Helvetica Neue", Helvetica, sans-serif;
-  --font-display: "Clash Display", "Satoshi", "Helvetica Neue", sans-serif;
-  --font-serif: "Satoshi", "Helvetica Neue", Helvetica, sans-serif;
-  --font-mono: "Satoshi", "Helvetica Neue", Helvetica, sans-serif;
+  --font-sans: AstonMartinSans, sans-serif;
+  --font-ui: AstonMartinSans, sans-serif;
+  --font-display: AstonMartinFlare, sans-serif;
+  --font-serif: AstonMartinFlare, sans-serif;
+  --font-mono: AstonMartinSans, sans-serif;
 }
 
 :root {
@@ -62,8 +65,9 @@ body {
     radial-gradient(ellipse 80% 50% at 10% 100%, rgb(11 14 20 / 0.9), transparent 50%),
     var(--void);
   color: var(--ivory);
-  font-family: var(--font-sans);
-  font-weight: 300;
+  font-family: AstonMartinSans, sans-serif;
+  font-weight: 400;
+  letter-spacing: 0.55px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

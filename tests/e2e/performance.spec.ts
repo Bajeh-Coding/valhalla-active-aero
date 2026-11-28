@@ -66,7 +66,7 @@ test.describe('Mockup performance probe', () => {
         ),
         chapterCount: document.querySelectorAll('[data-chapter-id]').length,
         valhallaImgCount: document.querySelectorAll(
-          'img[src*="/images/valhalla/"]',
+          'img[src*="/images/am-official/"]',
         ).length,
       }
     })
