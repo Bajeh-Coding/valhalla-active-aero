@@ -11,7 +11,7 @@ export function ChapterSection({ chapter }: ChapterSectionProps) {
   const hasDof = Boolean(chapter.dofBreakdown?.length)
   const hasSpecs = Boolean(chapter.specs?.rows.length)
   const titleWidth =
-    chapter.number === 1 || chapter.number === 2
+    chapter.number === 1 || chapter.number === 2 || chapter.number === 5
       ? 'max-w-[920px]'
       : 'max-w-[640px]'
 
