@@ -61,7 +61,7 @@ test.describe('Mockup 10 capitole E2E', () => {
     expect(errors, errors.join('\n')).toEqual([])
   })
 
-  test('renders Cap 01–02 content and remaining placeholders', async ({
+  test('renders Cap 01–03 content and remaining placeholders', async ({
     page,
   }) => {
     const errors = await attachErrorTrap(page)
@@ -115,7 +115,28 @@ test.describe('Mockup 10 capitole E2E', () => {
     )
     await expect(page.getByTestId('nav-problema')).toContainText(/Modelare/i)
 
-    for (const id of CHAPTER_IDS.slice(2)) {
+    const fundamente = page.getByTestId('chapter-fundamente')
+    await fundamente.scrollIntoViewIfNeeded()
+    await expect(fundamente).toBeVisible()
+    await expect(fundamente).toContainText(
+      /Sistemul de Control prin Stări \(DRS, Aerobrake, MaxP\)/i,
+    )
+    await expect(fundamente).toContainText(/State Machine/i)
+    await expect(page.getByTestId('chapter-fundamente-modes')).toContainText(
+      /AOA = 0°/,
+    )
+    await expect(page.getByTestId('chapter-fundamente-modes')).toContainText(
+      /AOA = 4\.5°/,
+    )
+    await expect(page.getByTestId('chapter-fundamente-notes')).toContainText(
+      /pp\.4–6/i,
+    )
+
+    const placeholderIds = CHAPTER_IDS.filter(
+      (id) =>
+        id !== 'introducere' && id !== 'problema' && id !== 'fundamente',
+    )
+    for (const id of placeholderIds) {
       const section = page.getByTestId(`chapter-${id}`)
       await section.scrollIntoViewIfNeeded()
       await expect(section).toBeVisible()
