@@ -10,7 +10,7 @@ type HotspotId =
 
 interface Hotspot {
   id: HotspotId
-  /** Percent of viewer width (0–100). Cap 05 side cam: nose toward screen right (+Z). */
+  /** Percent of viewer width (0–100). Fixed Cap3 side cam: nose toward screen left. */
   x: number
   /** Percent of viewer height (0–100). */
   y: number
@@ -22,7 +22,7 @@ interface Hotspot {
 }
 
 /**
- * Hotspot layout for fixed Cap 05 side profile (camera on +X).
+ * Hotspot layout for fixed Cap 03 side profile (camera on +X; GLB nose screen-left).
  * Guide fidelity only — 6 / 4 / 4 DOF copy unchanged from Slide 3.
  */
 const HOTSPOTS: readonly Hotspot[] = [
@@ -38,8 +38,8 @@ const HOTSPOTS: readonly Hotspot[] = [
   },
   {
     id: 'susp-front',
-    x: 71,
-    y: 52,
+    x: 29,
+    y: 50,
     label: 'Suspensie față',
     dof: '4 DOF',
     detail: 'Cursa verticală a suspensiilor la fiecare roată (1 DOF × 4)',
@@ -48,8 +48,8 @@ const HOTSPOTS: readonly Hotspot[] = [
   },
   {
     id: 'susp-rear',
-    x: 29,
-    y: 50,
+    x: 71,
+    y: 52,
     label: 'Suspensie spate',
     dof: '4 DOF',
     detail: 'Cursa verticală a suspensiilor la fiecare roată (1 DOF × 4)',
@@ -58,7 +58,7 @@ const HOTSPOTS: readonly Hotspot[] = [
   },
   {
     id: 'wheel-front',
-    x: 74,
+    x: 26,
     y: 64,
     label: 'Roată față',
     dof: '4 DOF',
@@ -68,7 +68,7 @@ const HOTSPOTS: readonly Hotspot[] = [
   },
   {
     id: 'wheel-rear',
-    x: 26,
+    x: 74,
     y: 64,
     label: 'Roată spate',
     dof: '4 DOF',
