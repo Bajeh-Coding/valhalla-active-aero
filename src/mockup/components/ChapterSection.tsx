@@ -18,8 +18,9 @@ export function ChapterSection({ chapter }: ChapterSectionProps) {
   const hasCharts = Boolean(chapter.charts?.length)
   const hasExtra = Boolean(chapter.bodyExtra?.length)
   const hasSimulator = Boolean(chapter.simulator)
+  const hasSummary = Boolean(chapter.summary?.length)
   const titleWidth =
-    chapter.number >= 1 && chapter.number <= 9
+    chapter.number >= 1 && chapter.number <= 10
       ? 'max-w-[920px]'
       : 'max-w-[640px]'
 
@@ -60,6 +61,22 @@ export function ChapterSection({ chapter }: ChapterSectionProps) {
                 </p>
               ))
             : null}
+
+          {hasSummary ? (
+            <ol
+              className="mt-10 max-w-[720px] space-y-3"
+              data-testid={`chapter-${chapter.id}-summary`}
+            >
+              {chapter.summary!.map((line, i) => (
+                <li
+                  key={i}
+                  className="font-ui text-[13px] leading-relaxed tracking-[0.4px] text-aero-mist/75 md:text-sm"
+                >
+                  {line}
+                </li>
+              ))}
+            </ol>
+          ) : null}
 
           {hasCharts ? (
             <Cap08Charts charts={chapter.charts!} chapterId={chapter.id} />

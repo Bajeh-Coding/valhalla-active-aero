@@ -61,7 +61,7 @@ test.describe('Mockup 10 capitole E2E', () => {
     expect(errors, errors.join('\n')).toEqual([])
   })
 
-  test('renders Cap 01–09 content and remaining placeholders', async ({
+  test('renders all 10 authored chapters', async ({
     page,
   }) => {
     const errors = await attachErrorTrap(page)
@@ -250,23 +250,28 @@ test.describe('Mockup 10 capitole E2E', () => {
       rezultate.locator('img[src*="/images/am-official/am-ch08-rezultate"]'),
     ).toBeVisible()
 
-    const authored = new Set([
-      'introducere',
-      'problema',
-      'fundamente',
-      'mecanisme',
-      'control',
-      'regimuri',
-      'studiu-de-caz',
-      'rezultate',
-      'insight-uri',
-    ])
+    const concluzii = page.getByTestId('chapter-surse')
+    await concluzii.scrollIntoViewIfNeeded()
+    await expect(concluzii).toBeVisible()
+    await expect(concluzii).toContainText(/Concluzii/i)
+    await expect(page.getByTestId('chapter-surse-summary')).toContainText(
+      /14 DOF/i,
+    )
+    await expect(page.getByTestId('chapter-surse-summary')).toContainText(
+      /−2\.55|−2.55|-2\.55|-2.55/,
+    )
+    await expect(page.getByTestId('chapter-surse-notes')).toContainText(
+      /SAE Technical Paper 2020-36-0079/i,
+    )
+    await expect(page.getByTestId('chapter-surse-notes')).toContainText(
+      /Subramanian/i,
+    )
+
     for (const id of CHAPTER_IDS) {
-      if (authored.has(id)) continue
       const section = page.getByTestId(`chapter-${id}`)
       await section.scrollIntoViewIfNeeded()
       await expect(section).toBeVisible()
-      await expect(section).toContainText(/placeholder/i)
+      await expect(section).not.toContainText(/placeholder/i)
     }
 
     expect(CHAPTER_IDS).toHaveLength(10)

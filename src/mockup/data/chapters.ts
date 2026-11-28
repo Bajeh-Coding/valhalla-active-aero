@@ -1,5 +1,5 @@
 /**
- * Presentation chapter shell — Cap 01–09 have authored content; Cap 10 remains placeholder until integration.
+ * Presentation chapter shell — all 10 chapters have authored content.
  * Imagery: official Aston Martin Valhalla page assets (downloaded, not hotlinked).
  */
 
@@ -53,6 +53,8 @@ export interface MockChapter {
   kicker: string
   headline: string
   body: string
+  /** Optional short recap lines (Cap 10 Concluzii). */
+  summary?: readonly string[]
   /** Optional secondary paragraphs (Cap 08 how/why prose). */
   bodyExtra?: readonly string[]
   image: { src: string; objectPosition?: string; sourceUrl: string }
@@ -443,16 +445,44 @@ export const MOCK_CHAPTERS: readonly MockChapter[] = [
   {
     id: 'surse',
     number: 10,
-    label: 'Surse',
-    kicker: 'Capitol 10 — placeholder',
-    headline: 'Referințe și note',
-    body: 'Aenean commodo ligula eget dolor. Capitol 10 — placeholder pentru surse bibliografice; lista rămâne goală până la input.',
+    label: 'Concluzii',
+    kicker: 'Capitol 10',
+    headline: 'Concluzii — pachet integrat, rezultat măsurat',
+    body: 'Sistemul integrat de aerodinamică activă și control mecatronic leagă proiectarea, modelarea și comanda într-un singur fir: de la caroseria de referință la bucla în timp real pe simulator.',
+    summary: [
+      '01 — Design integrat: Active Aerodynamics & Mechatronic Control pe referința Aston Martin Vantage / limbaj Valhalla.',
+      '02 — Modelare dinamică multicorp 14 DOF (VI-CarRealTime).',
+      '03 — Mașină de stări: DRS / Aerobrake / MaxP.',
+      '04 — Traiectorie & rezultat: −2.55 s pe Nürburgring GP (simulator).',
+      '05 — PI-ROM pentru comandă rapidă în buclă.',
+      '06 — Fundamente Kamm / FL: limita de aderență și forța verticală.',
+      '07 — Suprafețe OEM Valhalla ca ancoră vizuală / de produs.',
+      '08 — Grafice și lectură „de ce” asupra forțelor și a compromisului drag–downforce.',
+      '09 — Simulator DIL / VI-Grade ca spațiu de validare.',
+    ],
     image: {
       src: '/images/am-official/am-ch10-surse.jpg',
       objectPosition: '50% 45%',
       sourceUrl:
         'https://www.astonmartin.com/-/media/models---valhalla/2026-redesign/valhalla-technology-banner-desktop.jpg',
     },
+    notes: [
+      {
+        text: 'SAE Technical Paper 2020-36-0079 — Integrated Design and Control of Active Aerodynamic Features for High Performance Electric Vehicles.',
+      },
+      {
+        text: 'On Torque Vectoring Control: Review and Comparison of State-of-the-Art Approaches (PDF: On_Torque_Vectoring_Control_Review_and_Comparison_.pdf) — pointer; fără claims inventate aici.',
+      },
+      {
+        text: 'Aston_Martin_Valhalla_Active_Aero.pptx — firul prezentării (14 DOF, DRS/Aerobrake/MaxP, −2.55 s Nürburgring, PI-ROM, Kamm/FL).',
+      },
+      {
+        text: 'Subramanian — active aero ROM preprint (subramanian_activeaeroROM_preprint.pdf), as cited for PI-ROM.',
+      },
+      {
+        text: 'Gao — as cited earlier in the presentation sources (pointer only).',
+      },
+    ],
   },
 ] as const
 
