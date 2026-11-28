@@ -16,11 +16,6 @@ export interface MockAeroSurface {
   image: { src: string; objectPosition?: string; alt: string }
 }
 
-export interface MockChapterNote {
-  text: string
-  quote?: string
-}
-
 export interface MockChapterDofItem {
   dof: string
   detail: string
@@ -71,7 +66,6 @@ export interface MockChapter {
   equations?: readonly string[]
   image: { src: string; objectPosition?: string; sourceUrl: string }
   figure?: MockChapterFigure
-  notes?: readonly MockChapterNote[]
   dofBreakdown?: readonly MockChapterDofItem[]
   specs?: {
     caption: string
@@ -114,17 +108,6 @@ export const MOCK_CHAPTERS: readonly MockChapter[] = [
       sourceUrl:
         'https://www.astonmartin.com/-/media/models---valhalla-2026-relaunch/exterior-banner.jpg',
     },
-    notes: [
-      {
-        text: 'Sistemele de siguranță activă tradiționale (ESP, Torque Vectoring, AFS) modulează forțele la pata de contact a anvelopei — dar rămân limitate de cercul de frecare Kamm (Fy,max = μ * Fz).',
-      },
-      {
-        text: 'Aerodinamica activă mărește forța normală Fz prin downforce (FL), extinzând aderența fără a adăuga masă inerțială.',
-      },
-      {
-        text: 'Prezentarea unește studiul mecatronic din VI-CarRealTime, validat pe simulatorul DIL, cu aplicarea industrială pe Aston Martin Valhalla de serie.',
-      },
-    ],
   },
 
   {
@@ -152,17 +135,6 @@ export const MOCK_CHAPTERS: readonly MockChapter[] = [
         'https://www.astonmartin.com/-/media/models---valhalla-2026-relaunch/valhalla-explore-tile-3.jpg',
     },
     diagrams: ['kamm'],
-    notes: [
-      {
-        text: 'Pe vehiculele pasive, compromisul Drag–Downforce e rigid: un eleron fix cu unghi mare oferă aderență în viraje, dar frânează pe drepte.',
-      },
-      {
-        text: 'Soluția: acționare mecatronică activă — unghiul de atac (AOA) se schimbă după regimul de rulare.',
-      },
-      {
-        text: 'Validarea cvasi-statică până la 2 Hz confirmă că actuatorul hidraulic sau electric poate ajusta eleronul în timp real, fără desprinderi de flux turbulente imprevizibile.',
-      },
-    ],
   },
 
   {
@@ -221,17 +193,6 @@ export const MOCK_CHAPTERS: readonly MockChapter[] = [
       ],
     },
     diagrams: ['dof14'],
-    notes: [
-      {
-        text: '💬 Context (Slide 3): Modelul cu 14 grade de libertate (14 DOF) creat în VI-CarRealTime surprinde fidel transferul dinamic de masă pe frânare și accelerare.',
-      },
-      {
-        text: 'Deoarece mașina are 57% din masă pe puntea spate și o putere uriașă (1257 kW), orice accelerare bruscă descarcă puntea față, modificând dramatic echilibrul aerodinamic.',
-      },
-      {
-        text: "Simulările au folosit două circuite virtuale în VI-Road: 'Parabolica' (pentru stabilitate pe frânare și viraj) și 'GRIP Track' (pentru evaluarea globală a timpului pe tur).",
-      },
-    ],
   },
 
   {
@@ -258,17 +219,6 @@ export const MOCK_CHAPTERS: readonly MockChapter[] = [
       caption:
         'Figura 4.1: Evoluția Forțelor Aerodinamice (FL, FD) în funcție de Unghiul AOA la 160 km/h',
     },
-    notes: [
-      {
-        text: '💬 Context (Slide 4): Una dintre cele mai importante descoperiri ale cercetării este că o aerodinamică pasivă perfect echilibrată (50% față / 50% spate) NU este optimă pe o mașină dezechilibrată mecanic.',
-      },
-      {
-        text: 'Deoarece motoarele electrice spate livrează un cuplu uriaș, la ieșirea din viraj puntea față se ridică, iar mașina subvira masiv dacă aerodinamica rămânea fixă.',
-      },
-      {
-        text: 'Soluția este modularea mecatronică activă: schimbarea Centrului de Presiune (CoP) în timp real pentru a compensa transferul de masă.',
-      },
-    ],
   },
 
   {
@@ -334,20 +284,6 @@ export const MOCK_CHAPTERS: readonly MockChapter[] = [
       },
     ],
     diagrams: ['state-machine'],
-    notes: [
-      {
-        text: '💬 Context (Slide 5): Controllerul comută automat între cele 3 stări pe baza CAN-bus-ului vehiculului (viteză, apăsare pedale, senzori G).',
-      },
-      {
-        text: 'Modulul DRS reduce timpul 0-300 km/h de la 10.728s la 10.650s.',
-      },
-      {
-        text: 'Modulul Aerobrake creează o forță de frânare aerodinamică masivă pe puntea spate, permițând pilotului să întârzie punctul de oprire fără pierdere de aderență.',
-      },
-      {
-        text: 'Modulul MaxP variază AOA pe plaje de viteză (0° la 100-180 km/h, 3° la 180-250 km/h, 4.5° la 250-300 km/h) pentru a menține traiectoria perfectă.',
-      },
-    ],
   },
 
   {
@@ -376,17 +312,6 @@ export const MOCK_CHAPTERS: readonly MockChapter[] = [
       caption:
         'Figura 6.1: Comparația Timpilor pe Tur pe Nürburgring GP (VI-Driver vs. Pilot Uman DIL)',
     },
-    notes: [
-      {
-        text: '💬 Context (Slide 6): Diferența dintre pilotul uman și cel virtual este una dintre cele mai valoroase concluzii inginerești ale lucrării.',
-      },
-      {
-        text: 'Pilotul virtual (VI-Driver) operează la limita matematică fără frică, pe când pilotul uman frânează mai devreme dacă mașina oscilează.',
-      },
-      {
-        text: 'Sistemul activ MaxP oferă o platformă aerodinamică predictibilă, permițând pilotului uman să atace virajele de mare viteză fără ezitare.',
-      },
-    ],
   },
 
   {
@@ -416,17 +341,6 @@ export const MOCK_CHAPTERS: readonly MockChapter[] = [
       caption:
         'Figura 7.1: Curba de Apăsare Aerodinamică (Downforce) pe Modelul de Serie Valhalla',
     },
-    notes: [
-      {
-        text: '💬 Context (Slide 7): Acest slide face legătura directă între cercetarea dinamică 14 DOF și mașina fizică de serie creată de Aston Martin în 999 exemplare.',
-      },
-      {
-        text: 'Timpul de acționare de sub 400 ms al eleronului spate de pe mașina de serie respectă cu strictețe ipoteza cvasi-statică (< 2 Hz) demonstrată în studiu.',
-      },
-      {
-        text: 'Sistemul activ de pe Valhalla include și e-Reverse (marșarier realizat exclusiv electric de motoarele față), eliminând pârghiile mecanice din cutia DCT cu 8 trepte pentru a economisi masă.',
-      },
-    ],
   },
 
   {
@@ -458,17 +372,6 @@ export const MOCK_CHAPTERS: readonly MockChapter[] = [
       caption:
         'Figura 8.1: Timpul de Execuție Computațional: CFD XFOIL vs. Rețeaua Neuronală PI-ROM',
     },
-    notes: [
-      {
-        text: '💬 Context (Slide 8): Modelul PI-ROM dezvoltat de Subramanian reprezintă viitorul controlului aerodinamic activ.',
-      },
-      {
-        text: "Prin integrarea fizicii analitice direct în rețeaua neuronală, algoritmul nu mai face 'ghicituri' ne-fizice și atinge o viteză de calcul de 0.0906 ms.",
-      },
-      {
-        text: 'Această viteză permite controllerului să recalculeze unghiul AOA de 1000 de ori pe secundă (1000 Hz), depășind cu mult cerința minimă de control.',
-      },
-    ],
   },
 
   {
@@ -490,14 +393,6 @@ export const MOCK_CHAPTERS: readonly MockChapter[] = [
         'https://www.astonmartin.com/-/media/models---valhalla-2026-relaunch/interior-banner.jpg',
     },
     simulator: true,
-    notes: [
-      {
-        text: 'Cap 09 nu este un slide din ghidul de prezentare — este simulatorul interactiv R3F păstrat între Slide 8 (PI-ROM) și Slide 9 (Discuții).',
-      },
-      {
-        text: 'Moduri DRS / Aerobrake / MaxP: AOA, splitter OPEN|CLOSED, praguri viteză / pedale / ay — aliniate cu ghidul Slide 5.',
-      },
-    ],
   },
 
   {
@@ -519,17 +414,6 @@ export const MOCK_CHAPTERS: readonly MockChapter[] = [
         'https://www.astonmartin.com/-/media/models---valhalla-2026-relaunch/valhalla-explore-tile-2.jpg',
     },
     diagrams: ['synergy'],
-    notes: [
-      {
-        text: '💬 Context (Slide 9): Integrarea aerodinamicii active schimbă fundamental modul în care este calibrat un șasiu.',
-      },
-      {
-        text: 'În loc să fie nevoie de o suspensie extrem de rigidă care să compromită confortul și aderența pe denivelări, aerodinamica activă adaugă apăsare doar la viteze mari când este într-adevăr necesar.',
-      },
-      {
-        text: 'Această abordare este esențială pentru hypercar-urile moderne care trebuie să funcționeze impecabil atât pe pistă, cât și pe drumurile publice.',
-      },
-    ],
   },
 
   {
@@ -591,14 +475,6 @@ export const MOCK_CHAPTERS: readonly MockChapter[] = [
       'Subramanian (2021)',
       'Pieter de Buck (2021)',
       'Aston Martin Lagonda (2025)',
-    ],
-    notes: [
-      {
-        text: '💬 Context (Slide 10): Toate modelele matematice, datele din simulările 14 DOF, ecuațiile PI-ROM și specificațiile de serie Aston Martin Valhalla au fost validate prin teste numerice și pe simulatorul Driver-in-the-Loop.',
-      },
-      {
-        text: 'Pentru întrebări suplimentare și colaborări pe proiecte de mecatronică automotive, datele de contact ale autorilor sunt incluse în memoriul tehnic atașat.',
-      },
     ],
   },
 ] as const

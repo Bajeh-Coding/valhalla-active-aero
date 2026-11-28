@@ -110,9 +110,6 @@ test.describe('Mockup 11 capitole E2E (ghid)', () => {
     await expect(page.getByTestId('chapter-cadru-bullets')).toContainText(
       /PI-ROM/i,
     )
-    await expect(page.getByTestId('chapter-cadru-notes')).toContainText(
-      /Kamm/i,
-    )
 
     const kamm = page.getByTestId('chapter-kamm')
     await kamm.scrollIntoViewIfNeeded()
@@ -296,7 +293,6 @@ test.describe('Mockup 11 capitole E2E (ghid)', () => {
       'OPEN',
     )
 
-    await expect(page.getByTestId('chapter-simulator-notes')).toBeVisible()
     expect(errors, errors.join('\n')).toEqual([])
   })
 
