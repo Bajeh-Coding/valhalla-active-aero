@@ -5,6 +5,7 @@
  */
 
 import type { GuideDiagramId } from '../components/GuideDiagrams'
+import type { GuideChartId } from './guideCharts'
 
 /** Legacy Cap 07 OEM surface block (kept for AeroSurfaces component types). */
 export interface MockAeroSurface {
@@ -37,9 +38,9 @@ export interface MockChapterMode {
 }
 
 export interface MockChapterFigure {
-  src: string
+  /** Native SVG chart id (guide figures — no white PNG). */
+  chartId: GuideChartId
   caption: string
-  alt: string
 }
 
 export interface MockChapterModeColumn {
@@ -253,10 +254,9 @@ export const MOCK_CHAPTERS: readonly MockChapter[] = [
         'https://www.astonmartin.com/-/media/models---valhalla-2026-relaunch/engineering-banner-desktop.jpg',
     },
     figure: {
-      src: '/images/guide/fig-4-1-fl-fd-aoa.png',
+      chartId: 'fig-4-1-fl-fd-aoa',
       caption:
         'Figura 4.1: Evoluția Forțelor Aerodinamice (FL, FD) în funcție de Unghiul AOA la 160 km/h',
-      alt: 'Evoluția forțelor aerodinamice FL/FD vs AOA la 160 km/h',
     },
     notes: [
       {
@@ -372,10 +372,9 @@ export const MOCK_CHAPTERS: readonly MockChapter[] = [
         'https://www.astonmartin.com/-/media/models---valhalla-2026-relaunch/driver-tile.jpg',
     },
     figure: {
-      src: '/images/guide/fig-6-1-nurburgring.png',
+      chartId: 'fig-6-1-nurburgring',
       caption:
         'Figura 6.1: Comparația Timpilor pe Tur pe Nürburgring GP (VI-Driver vs. Pilot Uman DIL)',
-      alt: 'Comparație timp pe tur Nürburgring GP — VI-Driver vs Pilot Uman DIL',
     },
     notes: [
       {
@@ -413,10 +412,9 @@ export const MOCK_CHAPTERS: readonly MockChapter[] = [
         'https://www.astonmartin.com/-/media/models---valhalla-2026-relaunch/engineering-banner-desktop.jpg',
     },
     figure: {
-      src: '/images/guide/fig-7-1-downforce.png',
+      chartId: 'fig-7-1-downforce',
       caption:
         'Figura 7.1: Curba de Apăsare Aerodinamică (Downforce) pe Modelul de Serie Valhalla',
-      alt: 'Curba de downforce pe modelul de serie Valhalla',
     },
     notes: [
       {
@@ -456,10 +454,9 @@ export const MOCK_CHAPTERS: readonly MockChapter[] = [
         'https://www.astonmartin.com/-/media/models---valhalla-2026-relaunch/valhalla-lft-image.jpg',
     },
     figure: {
-      src: '/images/guide/fig-8-1-pi-rom.png',
+      chartId: 'fig-8-1-pi-rom',
       caption:
         'Figura 8.1: Timpul de Execuție Computațional: CFD XFOIL vs. Rețeaua Neuronală PI-ROM',
-      alt: 'Comparație timp execuție CFD XFOIL vs PI-ROM',
     },
     notes: [
       {
