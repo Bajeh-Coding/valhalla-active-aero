@@ -1,11 +1,19 @@
 import { useEffect, useId, useRef, useState } from 'react'
+import { Cap03DofViewer } from './Cap03DofViewer'
 
-type HotspotId = 'monocoque' | 'susp-front' | 'susp-rear' | 'wheel-front' | 'wheel-rear'
+type HotspotId =
+  | 'monocoque'
+  | 'susp-front'
+  | 'susp-rear'
+  | 'wheel-front'
+  | 'wheel-rear'
 
 interface Hotspot {
   id: HotspotId
-  cx: number
-  cy: number
+  /** Percent of viewer width (0–100). Cap 05 side cam: nose toward screen right (+Z). */
+  x: number
+  /** Percent of viewer height (0–100). */
+  y: number
   label: string
   dof: string
   detail: string
@@ -13,11 +21,15 @@ interface Hotspot {
   photoAlt: string
 }
 
+/**
+ * Hotspot layout for fixed Cap 05 side profile (camera on +X).
+ * Guide fidelity only — 6 / 4 / 4 DOF copy unchanged from Slide 3.
+ */
 const HOTSPOTS: readonly Hotspot[] = [
   {
     id: 'monocoque',
-    cx: 455,
-    cy: 148,
+    x: 50,
+    y: 42,
     label: 'Monococă',
     dof: '6 DOF',
     detail: 'Șasiu — translații x, y, z + rotații roll, pitch, yaw',
@@ -26,8 +38,8 @@ const HOTSPOTS: readonly Hotspot[] = [
   },
   {
     id: 'susp-front',
-    cx: 232,
-    cy: 198,
+    x: 71,
+    y: 52,
     label: 'Suspensie față',
     dof: '4 DOF',
     detail: 'Cursa verticală a suspensiilor la fiecare roată (1 DOF × 4)',
@@ -36,8 +48,8 @@ const HOTSPOTS: readonly Hotspot[] = [
   },
   {
     id: 'susp-rear',
-    cx: 702,
-    cy: 196,
+    x: 29,
+    y: 50,
     label: 'Suspensie spate',
     dof: '4 DOF',
     detail: 'Cursa verticală a suspensiilor la fiecare roată (1 DOF × 4)',
@@ -46,8 +58,8 @@ const HOTSPOTS: readonly Hotspot[] = [
   },
   {
     id: 'wheel-front',
-    cx: 188,
-    cy: 262,
+    x: 74,
+    y: 64,
     label: 'Roată față',
     dof: '4 DOF',
     detail: 'Dinamica de rotație și alunecarea longitudinală a roților (1 DOF × 4)',
@@ -56,8 +68,8 @@ const HOTSPOTS: readonly Hotspot[] = [
   },
   {
     id: 'wheel-rear',
-    cx: 748,
-    cy: 262,
+    x: 26,
+    y: 64,
     label: 'Roată spate',
     dof: '4 DOF',
     detail: 'Dinamica de rotație și alunecarea longitudinală a roților (1 DOF × 4)',
@@ -65,222 +77,6 @@ const HOTSPOTS: readonly Hotspot[] = [
     photoAlt: 'Profil lateral Valhalla — roți și siluetă',
   },
 ] as const
-
-function ChassisSketch() {
-  return (
-    <g aria-hidden>
-      <ellipse cx="470" cy="322" rx="380" ry="12" fill="rgb(0 102 94 / 0.14)" />
-      <line
-        x1="60"
-        y1="322"
-        x2="880"
-        y2="322"
-        stroke="rgb(232 228 220 / 0.1)"
-        strokeWidth="1"
-      />
-
-      {/* Far-side wheels — subtle 3/4 depth */}
-      <g opacity="0.22" stroke="#8b929a" fill="none" strokeWidth="1.15">
-        <ellipse cx="218" cy="266" rx="46" ry="44" />
-        <ellipse cx="218" cy="266" rx="26" ry="24" />
-        <ellipse cx="778" cy="266" rx="50" ry="46" />
-        <ellipse cx="778" cy="266" rx="28" ry="26" />
-      </g>
-
-      {/* Lower rocker / sill line */}
-      <path
-        d="M140 248
-           C200 258 280 268 380 272
-           C520 276 640 270 740 258
-           C780 252 820 248 850 252"
-        fill="none"
-        stroke="#00665e"
-        strokeWidth="1.15"
-        opacity="0.55"
-      />
-
-      {/* Front nose + splitter */}
-      <path
-        d="M95 248
-           C110 220 130 200 165 188
-           C195 178 220 176 245 182
-           L255 230
-           C220 238 175 242 140 248
-           C120 252 105 254 95 248 Z"
-        fill="rgb(248 247 244 / 0.03)"
-        stroke="#f8f7f4"
-        strokeWidth="1.35"
-        opacity="0.8"
-      />
-
-      {/* Front fender arch */}
-      <path
-        d="M245 182
-           C255 168 270 158 295 156
-           C320 154 345 162 355 178
-           C360 188 358 200 350 210
-           L255 230 Z"
-        fill="none"
-        stroke="#f8f7f4"
-        strokeWidth="1.25"
-        opacity="0.7"
-      />
-
-      {/* Carbon monocoque tub — central structure */}
-      <path
-        d="M350 210
-           C360 168 390 132 440 118
-           C475 110 515 112 550 126
-           C585 140 610 168 625 200
-           L620 238
-           C560 250 470 254 400 246
-           C370 240 355 226 350 210 Z"
-        fill="rgb(0 102 94 / 0.1)"
-        stroke="#00665e"
-        strokeWidth="1.85"
-      />
-
-      {/* Cabin canopy / windshield */}
-      <path
-        d="M395 168
-           C420 128 455 108 500 110
-           C535 112 565 128 582 158"
-        fill="none"
-        stroke="#f8f7f4"
-        strokeWidth="1.4"
-        opacity="0.9"
-      />
-      {/* Roof scoop */}
-      <path
-        d="M470 112 C488 96 518 94 540 108"
-        fill="none"
-        stroke="#c4df00"
-        strokeWidth="1.25"
-        opacity="0.75"
-      />
-      {/* Side aero channel */}
-      <path
-        d="M355 200 C400 214 480 218 560 208"
-        fill="none"
-        stroke="#8b929a"
-        strokeWidth="1"
-        opacity="0.45"
-      />
-
-      {/* Rear deck / engine cover / haunch */}
-      <path
-        d="M625 200
-           C655 170 700 158 745 168
-           C780 176 810 196 830 220
-           C845 236 855 250 858 262
-           L780 268
-           C760 248 720 232 680 230
-           C650 228 630 220 625 200 Z"
-        fill="rgb(248 247 244 / 0.03)"
-        stroke="#f8f7f4"
-        strokeWidth="1.35"
-        opacity="0.8"
-      />
-      {/* Rear diffuser strakes hint */}
-      <path
-        d="M780 278 L800 292 M800 278 L820 292 M820 278 L840 292"
-        fill="none"
-        stroke="#00665e"
-        strokeWidth="1.1"
-        opacity="0.55"
-      />
-
-      {/* Front double-wishbone + spring */}
-      <g stroke="#8b929a" fill="none" strokeWidth="1.15">
-        <path d="M232 198 L200 240" />
-        <path d="M250 204 L218 248" />
-        <path
-          d="M232 198 C236 214 236 228 232 244"
-          stroke="#00665e"
-          strokeWidth="1.65"
-        />
-        <circle cx="232" cy="198" r="3.5" fill="#00665e" stroke="none" />
-        <circle cx="200" cy="240" r="2.5" fill="#8b929a" stroke="none" />
-      </g>
-
-      {/* Rear double-wishbone + spring */}
-      <g stroke="#8b929a" fill="none" strokeWidth="1.15">
-        <path d="M702 196 L734 240" />
-        <path d="M684 204 L716 248" />
-        <path
-          d="M702 196 C698 214 698 228 702 244"
-          stroke="#00665e"
-          strokeWidth="1.65"
-        />
-        <circle cx="702" cy="196" r="3.5" fill="#00665e" stroke="none" />
-        <circle cx="734" cy="240" r="2.5" fill="#8b929a" stroke="none" />
-      </g>
-
-      {/* Near front wheel */}
-      <g>
-        <circle cx="188" cy="262" r="52" fill="#0b0e14" stroke="#f8f7f4" strokeWidth="1.55" />
-        <circle cx="188" cy="262" r="36" fill="none" stroke="#8b929a" strokeWidth="1.05" />
-        <circle cx="188" cy="262" r="15" fill="none" stroke="#00665e" strokeWidth="1.35" />
-        <circle cx="188" cy="262" r="4" fill="#c4df00" stroke="none" />
-        {[0, 36, 72, 108, 144].map((deg) => {
-          const a = (deg * Math.PI) / 180
-          return (
-            <line
-              key={deg}
-              x1={188 + Math.cos(a) * 17}
-              y1={262 + Math.sin(a) * 17}
-              x2={188 + Math.cos(a) * 33}
-              y2={262 + Math.sin(a) * 33}
-              stroke="#8b929a"
-              strokeWidth="1"
-              opacity="0.65"
-            />
-          )
-        })}
-      </g>
-
-      {/* Near rear wheel */}
-      <g>
-        <circle cx="748" cy="262" r="56" fill="#0b0e14" stroke="#f8f7f4" strokeWidth="1.55" />
-        <circle cx="748" cy="262" r="38" fill="none" stroke="#8b929a" strokeWidth="1.05" />
-        <circle cx="748" cy="262" r="16" fill="none" stroke="#00665e" strokeWidth="1.35" />
-        <circle cx="748" cy="262" r="4" fill="#c4df00" stroke="none" />
-        {[0, 36, 72, 108, 144].map((deg) => {
-          const a = (deg * Math.PI) / 180
-          return (
-            <line
-              key={deg}
-              x1={748 + Math.cos(a) * 18}
-              y1={262 + Math.sin(a) * 18}
-              x2={748 + Math.cos(a) * 35}
-              y2={262 + Math.sin(a) * 35}
-              stroke="#8b929a"
-              strokeWidth="1"
-              opacity="0.65"
-            />
-          )
-        })}
-      </g>
-
-      {/* CoG */}
-      <g>
-        <circle cx="455" cy="178" r="7" fill="none" stroke="#c4df00" strokeWidth="1.15" />
-        <circle cx="455" cy="178" r="2.4" fill="#c4df00" />
-        <text
-          x="468"
-          y="182"
-          fill="#c4df00"
-          fontSize="10"
-          fontFamily="AstonMartinSans, sans-serif"
-          letterSpacing="0.08em"
-          opacity="0.85"
-        >
-          CoG
-        </text>
-      </g>
-    </g>
-  )
-}
 
 function HotspotButton({
   hotspot,
@@ -310,8 +106,8 @@ function HotspotButton({
           : 'border-aero-amr/70 bg-aero-ink/90 text-aero-ivory hover:border-aero-lime hover:text-aero-lime',
       ].join(' ')}
       style={{
-        left: `${(hotspot.cx / 940) * 100}%`,
-        top: `${(hotspot.cy / 360) * 100}%`,
+        left: `${hotspot.x}%`,
+        top: `${hotspot.y}%`,
       }}
       aria-label={`${hotspot.label}: ${hotspot.dof}`}
     >
@@ -328,19 +124,18 @@ function HotspotPopover({
   onClose: () => void
 }) {
   const titleId = useId()
-  // Compact card; keep inside diagram bounds (prefer toward center)
-  const preferAbove = hotspot.cy > 200
-  const clampLeft = Math.min(72, Math.max(18, (hotspot.cx / 940) * 100))
+  const preferAbove = hotspot.y > 55
+  const clampLeft = Math.min(72, Math.max(18, hotspot.x))
 
   let transform = preferAbove
     ? 'translate(-50%, calc(-100% - 12px))'
     : 'translate(-50%, 16px)'
 
-  if (hotspot.cx < 260) {
+  if (hotspot.x < 28) {
     transform = preferAbove
       ? 'translate(-8%, calc(-100% - 12px))'
       : 'translate(-8%, 16px)'
-  } else if (hotspot.cx > 680) {
+  } else if (hotspot.x > 72) {
     transform = preferAbove
       ? 'translate(-92%, calc(-100% - 12px))'
       : 'translate(-92%, 16px)'
@@ -355,7 +150,7 @@ function HotspotPopover({
       className="absolute z-30 w-[min(220px,70vw)] overflow-hidden border border-aero-ivory/12 bg-aero-ink/96 shadow-[0_16px_40px_rgb(0_0_0_/0.55)] backdrop-blur-md"
       style={{
         left: `${clampLeft}%`,
-        top: `${(hotspot.cy / 360) * 100}%`,
+        top: `${hotspot.y}%`,
         transform,
       }}
       onClick={(e) => e.stopPropagation()}
@@ -396,7 +191,7 @@ function HotspotPopover({
   )
 }
 
-/** Cap 03 — Schemă 14 DOF pe siluetă șasiu Valhalla, cu hotspots interactive. */
+/** Cap 03 — Schemă 14 DOF pe Valhalla GLB (side view fix), cu hotspots interactive. */
 export function Dof14Diagram() {
   const [activeId, setActiveId] = useState<HotspotId | null>(null)
   const rootRef = useRef<HTMLElement>(null)
@@ -425,16 +220,8 @@ export function Dof14Diagram() {
         </span>
       </figcaption>
 
-      <div className="relative border border-aero-ivory/8 bg-gradient-to-b from-aero-ink to-aero-void">
-        <svg
-          viewBox="0 0 940 360"
-          className="block w-full"
-          role="img"
-          aria-label="Siluetă șasiu Valhalla: monococă 6 DOF, suspensii 4 DOF, roți 4 DOF. Apasă + pentru detalii."
-        >
-          <rect width="940" height="360" fill="#0b0e14" />
-          <ChassisSketch />
-        </svg>
+      <div className="relative overflow-visible border border-aero-ivory/8 bg-gradient-to-b from-aero-ink to-aero-void">
+        <Cap03DofViewer />
 
         {HOTSPOTS.map((h) => (
           <HotspotButton

@@ -141,6 +141,7 @@ test.describe('Mockup 10 capitole E2E (ghid)', () => {
       /43% Față/i,
     )
     await expect(page.getByTestId('diagram-dof14')).toBeVisible()
+    await expect(page.getByTestId('cap03-dof-viewer')).toBeVisible()
     await expect(page.getByTestId('dof-hotspot-monocoque')).toBeVisible()
     await page.getByTestId('dof-hotspot-monocoque').click()
     await expect(page.getByTestId('dof-popover-monocoque')).toBeVisible()
