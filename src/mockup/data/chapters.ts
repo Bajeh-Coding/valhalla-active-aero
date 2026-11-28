@@ -1,7 +1,7 @@
 /**
  * Canonical presentation chapters — strict map from
- * Informatii_pentru_Prezentare (ghid) → 11 site chapters.
- * Cap 09 = Active Aero Simulator (R3F), between guide slides 8 and 9.
+ * Informatii_pentru_Prezentare (ghid) → 10 site chapters.
+ * Active Aero Simulator (R3F) mounts inside Cap 05 after the mode table/diagram.
  */
 
 import type { GuideDiagramId } from '../components/GuideDiagrams'
@@ -287,6 +287,8 @@ export const MOCK_CHAPTERS: readonly MockChapter[] = [
       },
     ],
     diagrams: ['state-machine'],
+    /** Interactive R3F simulator — mounted via Cap05SimulatorSlot after modes/diagram. */
+    simulator: true,
   },
 
   {
@@ -378,31 +380,10 @@ export const MOCK_CHAPTERS: readonly MockChapter[] = [
   },
 
   {
-    id: 'simulator',
-    number: 9,
-    label: 'Simulator',
-    kicker: 'Capitol 09 · Simulator 3D',
-    actionTitle: 'Interactive Active Aero Simulator (R3F)',
-    headline: 'Simulator Active Aero 3D',
-    bullets: [
-      'Explorează programele DRS, Aerobrake și MaxP pe modelul 3D Valhalla.',
-      'Ajustează viteza, AOA, splitter și pedalele; vezi feedback vizual al suprafețelor active.',
-      'Ancoră forțe absolute doar la Table 3 @ 160 km/h (Drag = 788 N | DF față +470 N | DF spate +467 N).',
-    ],
-    image: {
-      src: '/images/am-official/am-ch09-insight.jpg',
-      objectPosition: '50% 45%',
-      sourceUrl:
-        'https://www.astonmartin.com/-/media/models---valhalla-2026-relaunch/interior-banner.jpg',
-    },
-    simulator: true,
-  },
-
-  {
     id: 'discutii',
-    number: 10,
+    number: 9,
     label: 'Discuții',
-    kicker: 'Capitol 10 · Slide 9',
+    kicker: 'Capitol 09 · Slide 9',
     actionTitle: 'Co-Design of Mechatronics & Aerodynamics Replaces Isolated Engineering',
     headline: 'Discuții & Implicații pentru Ingineria Auto Modernă',
     bullets: [
@@ -421,9 +402,9 @@ export const MOCK_CHAPTERS: readonly MockChapter[] = [
 
   {
     id: 'concluzii',
-    number: 11,
+    number: 10,
     label: 'Concluzii',
-    kicker: 'Capitol 11 · Slide 10',
+    kicker: 'Capitol 10 · Slide 10',
     actionTitle: 'Active Aerodynamics Transforms Vehicle Dynamics & Track Confidence',
     headline: 'Concluzii Majore & Referințe Bibliografice',
     bullets: [

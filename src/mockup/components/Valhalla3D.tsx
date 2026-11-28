@@ -79,7 +79,7 @@ export interface Valhalla3DProps {
 }
 
 /**
- * Cap 09 — luxury Three.js / R3F Valhalla stage.
+ * Cap 05 simulator — luxury Three.js / R3F Valhalla stage.
  * Side-profile default. SpoilerClose scrubbed by AOA via paused Action.time +
  * mixer.update(0) — NEVER mixer.setTime (that zeros paused actions back to t=0).
  * Wheel bones (from each SkinnedMesh.skeleton) spin after the mixer pose;
