@@ -7,6 +7,9 @@ interface ChapterSectionProps {
 
 export function ChapterSection({ chapter }: ChapterSectionProps) {
   const n = String(chapter.number).padStart(2, '0')
+  const hasNotes = Boolean(chapter.notes?.length)
+  const titleWidth =
+    chapter.number === 1 ? 'max-w-[920px]' : 'max-w-[640px]'
 
   return (
     <section
@@ -18,7 +21,7 @@ export function ChapterSection({ chapter }: ChapterSectionProps) {
       <ChapterMedia chapter={chapter} />
 
       <div className="mx-auto max-w-[1400px] px-6 py-16 md:px-10 md:py-24">
-        <div className="chapter-reveal max-w-[640px]">
+        <div className={`chapter-reveal ${titleWidth}`}>
           <p className="font-ui text-[12px] font-medium tracking-[0.55px] text-aero-mist/55 uppercase">
             {chapter.kicker}
           </p>
@@ -31,9 +34,40 @@ export function ChapterSection({ chapter }: ChapterSectionProps) {
           <p className="font-ui mt-2 text-[12px] font-medium tracking-[0.55px] text-aero-mist/60 uppercase">
             {chapter.label}
           </p>
-          <p className="font-ui mt-8 text-base leading-relaxed tracking-[0.55px] text-aero-mist/90 md:text-lg">
+          <p className="font-ui mt-8 max-w-[640px] text-base leading-relaxed tracking-[0.55px] text-aero-mist/90 md:text-lg">
             {chapter.body}
           </p>
+
+          {hasNotes ? (
+            <aside
+              className="mt-12 max-w-[640px] border-t border-aero-ivory/10 pt-6"
+              aria-label="Surse"
+              data-testid={`chapter-${chapter.id}-notes`}
+            >
+              <p className="font-ui mb-4 text-[10px] font-medium tracking-[0.55px] text-aero-mist/45 uppercase">
+                Surse
+              </p>
+              <ol className="space-y-4">
+                {chapter.notes!.map((note, i) => (
+                  <li key={i} className="flex gap-3">
+                    <span className="font-ui shrink-0 text-[10px] tracking-[0.2em] text-aero-mist/40">
+                      {String(i + 1).padStart(2, '0')}
+                    </span>
+                    <div className="min-w-0">
+                      <p className="font-ui text-[11px] leading-relaxed tracking-[0.35px] text-aero-mist/55">
+                        {note.text}
+                      </p>
+                      {note.quote ? (
+                        <blockquote className="font-ui mt-2 border-l border-aero-amr/50 pl-3 text-[11px] leading-relaxed tracking-[0.35px] text-aero-mist/70 italic">
+                          &ldquo;{note.quote}&rdquo;
+                        </blockquote>
+                      ) : null}
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            </aside>
+          ) : null}
         </div>
       </div>
     </section>
