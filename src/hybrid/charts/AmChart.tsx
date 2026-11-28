@@ -1,5 +1,6 @@
-import { useId, useMemo } from 'react'
+import { useId, useMemo, useRef } from 'react'
 import { cn } from '@/lib/utils'
+import { useChartDrawIn } from '@/lib/useChartDrawIn'
 import type { ChartSpec } from '../data/charts'
 import { CHART_THEME, SERIES_COLORS } from './theme'
 
@@ -65,6 +66,8 @@ export function AmChart({
   height = 380,
 }: AmChartProps) {
   const uid = useId()
+  const drawRef = useRef<HTMLElement>(null)
+  useChartDrawIn(drawRef)
   const pad = { t: 28, r: 24, b: 64, l: 72 }
   const W = 920
   const H = height
@@ -173,6 +176,7 @@ export function AmChart({
 
   return (
     <figure
+      ref={drawRef}
       className={cn('relative w-full', className)}
       data-testid={`chart-${spec.chartId}`}
       data-chart-id={spec.chartId}
@@ -286,6 +290,7 @@ export function AmChart({
                         height={bh}
                         fill={fill}
                         rx={0}
+                        data-chart-bar=""
                       >
                         <title>
                           {s.name}: {y} {spec.units}
@@ -326,6 +331,7 @@ export function AmChart({
                     strokeWidth={2.5}
                     strokeLinejoin="round"
                     strokeLinecap="round"
+                    data-chart-line=""
                   />
                   {pts.map(([x, y], i) => (
                     <circle
@@ -334,6 +340,7 @@ export function AmChart({
                       cy={yScale(y)}
                       r={3.2}
                       fill={SERIES_COLORS[si % SERIES_COLORS.length]}
+                      data-chart-marker=""
                     />
                   ))}
                 </g>

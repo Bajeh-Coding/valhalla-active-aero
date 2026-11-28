@@ -1,3 +1,5 @@
+import { useRef } from 'react'
+import { useChartDrawIn } from '@/lib/useChartDrawIn'
 import type { Cap08ChartSpec, Cap08Series } from '../data/cap08Charts'
 
 const IVORY = '#f8f7f4'
@@ -28,42 +30,51 @@ export function Cap08Charts({ charts, chapterId }: Cap08ChartsProps) {
       data-testid={`chapter-${chapterId}-charts`}
     >
       {charts.map((spec) => (
-        <figure
-          key={spec.id}
-          className="chapter-reveal border-t border-aero-ivory/10 pt-8"
-          data-testid={`chart-${spec.id}`}
-          data-chart-id={spec.id}
-        >
-          <figcaption className="mb-5 max-w-[640px]">
-            <p className="font-ui text-[10px] font-medium tracking-[0.55px] text-aero-mist/45 uppercase">
-              {spec.lead}
-            </p>
-            <h3 className="font-display mt-2 text-lg font-normal tracking-normal text-aero-ivory md:text-xl">
-              {spec.title}
-            </h3>
-          </figcaption>
-
-          {spec.kind === 'kamm' ? (
-            <KammDiagram spec={spec} />
-          ) : spec.kind === 'step' ? (
-            <StepChart spec={spec} />
-          ) : (
-            <BarChart spec={spec} />
-          )}
-
-          <div className="mt-4 flex flex-col gap-1 border-t border-aero-signal/10 pt-3">
-            {spec.annotation ? (
-              <p className="font-ui text-sm tracking-[0.35px] text-aero-mist/80">
-                {spec.annotation}
-              </p>
-            ) : null}
-            <p className="font-ui text-[10px] tracking-[0.18em] text-aero-signal/45 uppercase">
-              {spec.locator}
-            </p>
-          </div>
-        </figure>
+        <Cap08ChartFigure key={spec.id} spec={spec} />
       ))}
     </div>
+  )
+}
+
+function Cap08ChartFigure({ spec }: { spec: Cap08ChartSpec }) {
+  const drawRef = useRef<HTMLElement>(null)
+  useChartDrawIn(drawRef)
+
+  return (
+    <figure
+      ref={drawRef}
+      className="chapter-reveal border-t border-aero-ivory/10 pt-8"
+      data-testid={`chart-${spec.id}`}
+      data-chart-id={spec.id}
+    >
+      <figcaption className="mb-5 max-w-[640px]">
+        <p className="font-ui text-[10px] font-medium tracking-[0.55px] text-aero-mist/45 uppercase">
+          {spec.lead}
+        </p>
+        <h3 className="font-display mt-2 text-lg font-normal tracking-normal text-aero-ivory md:text-xl">
+          {spec.title}
+        </h3>
+      </figcaption>
+
+      {spec.kind === 'kamm' ? (
+        <KammDiagram spec={spec} />
+      ) : spec.kind === 'step' ? (
+        <StepChart spec={spec} />
+      ) : (
+        <BarChart spec={spec} />
+      )}
+
+      <div className="mt-4 flex flex-col gap-1 border-t border-aero-signal/10 pt-3">
+        {spec.annotation ? (
+          <p className="font-ui text-sm tracking-[0.35px] text-aero-mist/80">
+            {spec.annotation}
+          </p>
+        ) : null}
+        <p className="font-ui text-[10px] tracking-[0.18em] text-aero-signal/45 uppercase">
+          {spec.locator}
+        </p>
+      </div>
+    </figure>
   )
 }
 
@@ -221,6 +232,7 @@ function BarChart({ spec }: { spec: Cap08ChartSpec }) {
                     width={Math.max(2, barW - 2)}
                     height={bh}
                     fill={fill}
+                    data-chart-bar=""
                   >
                     <title>
                       {s.name}: {y} {spec.units}
@@ -233,6 +245,7 @@ function BarChart({ spec }: { spec: Cap08ChartSpec }) {
                     fill={IVORY}
                     fontSize={11}
                     fontFamily={FONT}
+                    data-chart-label=""
                   >
                     {formatTick(y)}
                   </text>
@@ -359,6 +372,7 @@ function StepChart({ spec }: { spec: Cap08ChartSpec }) {
         strokeWidth={2.5}
         strokeLinejoin="round"
         strokeLinecap="round"
+        data-chart-line=""
       />
       {pts.map(([x, y], i) => (
         <circle
@@ -367,6 +381,7 @@ function StepChart({ spec }: { spec: Cap08ChartSpec }) {
           cy={yScale(y)}
           r={3.2}
           fill={AMR}
+          data-chart-marker=""
         />
       ))}
       {spec.markers?.map((m) => (
@@ -466,14 +481,23 @@ function KammDiagram({ spec }: { spec: Cap08ChartSpec }) {
         strokeWidth={1.25}
       />
 
-      {/* Outer (+downforce) */}
+      {/* Outer (+downforce) — fill fades, stroke draws */}
       <circle
         cx={cx}
         cy={cy}
         r={rAero}
         fill="rgb(0 89 73 / 0.12)"
+        stroke="none"
+        data-chart-area=""
+      />
+      <circle
+        cx={cx}
+        cy={cy}
+        r={rAero}
+        fill="none"
         stroke={AMR}
         strokeWidth={2}
+        data-chart-line=""
       />
       {/* Inner (baseline Fz) */}
       <circle
@@ -484,6 +508,7 @@ function KammDiagram({ spec }: { spec: Cap08ChartSpec }) {
         stroke="rgb(139 146 154 / 0.85)"
         strokeWidth={1.5}
         strokeDasharray="5 4"
+        data-chart-line=""
       />
 
       {/* Example force vector inside expanded circle */}
@@ -494,8 +519,15 @@ function KammDiagram({ spec }: { spec: Cap08ChartSpec }) {
         y2={cy - 72}
         stroke={LIME}
         strokeWidth={1.75}
+        data-chart-line=""
       />
-      <circle cx={cx + 88} cy={cy - 72} r={4} fill={LIME} />
+      <circle
+        cx={cx + 88}
+        cy={cy - 72}
+        r={4}
+        fill={LIME}
+        data-chart-marker=""
+      />
 
       <text
         x={cx + 210}

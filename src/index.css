@@ -175,6 +175,52 @@ input[type="range"].aero-range::-moz-range-thumb {
   transform: translateY(0);
 }
 
+/* Native chart draw-in — bars/areas/markers (lines use stroke-dashoffset in JS) */
+[data-chart-bar] {
+  transform-box: fill-box;
+  transform-origin: bottom center;
+  transform: scaleY(0);
+  opacity: 0;
+  transition:
+    transform 0.95s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.35s ease;
+}
+
+[data-chart-bar][data-bar-dir='x'] {
+  transform-origin: left center;
+  transform: scaleX(0);
+}
+
+[data-chart-area] {
+  opacity: 0;
+  transition: opacity 0.75s cubic-bezier(0.22, 1, 0.36, 1) 0.35s;
+}
+
+[data-chart-marker] {
+  opacity: 0;
+  transition: opacity 0.4s ease 0.55s;
+}
+
+[data-chart-label] {
+  opacity: 0;
+  transition: opacity 0.35s ease 0.7s;
+}
+
+.is-chart-drawn [data-chart-bar] {
+  transform: scaleY(1);
+  opacity: 1;
+}
+
+.is-chart-drawn [data-chart-bar][data-bar-dir='x'] {
+  transform: scaleX(1);
+}
+
+.is-chart-drawn [data-chart-area],
+.is-chart-drawn [data-chart-marker],
+.is-chart-drawn [data-chart-label] {
+  opacity: 1;
+}
+
 .scrollbar-none {
   scrollbar-width: none;
 }
@@ -194,6 +240,16 @@ input[type="range"].aero-range::-moz-range-thumb {
   }
 
   .chapter-reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  [data-chart-bar],
+  [data-chart-bar][data-bar-dir='x'],
+  [data-chart-area],
+  [data-chart-marker],
+  [data-chart-label] {
     opacity: 1;
     transform: none;
     transition: none;

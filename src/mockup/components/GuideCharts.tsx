@@ -3,7 +3,8 @@
  * Obsidian ink + Aston Racing green — no white PNG backgrounds.
  */
 
-import type { ReactNode } from 'react'
+import { useRef, type ReactNode } from 'react'
+import { useChartDrawIn } from '@/lib/useChartDrawIn'
 import type {
   GuideChartId,
   GuideChartSeries,
@@ -40,8 +41,12 @@ interface GuideChartProps {
 
 export function GuideChart({ id, caption, chapterId }: GuideChartProps) {
   const spec = GUIDE_CHARTS[id]
+  const drawRef = useRef<HTMLElement>(null)
+  useChartDrawIn(drawRef)
+
   return (
     <figure
+      ref={drawRef}
       className="chapter-reveal mt-12 max-w-[1000px] border-t border-aero-ivory/10 pt-8"
       data-testid={`chapter-${chapterId}-figure`}
       data-chart-id={id}
@@ -252,15 +257,17 @@ function MultiLineChart({ spec }: { spec: GuideChartSpec }) {
               strokeDasharray={dashAttr(s.dash)}
               strokeLinejoin="round"
               strokeLinecap="round"
+              data-chart-line=""
             />
             {pts.map(([x, y]) => (
-              <Marker
-                key={`${s.name}-${x}`}
-                kind={s.marker}
-                cx={xScale(x)}
-                cy={yScale(y)}
-                fill={color}
-              />
+              <g key={`${s.name}-${x}`} data-chart-marker="">
+                <Marker
+                  kind={s.marker}
+                  cx={xScale(x)}
+                  cy={yScale(y)}
+                  fill={color}
+                />
+              </g>
             ))}
             <g transform={`translate(${pad.l + si * 210}, ${pad.t + 8})`}>
               <line
@@ -367,6 +374,7 @@ function GroupedBarChart({ spec }: { spec: GuideChartSpec }) {
                     width={Math.max(2, barW - 3)}
                     height={bh}
                     fill={fill}
+                    data-chart-bar=""
                   >
                     <title>
                       {s.name}: {y} s
@@ -379,6 +387,7 @@ function GroupedBarChart({ spec }: { spec: GuideChartSpec }) {
                     fill={IVORY}
                     fontSize={11}
                     fontFamily={FONT}
+                    data-chart-label=""
                   >
                     {y.toFixed(2)}
                   </text>
@@ -522,7 +531,9 @@ function AreaLineChart({ spec }: { spec: GuideChartSpec }) {
         </g>
       ) : null}
 
-      {areaPath ? <path d={areaPath} fill="url(#df-fill)" /> : null}
+      {areaPath ? (
+        <path d={areaPath} fill="url(#df-fill)" data-chart-area="" />
+      ) : null}
       <path
         d={linePath}
         fill="none"
@@ -530,6 +541,7 @@ function AreaLineChart({ spec }: { spec: GuideChartSpec }) {
         strokeWidth={2.5}
         strokeLinejoin="round"
         strokeLinecap="round"
+        data-chart-line=""
       />
       {pts.map(([x, y]) => (
         <circle
@@ -540,11 +552,12 @@ function AreaLineChart({ spec }: { spec: GuideChartSpec }) {
           fill={color}
           stroke={VOID}
           strokeWidth={1.5}
+          data-chart-marker=""
         />
       ))}
 
       {spec.callout ? (
-        <g>
+        <g data-chart-label="">
           <line
             x1={xScale(spec.callout.x)}
             y1={yScale(spec.callout.y) - 8}
@@ -683,6 +696,8 @@ function HorizontalBarChart({ spec }: { spec: GuideChartSpec }) {
               height={barH}
               fill={fill}
               rx={1}
+              data-chart-bar=""
+              data-bar-dir="x"
             >
               <title>
                 {String(label)}: {value} ms
@@ -694,6 +709,7 @@ function HorizontalBarChart({ spec }: { spec: GuideChartSpec }) {
               fill={IVORY}
               fontSize={13}
               fontFamily={FONT}
+              data-chart-label=""
             >
               {typeof value === 'number' ? value.toFixed(4) : value} ms
             </text>
