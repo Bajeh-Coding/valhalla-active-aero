@@ -26,22 +26,32 @@ const MODEL_URL = '/models/valhalla/valhalla.glb'
 /** Aerobrake reference AOA — maps to fully deployed spoiler (SpoilerClose t→0). */
 const AOA_DEPLOY_REF = 19
 
-/** ~335 mm rolling radius — km/h → rad/s via v/r. */
+/** ~335 mm rolling radius — physical ω = v/r (telemetry). */
 const WHEEL_RADIUS_M = 0.335
 
-const WHEEL_BONE_NAMES = [
-  'Wheel Front L',
-  'Wheel Front R',
-  'Wheel Rear L',
-  'Wheel Rear R',
+/**
+ * Display spin at 300 km/h (rev/s). True ω=v/r at highway speed is ~20+ rev/s —
+ * at 60 fps that is >2 rad/frame and spokes strobe (wagon-wheel), which reads as
+ * a frozen rim that only “blinks” when the speed slider moves. Cap the *visual*
+ * rate so the rim continuously reads while staying proportional to speed.
+ */
+const VISUAL_REVS_PER_SEC_AT_300 = 2.75
+
+/**
+ * Bone name → skinned wheel mesh.
+ * Runtime skeleton joints use underscores (`Wheel_Front_L`); gltf-transform may
+ * show spaces — always normalize before compare.
+ */
+const WHEEL_ENTRIES = [
+  { bone: 'Wheel_Front_L', mesh: 'Wheel1A_LF' },
+  { bone: 'Wheel_Front_R', mesh: 'Wheel1A_RF' },
+  { bone: 'Wheel_Rear_L', mesh: 'Wheel1A_LR' },
+  { bone: 'Wheel_Rear_R', mesh: 'Wheel1A_RR' },
 ] as const
 
-const WHEEL_MESH_NAMES = [
-  'Wheel1A_LF',
-  'Wheel1A_RF',
-  'Wheel1A_LR',
-  'Wheel1A_RR',
-] as const
+function normBoneName(n: string): string {
+  return n.replace(/[\s_]+/g, '').toLowerCase()
+}
 
 /** Spoiler skeleton nodes driven by SpoilerClose (GLB has no front-wing / splitter bones). */
 const SPOILER_TRACK_RE = /Spoiler/i
@@ -72,7 +82,8 @@ export interface Valhalla3DProps {
  * Cap 09 — luxury Three.js / R3F Valhalla stage.
  * Side-profile default. SpoilerClose scrubbed by AOA via paused Action.time +
  * mixer.update(0) — NEVER mixer.setTime (that zeros paused actions back to t=0).
- * Wheel bones spin with ω=v/r after the mixer pose is applied.
+ * Wheel bones (from each SkinnedMesh.skeleton) spin after the mixer pose;
+ * visual ω is speed-proportional but display-scaled so rims don’t strobe at 60fps.
  */
 export function Valhalla3D({
   aoaDeg,
@@ -231,7 +242,7 @@ export function Valhalla3D({
           className="pointer-events-none absolute bottom-3 left-3 font-ui text-[9px] tracking-[0.35px] text-aero-mist/35 md:bottom-4 md:left-4"
           data-testid="sim-wheel-rear"
         >
-          Side view · wheels ∝ speed · rear spoiler ← AOA (GLB)
+          Side view · wheels ∝ speed (rim-readable) · rear spoiler ← AOA
         </p>
       </div>
 
@@ -308,9 +319,12 @@ function SideOrbitControls() {
 }
 
 type WheelSpinTarget = {
-  bone: THREE.Object3D
-  /** Rest local quaternion (bind / post-mixer base). */
+  bone: THREE.Bone
+  skeleton: THREE.Skeleton | null
+  /** Rest local quaternion (bind pose). */
   rest: THREE.Quaternion
+  /** +1 / −1 — right-side bones have local +X flipped in world. */
+  sign: number
 }
 
 function ValhallaScene({
@@ -332,6 +346,7 @@ function ValhallaScene({
   const mixer = useRef<THREE.AnimationMixer | null>(null)
   const action = useRef<THREE.AnimationAction | null>(null)
   const wheels = useRef<WheelSpinTarget[]>([])
+  const skeletons = useRef<Set<THREE.Skeleton>>(new Set())
   const clipDuration = useRef(1)
   const spoilerTime = useRef(0)
   const wheelAngle = useRef(0)
@@ -341,6 +356,7 @@ function ValhallaScene({
   const hingeBone = useRef<THREE.Object3D | null>(null)
   const qSpin = useMemo(() => new THREE.Quaternion(), [])
   const qOut = useMemo(() => new THREE.Quaternion(), [])
+  /** Local +X is the hub axle on this Forza-style kit (world ±lateral). */
   const axle = useMemo(() => new THREE.Vector3(1, 0, 0), [])
 
   useEffect(() => {
@@ -391,28 +407,45 @@ function ValhallaScene({
       (root.getObjectByName('Animate_Spoiler_Hinge_1') as THREE.Object3D) ??
       null
 
-    // Prefer skeleton wheel bones (meshes are skinned to them). Mesh names are
-    // a last-resort fallback if bones are missing from a different LOD.
+    // Wheel hub joints live on SkinnedMesh.skeleton.bones — in this GLB they are
+    // NOT always reachable via scene traverse/getObjectByName after Draco load.
     const found: WheelSpinTarget[] = []
-    for (const name of WHEEL_BONE_NAMES) {
-      const bone = root.getObjectByName(name)
-      if (bone) {
-        found.push({
-          bone,
-          rest: bone.quaternion.clone(),
-        })
+    const skelSet = new Set<THREE.Skeleton>()
+    let skelBoneNames = ''
+    for (const entry of WHEEL_ENTRIES) {
+      const meshObj = root.getObjectByName(entry.mesh) as THREE.SkinnedMesh | undefined
+      if (!meshObj || !meshObj.isSkinnedMesh || !meshObj.skeleton) continue
+      const skeleton = meshObj.skeleton
+      skelSet.add(skeleton)
+      if (!skelBoneNames) {
+        skelBoneNames = skeleton.bones
+          .map((b) => b.name)
+          .filter((n) => /wheel|calliper|caliper|steering/i.test(n))
+          .join('|')
       }
-    }
-    if (found.length === 0) {
-      for (const name of WHEEL_MESH_NAMES) {
-        const mesh = root.getObjectByName(name)
-        if (mesh) {
-          found.push({ bone: mesh, rest: mesh.quaternion.clone() })
-        }
-      }
+      const want = normBoneName(entry.bone)
+      const bone =
+        skeleton.bones.find((b) => b.name === entry.bone) ??
+        skeleton.bones.find((b) => normBoneName(b.name) === want) ??
+        skeleton.getBoneByName?.(entry.bone) ??
+        null
+      if (!bone) continue
+      found.push({
+        bone,
+        skeleton,
+        rest: bone.quaternion.clone(),
+        // Right-side bones: world local +X points −X; keep tread direction.
+        sign: /_R$|R$/i.test(entry.bone) ? -1 : 1,
+      })
     }
     wheels.current = found
+    skeletons.current = skelSet
     wheelAngle.current = 0
+    const telInit = telemetryRef.current
+    if (telInit) {
+      telInit.dataset.skelBones = skelBoneNames.slice(0, 500)
+      telInit.dataset.wheelCount = String(found.length)
+    }
 
     if (spoilerClip) {
       const mix = new THREE.AnimationMixer(root)
@@ -431,8 +464,6 @@ function ValhallaScene({
       // Apply pose without mixer.setTime (setTime zeros paused actions → t=0 forever).
       act.time = spoilerTime.current
       mix.update(0)
-      // Capture rest quaternions AFTER the first spoiler pose so spin is relative
-      // to the post-mixer bind (wheels are not in the spoiler clip, so rest ≈ bind).
       for (const w of wheels.current) {
         w.rest.copy(w.bone.quaternion)
       }
@@ -465,16 +496,22 @@ function ValhallaScene({
       mix.update(0)
     }
 
-    // --- Wheel spin AFTER mixer, so pose isn't overwritten ---
+    // --- Wheel spin AFTER mixer (bones not in spoiler clip) ---
     const v = speedRef.current
-    if (v > 0.5 && wheels.current.length > 0) {
-      const radPerSec = v / 3.6 / WHEEL_RADIUS_M
-      wheelAngle.current += radPerSec * safeDt
-      qSpin.setFromAxisAngle(axle, wheelAngle.current)
+    const physicalOmega = v > 0.5 ? v / 3.6 / WHEEL_RADIUS_M : 0
+    // Display ω ∝ speed, capped so multi-spoke rims read continuously at ~60fps.
+    const visualOmega =
+      v > 0.5 ? (v / 300) * (Math.PI * 2 * VISUAL_REVS_PER_SEC_AT_300) : 0
+    if (visualOmega > 0 && wheels.current.length > 0) {
+      wheelAngle.current += visualOmega * safeDt
       for (const w of wheels.current) {
-        // rest ⊗ spin — absolute set, not rotateX accumulate (safer vs mixer).
+        qSpin.setFromAxisAngle(axle, w.sign * wheelAngle.current)
+        // rest ⊗ spin — absolute set on the skeleton bone the mesh actually weights.
         qOut.copy(w.rest).multiply(qSpin)
         w.bone.quaternion.copy(qOut)
+      }
+      for (const sk of skeletons.current) {
+        sk.update()
       }
     }
 
@@ -484,10 +521,17 @@ function ValhallaScene({
       el.dataset.spoilerTime = spoilerTime.current.toFixed(4)
       el.dataset.spoilerTarget = targetT.toFixed(4)
       el.dataset.wheelAngle = wheelAngle.current.toFixed(4)
+      el.dataset.wheelOmegaVisual = visualOmega.toFixed(4)
+      el.dataset.wheelOmegaPhysical = physicalOmega.toFixed(4)
       el.dataset.wheelCount = String(wheels.current.length)
       el.dataset.spoilerTracks = String(spoilerTrackCount.current)
       if (hingeBone.current) {
         el.dataset.hingeY = hingeBone.current.position.y.toFixed(4)
+      }
+      if (wheels.current[0]) {
+        const b = wheels.current[0].bone
+        el.dataset.boneQx = b.quaternion.x.toFixed(4)
+        el.dataset.boneQw = b.quaternion.w.toFixed(4)
       }
     }
   })
