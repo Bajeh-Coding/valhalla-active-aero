@@ -5,7 +5,7 @@ import { Hero } from './components/Hero'
 import { MOCK_CHAPTERS } from './data/chapters'
 
 /**
- * Luxury scientific presentation — 10 authored chapters.
+ * Luxury scientific presentation — 11 chapters (ghid + Cap 09 simulator).
  * Motions: hero ambient scale, chapter reveal on scroll, nav scrollspy underline.
  */
 export function MockupTalk() {
@@ -127,7 +127,7 @@ export function MockupTalk() {
             Aerodinamică Activă
           </p>
           <p className="font-ui text-[10px] tracking-[0.2em] text-aero-mist/40 uppercase">
-            10 capitole · SAE · OEM · simulare
+            11 capitole · ghid prezentare · simulator
           </p>
         </div>
       </footer>

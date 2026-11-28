@@ -1,7 +1,6 @@
 import type { MockChapter } from '../data/chapters'
 import { ActiveAeroSimulator } from './ActiveAeroSimulator'
-import { AeroSurfaces } from './AeroSurfaces'
-import { Cap08Charts } from './Cap08Charts'
+import { GuideDiagram } from './GuideDiagrams'
 import { ChapterMedia } from './ChapterMedia'
 
 interface ChapterSectionProps {
@@ -13,14 +12,17 @@ export function ChapterSection({ chapter }: ChapterSectionProps) {
   const hasNotes = Boolean(chapter.notes?.length)
   const hasDof = Boolean(chapter.dofBreakdown?.length)
   const hasSpecs = Boolean(chapter.specs?.rows.length)
-  const hasModes = Boolean(chapter.modes?.length)
-  const hasSurfaces = Boolean(chapter.surfaces?.length)
-  const hasCharts = Boolean(chapter.charts?.length)
-  const hasExtra = Boolean(chapter.bodyExtra?.length)
+  const hasModeColumns = Boolean(chapter.modeColumns?.length)
+  const hasEquations = Boolean(chapter.equations?.length)
+  const hasFigure = Boolean(chapter.figure)
+  const hasDiagrams = Boolean(chapter.diagrams?.length)
+  const hasKpi = Boolean(chapter.kpiTable?.rows.length)
+  const hasRefs = Boolean(chapter.references?.length)
   const hasSimulator = Boolean(chapter.simulator)
   const hasSummary = Boolean(chapter.summary?.length)
+  const hasBullets = Boolean(chapter.bullets?.length)
   const titleWidth =
-    chapter.number >= 1 && chapter.number <= 10
+    chapter.number >= 1 && chapter.number <= 11
       ? 'max-w-[920px]'
       : 'max-w-[640px]'
 
@@ -44,25 +46,51 @@ export function ChapterSection({ chapter }: ChapterSectionProps) {
           <h2 className="font-display mt-3 text-[clamp(1.75rem,3.8vw,3rem)] leading-[1.15] font-normal tracking-normal text-aero-ivory">
             {chapter.headline}
           </h2>
-          <p className="font-ui mt-2 text-[12px] font-medium tracking-[0.55px] text-aero-mist/60 uppercase">
+          <p className="font-ui mt-3 max-w-[720px] text-[13px] font-medium leading-snug tracking-[0.35px] text-aero-amr/90 md:text-sm">
+            {chapter.actionTitle}
+          </p>
+          <p className="font-ui mt-4 text-[12px] font-medium tracking-[0.55px] text-aero-mist/60 uppercase">
             {chapter.label}
           </p>
-          <p className="font-ui mt-8 max-w-[640px] text-base leading-relaxed tracking-[0.55px] text-aero-mist/90 md:text-lg">
-            {chapter.body}
-          </p>
 
-          {hasExtra
-            ? chapter.bodyExtra!.map((para) => (
-                <p
-                  key={para.slice(0, 48)}
-                  className="font-ui mt-6 max-w-[640px] text-base leading-relaxed tracking-[0.55px] text-aero-mist/85 md:text-lg"
+          {hasBullets ? (
+            <ul
+              className="mt-8 max-w-[720px] space-y-3"
+              data-testid={`chapter-${chapter.id}-bullets`}
+            >
+              {chapter.bullets.map((line) => (
+                <li
+                  key={line.slice(0, 64)}
+                  className="font-ui flex gap-3 text-base leading-relaxed tracking-[0.35px] text-aero-mist/90 md:text-lg"
                 >
-                  {para}
-                </p>
-              ))
-            : null}
+                  <span
+                    className="mt-2.5 h-1 w-1 shrink-0 rounded-full bg-aero-amr"
+                    aria-hidden
+                  />
+                  <span>{line}</span>
+                </li>
+              ))}
+            </ul>
+          ) : null}
 
-          {hasSummary ? (
+          {hasEquations ? (
+            <ul
+              className="mt-8 max-w-[640px] space-y-2 border-t border-aero-ivory/10 pt-6"
+              data-testid={`chapter-${chapter.id}-equations`}
+              aria-label="Ecuații"
+            >
+              {chapter.equations!.map((eq) => (
+                <li
+                  key={eq}
+                  className="font-mono text-sm tracking-normal text-aero-lime/90 md:text-base"
+                >
+                  {eq}
+                </li>
+              ))}
+            </ul>
+          ) : null}
+
+          {hasSummary && !hasBullets ? (
             <ol
               className="mt-10 max-w-[720px] space-y-3"
               data-testid={`chapter-${chapter.id}-summary`}
@@ -102,7 +130,7 @@ export function ChapterSection({ chapter }: ChapterSectionProps) {
 
           {hasSpecs ? (
             <div
-              className="mt-10 max-w-[640px] border-t border-aero-ivory/10 pt-8"
+              className="mt-10 max-w-[720px] border-t border-aero-ivory/10 pt-8"
               data-testid={`chapter-${chapter.id}-specs`}
             >
               <p className="font-ui mb-5 text-[10px] font-medium tracking-[0.55px] text-aero-mist/45 uppercase">
@@ -131,48 +159,148 @@ export function ChapterSection({ chapter }: ChapterSectionProps) {
             </div>
           ) : null}
 
-          {hasModes ? (
-            <ul
-              className="mt-12 grid max-w-[920px] gap-8 border-t border-aero-ivory/10 pt-8 md:grid-cols-3"
+          {hasModeColumns ? (
+            <div
+              className="mt-12 max-w-[1000px] border-t border-aero-ivory/10 pt-8"
               data-testid={`chapter-${chapter.id}-modes`}
             >
-              {chapter.modes!.map((mode) => (
-                <li key={mode.name} className="min-w-0">
-                  <p className="font-display text-lg font-normal tracking-normal text-aero-ivory">
-                    {mode.name}
-                  </p>
-                  <p className="font-ui mt-1 text-[11px] font-medium tracking-[0.55px] text-aero-mist/55 uppercase">
-                    {mode.role}
-                  </p>
-                  <ul className="mt-4 space-y-2">
-                    {mode.lines.map((line) => (
-                      <li
-                        key={line}
-                        className="font-ui text-sm leading-relaxed tracking-[0.35px] text-aero-mist/85"
-                      >
-                        {line}
-                      </li>
-                    ))}
-                  </ul>
-                </li>
-              ))}
-            </ul>
+              <p className="font-ui mb-6 text-[10px] font-medium tracking-[0.55px] text-aero-mist/45 uppercase">
+                Tabel comparativ — 3 moduri de funcționare
+              </p>
+              <div className="grid gap-8 md:grid-cols-3">
+                {chapter.modeColumns!.map((col) => (
+                  <div key={col.id} className="min-w-0">
+                    <p className="font-display text-lg font-normal tracking-normal text-aero-ivory">
+                      {col.title}
+                    </p>
+                    <p className="font-ui mt-4 text-[10px] font-medium tracking-[0.55px] text-aero-mist/45 uppercase">
+                      Configurație Hardware
+                    </p>
+                    <ul className="mt-2 space-y-1.5">
+                      {col.hardware.map((line) => (
+                        <li
+                          key={line}
+                          className="font-ui text-sm leading-relaxed tracking-[0.35px] text-aero-mist/85"
+                        >
+                          {line}
+                        </li>
+                      ))}
+                    </ul>
+                    <p className="font-ui mt-4 text-[10px] font-medium tracking-[0.55px] text-aero-mist/45 uppercase">
+                      Condiții Activare
+                    </p>
+                    <ul className="mt-2 space-y-1.5">
+                      {col.activation.map((line) => (
+                        <li
+                          key={line}
+                          className="font-ui text-sm leading-relaxed tracking-[0.35px] text-aero-mist/85"
+                        >
+                          {line}
+                        </li>
+                      ))}
+                    </ul>
+                    <p className="font-ui mt-4 text-[10px] font-medium tracking-[0.55px] text-aero-mist/45 uppercase">
+                      Efect Dinamic
+                    </p>
+                    <ul className="mt-2 space-y-1.5">
+                      {col.effect.map((line) => (
+                        <li
+                          key={line}
+                          className="font-ui text-sm leading-relaxed tracking-[0.35px] text-aero-mist/85"
+                        >
+                          {line}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </div>
           ) : null}
 
+          {hasKpi ? (
+            <div
+              className="mt-10 max-w-[800px] border-t border-aero-ivory/10 pt-8"
+              data-testid={`chapter-${chapter.id}-kpi`}
+            >
+              <p className="font-ui mb-5 text-[10px] font-medium tracking-[0.55px] text-aero-mist/45 uppercase">
+                {chapter.kpiTable!.caption}
+              </p>
+              <table className="w-full border-collapse text-left">
+                <thead>
+                  <tr className="border-b border-aero-ivory/15">
+                    <th className="font-ui py-2 pr-4 text-[10px] font-medium tracking-[0.55px] text-aero-mist/45 uppercase">
+                      Indicator
+                    </th>
+                    <th className="font-ui py-2 text-[10px] font-medium tracking-[0.55px] text-aero-mist/45 uppercase">
+                      Valoare
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {chapter.kpiTable!.rows.map((row) => (
+                    <tr
+                      key={row.indicator}
+                      className="border-b border-aero-ivory/8 last:border-b-0"
+                    >
+                      <th
+                        scope="row"
+                        className="font-ui py-2.5 pr-4 text-[12px] font-medium tracking-[0.55px] text-aero-mist/65"
+                      >
+                        {row.indicator}
+                      </th>
+                      <td className="font-display py-2.5 text-sm font-normal tracking-normal text-aero-ivory">
+                        {row.value}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : null}
+
+          {hasRefs ? (
+            <div
+              className="mt-10 max-w-[720px] border-t border-aero-ivory/10 pt-8"
+              data-testid={`chapter-${chapter.id}-references`}
+            >
+              <p className="font-ui mb-4 text-[10px] font-medium tracking-[0.55px] text-aero-mist/45 uppercase">
+                Referințe Cheie
+              </p>
+              <ul className="space-y-2">
+                {chapter.references!.map((ref) => (
+                  <li
+                    key={ref}
+                    className="font-ui text-[13px] leading-relaxed tracking-[0.35px] text-aero-mist/75"
+                  >
+                    {ref}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
         </div>
 
-        {/* Charts/surfaces stay outside the title reveal so tall blocks
-            cannot trap opacity:0 when IntersectionObserver never hits
-            threshold on a multi-viewport element. */}
-        {hasCharts ? (
-          <Cap08Charts charts={chapter.charts!} chapterId={chapter.id} />
-        ) : null}
+        {hasDiagrams
+          ? chapter.diagrams!.map((id) => <GuideDiagram key={id} id={id} />)
+          : null}
 
-        {hasSurfaces ? (
-          <AeroSurfaces
-            surfaces={chapter.surfaces!}
-            chapterId={chapter.id}
-          />
+        {hasFigure ? (
+          <figure
+            className="chapter-reveal mt-12 max-w-[1000px] border-t border-aero-ivory/10 pt-8"
+            data-testid={`chapter-${chapter.id}-figure`}
+          >
+            <figcaption className="font-ui mb-5 text-[10px] font-medium tracking-[0.55px] text-aero-mist/45 uppercase">
+              {chapter.figure!.caption}
+            </figcaption>
+            <img
+              src={chapter.figure!.src}
+              alt={chapter.figure!.alt}
+              className="w-full bg-aero-ink object-contain"
+              loading="lazy"
+              decoding="async"
+            />
+          </figure>
         ) : null}
 
         {hasSimulator ? (
@@ -181,11 +309,11 @@ export function ChapterSection({ chapter }: ChapterSectionProps) {
             {hasNotes ? (
               <aside
                 className="mt-12 max-w-[720px] border-t border-aero-ivory/10 pt-6"
-                aria-label="Surse"
+                aria-label="Note prezentator"
                 data-testid={`chapter-${chapter.id}-notes`}
               >
                 <p className="font-ui mb-4 text-[10px] font-medium tracking-[0.55px] text-aero-mist/45 uppercase">
-                  Surse
+                  Note prezentator
                 </p>
                 <ol className="space-y-4">
                   {chapter.notes!.map((note, i) => (
@@ -212,11 +340,11 @@ export function ChapterSection({ chapter }: ChapterSectionProps) {
         ) : hasNotes ? (
           <aside
             className="chapter-reveal mt-12 max-w-[720px] border-t border-aero-ivory/10 pt-6"
-            aria-label="Surse"
+            aria-label="Note prezentator"
             data-testid={`chapter-${chapter.id}-notes`}
           >
             <p className="font-ui mb-4 text-[10px] font-medium tracking-[0.55px] text-aero-mist/45 uppercase">
-              Surse
+              Note prezentator
             </p>
             <ol className="space-y-4">
               {chapter.notes!.map((note, i) => (

@@ -33,11 +33,11 @@ test.describe('Mockup performance probe', () => {
           }
         }
         const chapters = [
-          'introducere',
-          'control',
-          'rezultate',
-          'surse',
-          'problema',
+          'cadru',
+          'state-machine',
+          'pi-rom',
+          'concluzii',
+          'modelare-14dof',
         ]
         let i = 0
         const scrollIv = window.setInterval(() => {
@@ -74,7 +74,7 @@ test.describe('Mockup performance probe', () => {
     console.log(`PERF_JSON ${JSON.stringify(result)}`)
 
     expect(result.hasMockup).toBe(true)
-    expect(result.chapterCount).toBe(10)
+    expect(result.chapterCount).toBe(11)
     expect(result.valhallaImgCount).toBeGreaterThan(0)
     expect(result.sampleCount).toBeGreaterThan(0)
     expect(result.avgFps).toBeGreaterThan(2)

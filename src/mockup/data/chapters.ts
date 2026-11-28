@@ -1,34 +1,27 @@
 /**
- * Presentation chapter shell — all 10 chapters have authored content.
- * Imagery: official Aston Martin Valhalla page assets (downloaded, not hotlinked).
+ * Canonical presentation chapters — strict map from
+ * Informatii_pentru_Prezentare (ghid) → 11 site chapters.
+ * Cap 09 = Active Aero Simulator (R3F), between guide slides 8 and 9.
  */
 
-import type { Cap08ChartSpec } from './cap08Charts'
-import { CAP08_CHARTS } from './cap08Charts'
+import type { GuideDiagramId } from '../components/GuideDiagrams'
 
-export interface MockChapterNote {
-  /** Visible citation / footnote line (luxury caption style). */
-  text: string
-  /** Optional emphasis quote nested under the note. */
-  quote?: string
-}
-
-/** Cap 07 — official OEM aerodynamic control surface. */
+/** Legacy Cap 07 OEM surface block (kept for AeroSurfaces component types). */
 export interface MockAeroSurface {
   id: string
-  /** OEM English name (official AM terminology). */
   oemName: string
-  /** Short Romanian role / function. */
   roleRo: string
-  /** Optional OEM fact chips (keep English terms). */
   facts?: readonly string[]
   image: { src: string; objectPosition?: string; alt: string }
 }
 
+export interface MockChapterNote {
+  text: string
+  quote?: string
+}
+
 export interface MockChapterDofItem {
-  /** DOF count label, e.g. "6 DOF". */
   dof: string
-  /** Short description grounded in the SAE paper. */
   detail: string
 }
 
@@ -38,12 +31,28 @@ export interface MockChapterSpecRow {
 }
 
 export interface MockChapterMode {
-  /** Short mode name (DRS / Aerobrake / MaxP). */
   name: string
-  /** One-line role of the mode. */
   role: string
-  /** Parameter lines sourced from SAE control strategy. */
   lines: readonly string[]
+}
+
+export interface MockChapterFigure {
+  src: string
+  caption: string
+  alt: string
+}
+
+export interface MockChapterModeColumn {
+  id: string
+  title: string
+  hardware: readonly string[]
+  activation: readonly string[]
+  effect: readonly string[]
+}
+
+export interface MockChapterKpiRow {
+  indicator: string
+  value: string
 }
 
 export interface MockChapter {
@@ -51,41 +60,53 @@ export interface MockChapter {
   number: number
   label: string
   kicker: string
+  /** EN action title from guide. */
+  actionTitle: string
+  /** Principal RO title (slide text). */
   headline: string
-  body: string
-  /** Optional short recap lines (Cap 10 Concluzii). */
-  summary?: readonly string[]
-  /** Optional secondary paragraphs (Cap 08 how/why prose). */
-  bodyExtra?: readonly string[]
+  /** Synthetic bullet points from guide §1. */
+  bullets: readonly string[]
+  /** Optional equations / HUD lines. */
+  equations?: readonly string[]
   image: { src: string; objectPosition?: string; sourceUrl: string }
-  /** Optional discreet footnotes — SAE / Gao / Subramanian citations. */
+  figure?: MockChapterFigure
   notes?: readonly MockChapterNote[]
-  /** Optional 14 DOF breakdown (Cap 02). */
   dofBreakdown?: readonly MockChapterDofItem[]
-  /** Optional Table 1-style specs (Cap 02). */
   specs?: {
     caption: string
     rows: readonly MockChapterSpecRow[]
   }
-  /** Optional control-mode blocks — Cap 03 state machine. */
+  /** Cap 05 comparison — three modes as columns. */
+  modeColumns?: readonly MockChapterModeColumn[]
+  /** Legacy mode blocks (unused after ghid rewrite; kept for type compat). */
   modes?: readonly MockChapterMode[]
-  /** Cap 07 — per-surface visual blocks (OEM/marketing only). */
-  surfaces?: readonly MockAeroSurface[]
-  /** Optional Cap 08 SVG chart specs (paper-exact only). */
-  charts?: readonly Cap08ChartSpec[]
-  /** Cap 09 — embed interactive Active Aero simulator. */
+  diagrams?: readonly GuideDiagramId[]
+  kpiTable?: {
+    caption: string
+    rows: readonly MockChapterKpiRow[]
+  }
+  summary?: readonly string[]
+  references?: readonly string[]
   simulator?: boolean
 }
 
 export const MOCK_CHAPTERS: readonly MockChapter[] = [
   {
-    id: 'introducere',
+    id: 'cadru',
     number: 1,
-    label: 'Introducere',
-    kicker: 'Capitol 01',
+    label: 'Cadru',
+    kicker: 'Capitol 01 · Slide 1',
+    actionTitle:
+      'Optimizing Hypercar Performance via Active Aerodynamics & Mechatronic Control',
     headline:
-      'Aston Martin Valhalla — Active Aerodynamics & Mechatronic Control',
-    body: 'Dezvoltarea integrată a pachetului aerodinamic activ și control mecatronic pe caroseria de referință Aston Martin Vantage (4WD Electric Hypercar).',
+      'Sisteme Integrate de Aerodinamică Activă și Control Mecatronic pe Hypercar-ul Aston Martin Valhalla',
+    bullets: [
+      'Subtitlu: De la simulări multicorp (14 DOF) și optimizare AI (PI-ROM) la modelul de serie PHEV 1,079 PS',
+      'Autori & Afiliere: Departamentul de Inginerie Mecanică și Aerospațială (Politecnico di Torino) & Aston Martin Lagonda Ltd.',
+      'Pilon: Depășirea limitei de aderență a anvelopelor fără masă inerțială adăugată.',
+      'Pilon: Control mecatronic în 3 stări: DRS, Aerobrake și MaxP Aero-Balance.',
+      'Pilon: Predicție aerodinamică sub-milisecundă (< 0.1 ms) prin Rețele Neuronale (PI-ROM).',
+    ],
     image: {
       src: '/images/am-official/am-ch01-intro.jpg',
       objectPosition: '50% 40%',
@@ -94,22 +115,68 @@ export const MOCK_CHAPTERS: readonly MockChapter[] = [
     },
     notes: [
       {
-        text: 'SAE Technical Paper 2020-36-0079 — Integrated Design and Control of Active Aerodynamic Features for High Performance Electric Vehicles (Henrique de Carvalho Pinheiro, Alessandro Ferraris, Alessandro Messana, Massimiliana Carello, Davide De Cupis, Lorenzo Sisca, Andrea Giancarlo Airale).',
+        text: '💬 Context (Slide 1): Sistemele de siguranță activă tradiționale (ESP, Torque Vectoring, AFS) acționează prin modularea forțelor de la pata de contact a anvelopei, dar sunt limitate de cercul de frecare al lui Kamm (Fy,max = μ * Fz).',
       },
       {
-        text: 'SAE 2020-36-0079, p.3 — Baseline Aerodynamic and Surfaces Design / Fig.3:',
-        quote:
-          'From the aerodynamic point of view, the reference vehicle body shape selected for this paper is the Aston Martin Vantage 2019...',
+        text: 'Aerodinamica activă oferă o cale complet nouă: mărește forța normală Fz prin generarea de apăsare aerodinamică (Downforce FL), extinzând aderența fără a adăuga masă inerțială vehiculului.',
+      },
+      {
+        text: 'Această prezentare unește două dimensiuni: (1) Studiul mecatronic de bază dezvoltat în mediul VI-CarRealTime și validat pe simulatorul DIL, și (2) Aplicarea sa industrială directă pe hypercar-ul de serie Aston Martin Valhalla.',
       },
     ],
   },
+
   {
-    id: 'problema',
+    id: 'kamm',
     number: 2,
-    label: 'Modelare',
-    kicker: 'Capitol 02',
-    headline: 'Modelarea Dinamică Multicorp (14 DOF)',
-    body: 'Modelarea șasiului și a suspensiilor pe un model dinamic multicorp cu 14 Grade de Libertate (14 DOF) în mediul VI-CarRealTime.',
+    label: 'Kamm',
+    kicker: 'Capitol 02 · Slide 2',
+    actionTitle:
+      'Downforce Increases Tire Grip (Fy,max = μ * Fz) Without Adding Inertial Mass',
+    headline: 'Cadrul Teoretic — Fizica Aerodinamicii și Limitele Pasive',
+    bullets: [
+      'Limita Fizică Pasivă: Forța laterală la anvelopă este limitată strict de aderență: Fy,max = μ * Fz. Sistemele tradiționale nu pot depăși această limită când anvelopa se saturează.',
+      'Penalizarea Energetică a Drag-ului: La viteze mari, peste 50% din energia vehiculului este consumată pentru învingerea rezistenței aerodinamice FD.',
+      'Ipoteza Regimului Cvasi-Static: Până la o frecvență de acționare de 2 Hz, tranzițiile aerodinamice sunt cvasi-statice, permițând superpoziția liniară a forțelor.',
+    ],
+    equations: [
+      'FD = 0.5 * ρ * v² * A * CD  [N]',
+      'FL = 0.5 * ρ * v² * A * |CL|  [N]',
+      'Fy,max = μ * Fz',
+    ],
+    image: {
+      src: '/images/am-official/am-ch06-regimuri.jpg',
+      objectPosition: '50% 40%',
+      sourceUrl:
+        'https://www.astonmartin.com/-/media/models---valhalla-2026-relaunch/valhalla-explore-tile-3.jpg',
+    },
+    diagrams: ['kamm'],
+    notes: [
+      {
+        text: '💬 Context (Slide 2): Dificultatea majoră pe vehiculele pasive este compromisul dintre Drag și Downforce. Un eleron fix cu unghi mare oferă aderență în viraje, dar frânează mașina pe liniile drepte.',
+      },
+      {
+        text: 'Soluția este acționarea mecatronică activă: schimbarea unghiului de atac (AOA) în funcție de regimul de rulare.',
+      },
+      {
+        text: 'Validarea ipotezei cvasi-statice de până la 2 Hz este esențială deoarece confirmă că actuatorul hidraulic sau electric poate ajusta eleronul în timp real fără a declanșa desprinderi de flux turbulente imprevizibile.',
+      },
+    ],
+  },
+
+  {
+    id: 'modelare-14dof',
+    number: 3,
+    label: '14 DOF',
+    kicker: 'Capitol 03 · Slide 3',
+    actionTitle: '14 DOF Multibody Simulation Validates High-Speed Vehicle Stability',
+    headline: 'Modelarea Dinamică Multicorp (14 DOF) & Platforma Virtuală',
+    bullets: [
+      'Arhitectura Modelului Multicorp (14 DOF) în VI-CarRealTime.',
+      '6 DOF Șasiu (translații x, y, z + rotații roll, pitch, yaw).',
+      '4 DOF Cursa verticală a suspensiilor la fiecare roată.',
+      '4 DOF Dinamica de rotație și alunecarea longitudinală a roților.',
+    ],
     image: {
       src: '/images/am-official/am-ch02-problema.jpg',
       objectPosition: '50% 45%',
@@ -119,312 +186,306 @@ export const MOCK_CHAPTERS: readonly MockChapter[] = [
     dofBreakdown: [
       {
         dof: '6 DOF',
-        detail: 'mișcare spațială a șasiului (sprung mass)',
+        detail: 'Șasiu — translații x, y, z + rotații roll, pitch, yaw',
       },
       {
         dof: '4 DOF',
-        detail: 'cursă suspensie (suspensions’ stroke)',
+        detail: 'Cursa verticală a suspensiilor la fiecare roată',
       },
       {
         dof: '4 DOF',
-        detail: 'alunecare longitudinală a roților (wheels’ longitudinal slip)',
+        detail: 'Dinamica de rotație și alunecarea longitudinală a roților',
       },
     ],
     specs: {
-      caption: 'Table 1 — Vehicle reference model technical specification',
+      caption:
+        'Specificațiile Cheie ale Vehiculului de Referință (Hypercar 4WD EV)',
       rows: [
-        { parameter: 'Sprung mass', value: '2050 kg' },
-        { parameter: 'Power', value: '1257 kW' },
-        { parameter: 'Wheelbase', value: '2691 mm' },
-        { parameter: 'Frontal area', value: '2.1 m²' },
+        {
+          parameter: 'Masa Suspendată (ms) / Nesuspendată',
+          value: '2050 kg / 190 kg (Total: 2240 kg)',
+        },
+        {
+          parameter: 'Grup Motopropulsor / Putere Maximă',
+          value: '4WD EV (4 Motoare Roată) / 1257 kW (1709 PS)',
+        },
+        {
+          parameter: 'Geometrie Șasiu (Ampatament / CoG)',
+          value: '2691 mm / Înălțime CoG: 378 mm',
+        },
+        {
+          parameter: 'Distribuție Statică Masă (Față / Spate)',
+          value: '43% Față / 57% Spate',
+        },
       ],
     },
+    diagrams: ['dof14'],
     notes: [
       {
-        text: 'SAE 2020-36-0079, p.2 — Vehicle Model and Tailored Maneuvers: VI-CarRealTime; reduced DOF model with 5 rigid parts and 14 DOF (6 chassis / 4 suspension stroke / 4 wheels’ longitudinal slip).',
+        text: '💬 Context (Slide 3): Modelul cu 14 grade de libertate (14 DOF) creat în VI-CarRealTime surprinde fidel transferul dinamic de masă pe frânare și accelerare.',
       },
       {
-        text: 'SAE 2020-36-0079, p.3 — Table 1 (Vehicle reference model technical specification): sprung mass 2050 kg; maximum power* 1257 kW; wheelbase 2691 mm; frontal area 2.1 m².',
+        text: 'Deoarece mașina are 57% din masă pe puntea spate și o putere uriașă (1257 kW), orice accelerare bruscă descarcă puntea față, modificând dramatic echilibrul aerodinamic.',
+      },
+      {
+        text: "Simulările au folosit două circuite virtuale în VI-Road: 'Parabolica' (pentru stabilitate pe frânare și viraj) și 'GRIP Track' (pentru evaluarea globală a timpului pe tur).",
       },
     ],
   },
+
   {
-    id: 'fundamente',
-    number: 3,
-    label: 'Stări',
-    kicker: 'Capitol 03',
-    headline:
-      'Sistemul de Control prin Stări (DRS, Aerobrake, MaxP)',
-    body: 'Arhitectura mașinii de stări (State Machine) cu 3 moduri active: DRS (reducere drag), Aerobrake (frânare aerodinamică), MaxP (optimizarea balanței aerodinamice CoP vs. CoG în viraje).',
-    image: {
-      src: '/images/am-official/am-ch03-fundamente.jpg',
-      objectPosition: '50% 40%',
-      sourceUrl:
-        'https://www.astonmartin.com/-/media/models---valhalla/2026-redesign/valhalla-powertrain-hero-banner-desktop.jpg',
-    },
-    modes: [
-      {
-        name: 'DRS',
-        role: 'Reducere drag',
-        lines: [
-          'AOA = 0°',
-          'Splitter = DESCHIS la viteză > 110 km/h',
-          'Pedală accelerație > 70%',
-        ],
-      },
-      {
-        name: 'Aerobrake',
-        role: 'Frânare aerodinamică',
-        lines: [
-          'AOA = 19°..25°',
-          'Splitter = ÎNCHIS la frânare > 40%',
-        ],
-      },
-      {
-        name: 'MaxP',
-        role: 'Balanță aerodinamică CoP vs. CoG',
-        lines: [
-          'AOA = 0° la 100–180 km/h',
-          'AOA = 3° la 180–250 km/h',
-          'AOA = 4.5° la 250–300 km/h',
-        ],
-      },
-    ],
-    notes: [
-      {
-        text: 'SAE 2020-36-0079, pp.4–6 — State machine and Control Strategy (DRS, DRS + Aerobrake, MaxP).',
-      },
-    ],
-  },
-  {
-    id: 'mecanisme',
+    id: 'pachet-aero',
     number: 4,
-    label: 'Traiectorie',
-    kicker: 'Capitol 04',
-    headline:
-      'Optimizarea Traiectoriei & Performanța pe Tur (−2.55s Nürburgring GP)',
-    body: 'Reducerea timpului pe tur cu −2.55 secunde pentru pilotul uman pe simulatorul profesional VI-Grade DIL pe circuitul Nürburgring GP.',
-    image: {
-      src: '/images/am-official/am-ch04-mecanisme.jpg',
-      objectPosition: '50% 45%',
-      sourceUrl:
-        'https://www.astonmartin.com/-/media/models---valhalla-2026-relaunch/driver-tile.jpg',
-    },
-    notes: [
-      {
-        text: 'SAE 2020-36-0079 Table 6 (pp.6–7): Passive New 131.61s → ACTIVE MaxP 129.06s (human DIL) → delta −2.55s.',
-      },
-      {
-        text: 'Trajectory Optimization — Pieter de Buck (URL) — NLP formulation using OpenMDAO, Dymos, IPOPT for ideal line + AOA/torque vectoring optimization.',
-      },
+    label: 'Pachet',
+    kicker: 'Capitol 04 · Slide 4',
+    actionTitle: 'Active Aero Package Resolves the High-Speed Understeer Paradox',
+    headline: 'Pachetul Aerodinamic Activ — Splitter Binar & Eleron Continuous',
+    bullets: [
+      'Splitter Frontal Activ: Acționare binară (ÎNCHIS = Downforce față maxim | DESCHIS = Canal inferior deschis pentru reducere Drag).',
+      'Eleron Spate Activ: Modulare continuă AOA între 0° și 25° (stare pasivă de bază: 6°).',
+      'Paradoxul Balanței Aerodinamice 50/50: Un pachet pasiv egalizat 50/50 pe punți a pierdut +1.007s pe tur față de mașina originală. Cuplul masiv pe spate crea subvirare severă la accelerare la ieșirea din viraj, cerând o balanță dinamică variabilă.',
+      'Forțele Aerodinamice la 160 km/h: Drag = 788 N | Downforce Față = +470 N | Downforce Spate = +467 N.',
     ],
-  },
-  {
-    id: 'control',
-    number: 5,
-    label: 'Control',
-    kicker: 'Capitol 05',
-    headline: 'Modelul de Predicție AI în Timp Real (PI-ROM)',
-    body: 'Modelul hibrid bazat pe fizică integrată și rețea neuronală reziduală (PI-ROM) pentru calculul coeficienților aerodinamici în buclă închisă sub 1 ms.',
-    image: {
-      src: '/images/am-official/am-ch05-control.jpg',
-      objectPosition: '55% 42%',
-      sourceUrl:
-        'https://www.astonmartin.com/-/media/models---valhalla-2026-relaunch/valhalla-lft-image.jpg',
-    },
-    notes: [
-      {
-        text: 'subramanian_activeaeroROM_preprint.pdf, p.1 Abstract — PI-ROM architecture: thin airfoil theory + residual neural network + computational acceleration.',
-      },
-      {
-        text: 'subramanian_activeaeroROM_preprint.pdf, p.27 Table 2 — PI-ROM 0.0906 ms vs XFOIL CFD 2.4081 ms → 26.58× faster.',
-      },
-    ],
-  },
-  {
-    id: 'regimuri',
-    number: 6,
-    label: 'Cadrul teoretic',
-    kicker: 'Capitol 06',
-    headline: 'Cadrul Teoretic General (Frecare & Saturație Anvelope)',
-    body: 'Limitele sistemelor pasive/tradiționale cauzate de saturația cercului de frecare Kamm (Fy,max = μ FZ).',
-    image: {
-      src: '/images/am-official/am-ch06-regimuri.jpg',
-      objectPosition: '50% 40%',
-      sourceUrl:
-        'https://www.astonmartin.com/-/media/models---valhalla-2026-relaunch/valhalla-explore-tile-3.jpg',
-    },
-    notes: [
-      {
-        text: 'Wei Gao et al., 2021 — Journal of Physics; 1fbd01b59b71746ed236baedf6ea44c4.pdf.',
-      },
-      {
-        text: 'pp.1–2 Intro & 2.1 Fuel consumption: tire physical limit; aerodynamic downforce (FL) extends adhesion limit without added mass.',
-      },
-    ],
-  },
-  {
-    id: 'studiu-de-caz',
-    number: 7,
-    label: 'Studiu de caz',
-    kicker: 'Capitol 07 · OEM',
-    headline: 'Active Aero — Aston Martin Valhalla',
-    body: 'Suprafețele aerodinamice active ale Valhalla, așa cum le descrie Aston Martin oficial: aripi față/spate, splitter, air-dam, underbody / venturi, diffuser și canalele din dihedral doors. Surse: pagina de model, comunicatul de presă și brochure 2025 — fără claim-uri SAE inventate.',
     image: {
       src: '/images/am-official/am-ch07-caz.jpg',
       objectPosition: '50% 40%',
       sourceUrl:
         'https://www.astonmartin.com/-/media/models---valhalla-2026-relaunch/engineering-banner-desktop.jpg',
     },
-    surfaces: [
-      {
-        id: 'front-wing',
-        oemName: 'Active front wing',
-        roleRo:
-          'Aripa față twin-element, ascunsă în spatele grilei AM, chiar înaintea axei față. Un singur mecanism controlează downforce-ul aripii și fluxul spre underfloor vanes; în Race trece în maximum downforce, cu bleed AoA / DRS automat. Reacție ≤ 0,5 s. Include cooling bypass pentru drag redus la viteză mare.',
-        facts: [
-          'twin-element · hidden behind grille',
-          'reactive ≤ 0.5 s',
-          'Race · max DF + DRS bleed',
-        ],
-        image: {
-          src: '/images/am-official/am-ch07-front-wing.jpg',
-          objectPosition: '50% 45%',
-          alt: 'Aston Martin Valhalla — active front wing / grille aero detail (official)',
-        },
-      },
-      {
-        id: 'rear-wing',
-        oemName: 'Active rear wing · dual-element T-wing',
-        roleRo:
-          'Aripa spate dual-element „T” pe rame hidraulice. În EV / Sport / Sport+ rămâne stowed; în Race se ridică cu 255 mm. IVC ajustează AoA pentru downforce, drag sau distanță de frânare; la frânare puternică se depliază ca air brake sub 0,5 s, împreună cu aripa față pentru aero-balance.',
-        facts: [
-          '+255 mm · Race mode',
-          'DRS · air brake',
-          'IVC · reactive ≤ 0.5 s',
-        ],
-        image: {
-          src: '/images/am-official/am-ch07-rear-wing.jpg',
-          objectPosition: '50% 40%',
-          alt: 'Aston Martin Valhalla — active rear T-wing deployed (official)',
-        },
-      },
-      {
-        id: 'front-splitter',
-        oemName: 'Carbon fibre front splitter',
-        roleRo:
-          'Splitter față din carbon fibre: delimitează fluxul inferior și lucrează cu under-floor-ul concav din spatele său pentru zona de joasă presiune care generează downforce pe axa față.',
-        facts: ['carbon fibre', 'pairs with concave under-floor'],
-        image: {
-          src: '/images/am-official/am-ch07-front.jpg',
-          objectPosition: '50% 55%',
-          alt: 'Aston Martin Valhalla — front splitter and nose aero (official)',
-        },
-      },
-      {
-        id: 'air-dam',
-        oemName: 'Active air-dam · underfloor turning vanes',
-        roleRo:
-          'Air-dam activ care controlează automat underfloor turning vanes — modulează fluxul sub podea împreună cu aripa față, pentru balance și managearea aerului spre venturi.',
-        facts: ['active air-dam', 'underfloor turning vanes'],
-        image: {
-          src: '/images/am-official/am-ch07-vanes.jpg',
-          objectPosition: '50% 45%',
-          alt: 'Aston Martin Valhalla — F1-inspired vanes / air apertures (official)',
-        },
-      },
-      {
-        id: 'underbody',
-        oemName: 'Underbody · flat floor · venturi tunnels',
-        roleRo:
-          'Arhitectură underbody AMPT: flat floor, under-floor concav față și rear venturi tunnels accelerează aerul sub mașină. Claim public: >600 kg downforce @ 150 mph / de la 240 km/h, menținut până la vMax 350 km/h prin bleed AoA pe aripi.',
-        facts: [
-          '>600 kg DF @ 150 mph (Race)',
-          'flat floor · venturi',
-          'maintained to 350 km/h',
-        ],
-        image: {
-          src: '/images/am-official/am-ch07-underbody.jpg',
-          objectPosition: '50% 50%',
-          alt: 'Aston Martin Valhalla — underbody / venturi aero (official)',
-        },
-      },
-      {
-        id: 'rear-diffuser',
-        oemName: 'Carbon fibre rear diffuser',
-        roleRo:
-          'Diffuser spate din carbon fibre, împreună cu venturi tunnels, gestionează evacuarea fluxului underbody și completează pachetul de downforce pe axa spate alături de T-wing.',
-        facts: ['carbon fibre rear diffuser', 'with venturi tunnels'],
-        image: {
-          src: '/images/am-official/am-ch07-rear-design.jpg',
-          objectPosition: '50% 55%',
-          alt: 'Aston Martin Valhalla — rear diffuser and tail aero (official)',
-        },
-      },
-      {
-        id: 'door-ducts',
-        oemName: 'Dihedral door ducts · Concealed Extraction',
-        roleRo:
-          'Suprafețele interioare ale dihedral doors acționează ca ducte aerodinamice ascunse: ghidează aerul din wheel arches pe flancuri spre coolerele de ulei motor / transmisie — +50% eficiență termică fără side scoops vizibile.',
-        facts: ['hidden aerodynamic ducts', '+50% thermal efficiency (AM)'],
-        image: {
-          src: '/images/am-official/am-ch07-doors.jpg',
-          objectPosition: '50% 45%',
-          alt: 'Aston Martin Valhalla — dihedral doors / flank aero ducts (official)',
-        },
-      },
-    ],
+    figure: {
+      src: '/images/guide/fig-4-1-fl-fd-aoa.png',
+      caption:
+        'Figura 4.1: Evoluția Forțelor Aerodinamice (FL, FD) în funcție de Unghiul AOA la 160 km/h',
+      alt: 'Evoluția forțelor aerodinamice FL/FD vs AOA la 160 km/h',
+    },
     notes: [
       {
-        text: 'Aston Martin official — Model page: https://www.astonmartin.com/en/models/valhalla (Aerodynamics specs; Aerodynamic Directives: Concealed Extraction, Active Equilibrium, Venturi Velocity).',
+        text: '💬 Context (Slide 4): Una dintre cele mai importante descoperiri ale cercetării este că o aerodinamică pasivă perfect echilibrată (50% față / 50% spate) NU este optimă pe o mașină dezechilibrată mecanic.',
       },
       {
-        text: 'Aston Martin official — Press: “Valhalla: The ultimate drivers supercar” (11 Dec 2024) — active front/rear wings, IVC, Race +255 mm, DRS / air brake, >600 kg downforce.',
+        text: 'Deoarece motoarele electrice spate livrează un cuplu uriaș, la ieșirea din viraj puntea față se ridică, iar mașina subvira masiv dacă aerodinamica rămânea fixă.',
       },
       {
-        text: 'Aston Martin official — Valhalla Brochure 2025: Unparalleled active aero / Active aero / Front and rear wing (active air-dam, venturi, diffuser, cooling by-pass).',
+        text: 'Soluția este modularea mecatronică activă: schimbarea Centrului de Presiune (CoP) în timp real pentru a compensa transferul de masă.',
       },
     ],
   },
 
   {
-    id: 'rezultate',
-    number: 8,
-    label: 'Grafice',
-    kicker: 'Capitol 08',
-    headline: 'Grafice relevante — de ce Active Aero',
-    body: 'Sinteză ilustrativă a Cap. 1–6: proiectare integrată și control mecatronic pe caroseria de referință Vantage, plantă 14 DOF, mașina de stări DRS / Aerobrake / MaxP, validare Nürburgring (−2.55 s), predicție PI-ROM și limita anvelopei (cerc Kamm / FL).',
-    bodyExtra: [
-      'Cum funcționează. Pe modelul multicorp 14 DOF (VI-CarRealTime), controlul aero nu optimizează continuu coeficienții, ci selectează stări discrete: DRS (AOA 0°, splitter deschis peste 110 km/h) pentru drag minim la accelerație; Aerobrake (AOA 19°) pentru forță de frânare aerodinamică; MaxP cu schedule empiric de AOA pe benzi de viteză (0° / 3° / 4.5°) pentru balanță aero când DRS și Aerobrake sunt inactive. Unde e nevoie de predicție rapidă a coeficienților, PI-ROM evaluează în ~0.09 ms — cu un ordin de mărime sub XFOIL.',
-      'De ce este necesar. Aero pasivă fixează un singur compromis drag–downforce pe întreaga tură. La limita anvelopei, forțele longitudinale (FL / Fx) și laterale (Fy) sunt constrânse de cercul de frecare Kamm: √(Fx² + Fy²) ≤ μ·Fz. Downforce-ul activ crește Fz și, odată cu el, raza utilizabilă a cercului — fără a inventa valori OEM Valhalla. Rezultatul măsurat în SAE pe DIL Nürburgring GP: Passive–New 131.61 s → Active–MaxP 129.06 s (−2.55 s). Graficele de mai jos sunt ilustrative, citate din sursele Cap. 1–6.',
+    id: 'state-machine',
+    number: 5,
+    label: 'Stări',
+    kicker: 'Capitol 05 · Slide 5',
+    actionTitle:
+      'Three-State Mechatronic Controller Seamlessly Shifts Aero-Balance',
+    headline: 'Logica Mecatronică de Control prin Stări (State Machine)',
+    bullets: [
+      'Controllerul comută automat între 3 stări pe baza CAN-bus-ului vehiculului (viteză, apăsare pedale, senzori G).',
+      'Modul DRS, Aerobrake și MaxP definesc configurația hardware, condițiile de activare și efectul dinamic.',
     ],
     image: {
-      src: '/images/am-official/am-ch08-rezultate.jpg',
-      objectPosition: '50% 45%',
+      src: '/images/am-official/am-ch03-fundamente.jpg',
+      objectPosition: '50% 40%',
       sourceUrl:
-        'https://www.astonmartin.com/-/media/models---valhalla-2026-relaunch/valhalla-explore-tile-2.jpg',
+        'https://www.astonmartin.com/-/media/models---valhalla/2026-redesign/valhalla-powertrain-hero-banner-desktop.jpg',
     },
-    charts: CAP08_CHARTS,
+    modeColumns: [
+      {
+        id: 'drs',
+        title: 'Modul DRS (Low Drag)',
+        hardware: ['AOA = 0°', 'Splitter = DESCHIS'],
+        activation: [
+          'Viteză > 110 km/h',
+          'Accelerație > 70%',
+          'Acc. Laterală < 1g',
+        ],
+        effect: [
+          'Minimizare Drag (CD=0.31)',
+          '0-300 km/h în 10.650s',
+        ],
+      },
+      {
+        id: 'aerobrake',
+        title: 'Modul AEROBRAKE',
+        hardware: ['AOA = 19°...25°', 'Splitter = ÎNCHIS'],
+        activation: [
+          'Viteză > 70 km/h',
+          'Frână > 40%',
+          'Acc. Laterală < 1g',
+        ],
+        effect: [
+          'Decelerație & Downforce Spate',
+          'Stabilitate pe frânare',
+        ],
+      },
+      {
+        id: 'maxp',
+        title: 'Modul MAXP (Cornering)',
+        hardware: ['AOA = 0°...4.5° Dinamic', 'Splitter = ÎNCHIS'],
+        activation: [
+          'Regim viraj stabil',
+          'Viteză 100-300 km/h',
+          'CoP suprapus peste CoG',
+        ],
+        effect: [
+          'Optimizare Aero-Balance',
+          'Maximizare Accelerație Lat.',
+        ],
+      },
+    ],
+    diagrams: ['state-machine'],
     notes: [
       {
-        text: 'SAE Technical Paper 2020-36-0079 — Table 1 (specs), Table 3 (forțe @ 160 km/h), pp.5–6 (DRS / Aerobrake / MaxP), Table 6 (Nürburgring GP · −2.55 s DIL). Body shape de referință: Aston Martin Vantage 2019 — nu claim-uri OEM Valhalla.',
+        text: '💬 Context (Slide 5): Controllerul comută automat între cele 3 stări pe baza CAN-bus-ului vehiculului (viteză, apăsare pedale, senzori G).',
       },
       {
-        text: 'subramanian_activeaeroROM_preprint.pdf, Table 2 — PI-ROM 0.0906 ms vs XFOIL CFD 2.4081 ms (26.58×).',
+        text: 'Modulul DRS reduce timpul 0-300 km/h de la 10.728s la 10.650s.',
       },
       {
-        text: 'Asperti, Vignati, Sabbioni — On Torque Vectoring Control: Review and Comparison — friction circle / ellipse ca limital anvelopei (diagramă conceptuală Cap. 08; fără μ inventat).',
+        text: 'Modulul Aerobrake creează o forță de frânare aerodinamică masivă pe puntea spate, permițând pilotului să întârzie punctul de oprire fără pierdere de aderență.',
+      },
+      {
+        text: 'Modulul MaxP variază AOA pe plaje de viteză (0° la 100-180 km/h, 3° la 180-250 km/h, 4.5° la 250-300 km/h) pentru a menține traiectoria perfectă.',
       },
     ],
   },
 
   {
-    id: 'insight-uri',
+    id: 'nurburgring',
+    number: 6,
+    label: 'DIL',
+    kicker: 'Capitol 06 · Slide 6',
+    actionTitle: 'Active Aero Yields a Net -2.55s Lap Time Cut on Nürburgring GP',
+    headline: 'Validarea pe Simulatorul Static DIL (Nürburgring GP)',
+    bullets: [
+      'Setup Testare DIL (Driver-in-the-Loop): Simulator profesional VI-Grade DIL la Udine (Italia), pe circuitul virtual Nürburgring GP.',
+      'Pasiv Original Aero: 115.48s (VI-Driver) | 134.82s (Pilot Uman DIL)',
+      'Pasiv Nou Aero (50/50): 114.08s (VI-Driver) | 131.61s (Pilot Uman DIL)',
+      'ACTIV MaxP Aero Mode: 112.29s (VI-Driver) | 129.06s (Pilot Uman DIL)',
+      'Câștig Net Pilot Uman: -2.55 secunde (MaxP vs Pasiv Nou) și -5.76 secunde total față de referința originală.',
+      'Descoperire Cheie (Psihologia Pilotului): Pilotul uman câștigă mai mult decât cel virtual (-2.55s vs -1.79s) deoarece aerodinamica activă elimină instabilitatea pe frânare și oferă încredere totală în viraj.',
+    ],
+    image: {
+      src: '/images/am-official/am-ch04-mecanisme.jpg',
+      objectPosition: '50% 45%',
+      sourceUrl:
+        'https://www.astonmartin.com/-/media/models---valhalla-2026-relaunch/driver-tile.jpg',
+    },
+    figure: {
+      src: '/images/guide/fig-6-1-nurburgring.png',
+      caption:
+        'Figura 6.1: Comparația Timpilor pe Tur pe Nürburgring GP (VI-Driver vs. Pilot Uman DIL)',
+      alt: 'Comparație timp pe tur Nürburgring GP — VI-Driver vs Pilot Uman DIL',
+    },
+    notes: [
+      {
+        text: '💬 Context (Slide 6): Diferența dintre pilotul uman și cel virtual este una dintre cele mai valoroase concluzii inginerești ale lucrării.',
+      },
+      {
+        text: 'Pilotul virtual (VI-Driver) operează la limita matematică fără frică, pe când pilotul uman frânează mai devreme dacă mașina oscilează.',
+      },
+      {
+        text: 'Sistemul activ MaxP oferă o platformă aerodinamică predictibilă, permițând pilotului uman să atace virajele de mare viteză fără ezitare.',
+      },
+    ],
+  },
+
+  {
+    id: 'valhalla-serie',
+    number: 7,
+    label: 'Valhalla',
+    kicker: 'Capitol 07 · Slide 7',
+    actionTitle:
+      'Production Valhalla Delivers 1,079 PS and >600 kg Downforce at 240 km/h',
+    headline: 'Transpunerea pe Modelul de Serie Aston Martin Valhalla (PHEV)',
+    bullets: [
+      'Grup Motopropulsor PHEV (1,079 PS Total).',
+      'Motor Termic (ICE): 4.0L V8 Biturbo Flat-Plane Crank (817 PS).',
+      'Motoare Electrice: 3 eMotoare (2 pe puntea față cu Torque Vectoring + 1 în transmisie) = 248 PS.',
+      'Performanțe Dinamice de Vârf: 0-100 km/h în 2.5s | VMax 350 km/h | Masă uscată 1655 kg (Monococă Carbon F1).',
+      'Capabilități Aerodinamice de Serie: Downforce de peste 600 kg la 240 km/h. Timp de acționare mecatronică sub 0.4s (< 400 ms) pentru eleronul hidraulic cu cursă de 255 mm.',
+      'Țintă Nürburgring Nordschleife: Sub 6 minute și 30 secunde (< 6:30.00).',
+    ],
+    image: {
+      src: '/images/am-official/am-ch07-rear-wing.jpg',
+      objectPosition: '50% 40%',
+      sourceUrl:
+        'https://www.astonmartin.com/-/media/models---valhalla-2026-relaunch/engineering-banner-desktop.jpg',
+    },
+    figure: {
+      src: '/images/guide/fig-7-1-downforce.png',
+      caption:
+        'Figura 7.1: Curba de Apăsare Aerodinamică (Downforce) pe Modelul de Serie Valhalla',
+      alt: 'Curba de downforce pe modelul de serie Valhalla',
+    },
+    notes: [
+      {
+        text: '💬 Context (Slide 7): Acest slide face legătura directă între cercetarea dinamică 14 DOF și mașina fizică de serie creată de Aston Martin în 999 exemplare.',
+      },
+      {
+        text: 'Timpul de acționare de sub 400 ms al eleronului spate de pe mașina de serie respectă cu strictețe ipoteza cvasi-statică (< 2 Hz) demonstrată în studiu.',
+      },
+      {
+        text: 'Sistemul activ de pe Valhalla include și e-Reverse (marșarier realizat exclusiv electric de motoarele față), eliminând pârghiile mecanice din cutia DCT cu 8 trepte pentru a economisi masă.',
+      },
+    ],
+  },
+
+  {
+    id: 'pi-rom',
+    number: 8,
+    label: 'PI-ROM',
+    kicker: 'Capitol 08 · Slide 8',
+    actionTitle:
+      'Physics-Informed Neural Model (PI-ROM) Enables <0.1 ms Closed-Loop Control',
+    headline: 'Inteligența Artificială & Predicția în Timp Real (PI-ROM & NLP)',
+    bullets: [
+      'Problema CFD Clasic: Simulările CFD tradiționale necesită secunde/minute per iterație, fiind inaccesibile pentru un controller mecatronic în timp real (< 1 ms).',
+      'Arhitectura Hibridă PI-ROM (Physics-Informed Reduced-Order Model): Combină teoria profilului subțire [CL = 2π(α-α0)] și polara de rezistență [CD = CD0 + K*CL²] cu o rețea neuronală reziduală PyTorch.',
+      'Performanță Computațională: Execuție în 0.0906 ms (26.58x mai rapid decât CFD XFOIL la 2.4081 ms). Precizie R² = 0.9959 pe CL.',
+      'Optimizare Traiectorie (NLP / IPOPT): Formularea liniei ideale de cursă și a managementului de energie prin programare nelineară (Pieter de Buck).',
+    ],
+    equations: [
+      'CL = 2π(α − α0)',
+      'CD = CD0 + K · CL²',
+    ],
+    image: {
+      src: '/images/am-official/am-ch05-control.jpg',
+      objectPosition: '55% 42%',
+      sourceUrl:
+        'https://www.astonmartin.com/-/media/models---valhalla-2026-relaunch/valhalla-lft-image.jpg',
+    },
+    figure: {
+      src: '/images/guide/fig-8-1-pi-rom.png',
+      caption:
+        'Figura 8.1: Timpul de Execuție Computațional: CFD XFOIL vs. Rețeaua Neuronală PI-ROM',
+      alt: 'Comparație timp execuție CFD XFOIL vs PI-ROM',
+    },
+    notes: [
+      {
+        text: '💬 Context (Slide 8): Modelul PI-ROM dezvoltat de Subramanian reprezintă viitorul controlului aerodinamic activ.',
+      },
+      {
+        text: "Prin integrarea fizicii analitice direct în rețeaua neuronală, algoritmul nu mai face 'ghicituri' ne-fizice și atinge o viteză de calcul de 0.0906 ms.",
+      },
+      {
+        text: 'Această viteză permite controllerului să recalculeze unghiul AOA de 1000 de ori pe secundă (1000 Hz), depășind cu mult cerința minimă de control.',
+      },
+    ],
+  },
+
+  {
+    id: 'simulator',
     number: 9,
     label: 'Simulator',
-    kicker: 'Capitol 09',
-    headline: 'Simulator Active Aero',
-    body: 'Explorează programele SAE DRS, Aerobrake și MaxP: ajustează viteza, AOA, splitter și pedalele; vezi feedback vizual și indici educaționali relativi (forțe absolute doar la ancora Table 3 @ 160 km/h).',
+    kicker: 'Capitol 09 · Simulator 3D',
+    actionTitle: 'Interactive Active Aero Simulator (R3F)',
+    headline: 'Simulator Active Aero 3D',
+    bullets: [
+      'Explorează programele DRS, Aerobrake și MaxP pe modelul 3D Valhalla.',
+      'Ajustează viteza, AOA, splitter și pedalele; vezi feedback vizual al suprafețelor active.',
+      'Ancoră forțe absolute doar la Table 3 @ 160 km/h (Drag = 788 N | DF față +470 N | DF spate +467 N).',
+    ],
     image: {
       src: '/images/am-official/am-ch09-insight.jpg',
       objectPosition: '50% 45%',
@@ -434,31 +495,58 @@ export const MOCK_CHAPTERS: readonly MockChapter[] = [
     simulator: true,
     notes: [
       {
-        text: 'SAE 2020-36-0079 — modes DRS / Aerobrake / MaxP / Standard: AOA setpoints, splitter OPEN|CLOSED, throttle/brake/|ay| gates (S1-F020–F051).',
+        text: 'Cap 09 nu este un slide din ghidul de prezentare — este simulatorul interactiv R3F păstrat între Slide 8 (PI-ROM) și Slide 9 (Discuții).',
       },
       {
-        text: 'SAE 2020-36-0079, Table 3 @ 160 km/h (New Pack): absolute drag / front DF / rear DF anchors only — no invented Valhalla OEM forces away from this speed.',
+        text: 'Moduri DRS / Aerobrake / MaxP: AOA, splitter OPEN|CLOSED, praguri viteză / pedale / ay — aliniate cu ghidul Slide 5.',
       },
     ],
   },
 
   {
-    id: 'surse',
+    id: 'discutii',
     number: 10,
+    label: 'Discuții',
+    kicker: 'Capitol 10 · Slide 9',
+    actionTitle: 'Co-Design of Mechatronics & Aerodynamics Replaces Isolated Engineering',
+    headline: 'Discuții & Implicații pentru Ingineria Auto Modernă',
+    bullets: [
+      'Schimbarea de Paradigmă în Proiectare: Trecerea de la silozuri inginerești izolate la dezvoltare concomitentă (Concurrent Engineering) între aerodinamică, șasiu și software.',
+      'Sinergia Mecatronică Nivel 4: Aerodinamica activă lucrează în sinergie cu Vectorizarea Cuplului (Torque Vectoring) și suspensia activă pentru a neutraliza subvirarea.',
+      'Replicabilitate pe Vehicule Electrice (EV): Metodologia poate fi transferată pe orice vehicul electric de performanță pentru a îmbunătăți eficiența energetică și timpii pe tur.',
+    ],
+    image: {
+      src: '/images/am-official/am-ch08-rezultate.jpg',
+      objectPosition: '50% 45%',
+      sourceUrl:
+        'https://www.astonmartin.com/-/media/models---valhalla-2026-relaunch/valhalla-explore-tile-2.jpg',
+    },
+    diagrams: ['synergy'],
+    notes: [
+      {
+        text: '💬 Context (Slide 9): Integrarea aerodinamicii active schimbă fundamental modul în care este calibrat un șasiu.',
+      },
+      {
+        text: 'În loc să fie nevoie de o suspensie extrem de rigidă care să compromită confortul și aderența pe denivelări, aerodinamica activă adaugă apăsare doar la viteze mari când este într-adevăr necesar.',
+      },
+      {
+        text: 'Această abordare este esențială pentru hypercar-urile moderne care trebuie să funcționeze impecabil atât pe pistă, cât și pe drumurile publice.',
+      },
+    ],
+  },
+
+  {
+    id: 'concluzii',
+    number: 11,
     label: 'Concluzii',
-    kicker: 'Capitol 10',
-    headline: 'Concluzii — pachet integrat, rezultat măsurat',
-    body: 'Sistemul integrat de aerodinamică activă și control mecatronic leagă proiectarea, modelarea și comanda într-un singur fir: de la caroseria de referință la bucla în timp real pe simulator.',
-    summary: [
-      '01 — Design integrat: Active Aerodynamics & Mechatronic Control pe referința Aston Martin Vantage / limbaj Valhalla.',
-      '02 — Modelare dinamică multicorp 14 DOF (VI-CarRealTime).',
-      '03 — Mașină de stări: DRS / Aerobrake / MaxP.',
-      '04 — Traiectorie & rezultat: −2.55 s pe Nürburgring GP (simulator).',
-      '05 — PI-ROM pentru comandă rapidă în buclă.',
-      '06 — Fundamente Kamm / FL: limita de aderență și forța verticală.',
-      '07 — Suprafețe OEM Valhalla ca ancoră vizuală / de produs.',
-      '08 — Grafice și lectură „de ce” asupra forțelor și a compromisului drag–downforce.',
-      '09 — Simulator DIL / VI-Grade ca spațiu de validare.',
+    kicker: 'Capitol 11 · Slide 10',
+    actionTitle: 'Active Aerodynamics Transforms Vehicle Dynamics & Track Confidence',
+    headline: 'Concluzii Majore & Referințe Bibliografice',
+    bullets: [
+      'Concluzia 1: Aerodinamica activă extinde cercul de aderență Kamm fără a adăuga masă inerțială.',
+      'Concluzia 2: O balanță pasivă 50/50 este suboptimală pe vehicule 4WD; este necesară ajustarea mecatronică dinamică CoP vs CoG.',
+      'Concluzia 3: Câștig net de -2.55s pe Nürburgring GP pe simulatorul DIL, eliminând instabilitatea la frânare.',
+      'Concluzia 4: Modelul de serie Valhalla confirmă fezabilitatea industrială (1079 PS, >600 kg downforce, acționare <0.4s).',
     ],
     image: {
       src: '/images/am-official/am-ch10-surse.jpg',
@@ -466,21 +554,53 @@ export const MOCK_CHAPTERS: readonly MockChapter[] = [
       sourceUrl:
         'https://www.astonmartin.com/-/media/models---valhalla/2026-redesign/valhalla-technology-banner-desktop.jpg',
     },
+    summary: [
+      'Concluzia 1: Aerodinamica activă extinde cercul de aderență Kamm fără a adăuga masă inerțială.',
+      'Concluzia 2: O balanță pasivă 50/50 este suboptimală pe vehicule 4WD; este necesară ajustarea mecatronică dinamică CoP vs CoG.',
+      'Concluzia 3: Câștig net de -2.55s pe Nürburgring GP pe simulatorul DIL, eliminând instabilitatea la frânare.',
+      'Concluzia 4: Modelul de serie Valhalla confirmă fezabilitatea industrială (1079 PS, >600 kg downforce, acționare <0.4s).',
+    ],
+    kpiTable: {
+      caption: 'Indicatori cheie de performanță (KPI) — din ghid',
+      rows: [
+        {
+          indicator: 'Câștig net DIL (MaxP vs Pasiv Nou)',
+          value: '−2.55 s (pilot uman)',
+        },
+        {
+          indicator: 'Câștig total vs Original (pilot uman)',
+          value: '−5.76 s',
+        },
+        {
+          indicator: 'DRS 0–300 km/h',
+          value: '10.650 s (față de 10.728 s)',
+        },
+        {
+          indicator: 'Forțe @ 160 km/h',
+          value: 'Drag 788 N · DF față +470 N · DF spate +467 N',
+        },
+        {
+          indicator: 'PI-ROM execuție',
+          value: '0.0906 ms (26.58× vs XFOIL 2.4081 ms); R² = 0.9959 pe CL',
+        },
+        {
+          indicator: 'Valhalla serie',
+          value: '1,079 PS · >600 kg DF @ 240 km/h · acționare <0.4 s',
+        },
+      ],
+    },
+    references: [
+      'Carvalho Pinheiro et al. (SAE 2020-36-0079)',
+      'Subramanian (2021)',
+      'Pieter de Buck (2021)',
+      'Aston Martin Lagonda (2025)',
+    ],
     notes: [
       {
-        text: 'SAE Technical Paper 2020-36-0079 — Integrated Design and Control of Active Aerodynamic Features for High Performance Electric Vehicles.',
+        text: '💬 Context (Slide 10): Toate modelele matematice, datele din simulările 14 DOF, ecuațiile PI-ROM și specificațiile de serie Aston Martin Valhalla au fost validate prin teste numerice și pe simulatorul Driver-in-the-Loop.',
       },
       {
-        text: 'On Torque Vectoring Control: Review and Comparison of State-of-the-Art Approaches (PDF: On_Torque_Vectoring_Control_Review_and_Comparison_.pdf) — pointer; fără claims inventate aici.',
-      },
-      {
-        text: 'Aston_Martin_Valhalla_Active_Aero.pptx — firul prezentării (14 DOF, DRS/Aerobrake/MaxP, −2.55 s Nürburgring, PI-ROM, Kamm/FL).',
-      },
-      {
-        text: 'Subramanian — active aero ROM preprint (subramanian_activeaeroROM_preprint.pdf), as cited for PI-ROM.',
-      },
-      {
-        text: 'Gao — as cited earlier in the presentation sources (pointer only).',
+        text: 'Pentru întrebări suplimentare și colaborări pe proiecte de mecatronică automotive, datele de contact ale autorilor sunt incluse în memoriul tehnic atașat.',
       },
     ],
   },
