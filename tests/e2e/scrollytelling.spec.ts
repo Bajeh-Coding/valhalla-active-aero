@@ -61,7 +61,7 @@ test.describe('Mockup 10 capitole E2E', () => {
     expect(errors, errors.join('\n')).toEqual([])
   })
 
-  test('renders Cap 01 content and remaining placeholders', async ({
+  test('renders Cap 01 and Cap 06 content; other chapters remain placeholders', async ({
     page,
   }) => {
     const errors = await attachErrorTrap(page)
@@ -81,7 +81,28 @@ test.describe('Mockup 10 capitole E2E', () => {
       /Aston Martin Vantage 2019/i,
     )
 
-    for (const id of CHAPTER_IDS.slice(1)) {
+    const cap06 = page.getByTestId('chapter-regimuri')
+    await cap06.scrollIntoViewIfNeeded()
+    await expect(cap06).toBeVisible()
+    await expect(cap06).toContainText(
+      /Cadrul Teoretic General \(Frecare & Saturație Anvelope\)/i,
+    )
+    await expect(cap06).toContainText(/cercului de frecare Kamm/i)
+    await expect(cap06).toContainText(/Fy,max = μ FZ/)
+    await expect(page.getByTestId('chapter-regimuri-notes')).toContainText(
+      /Wei Gao et al\., 2021/i,
+    )
+    await expect(page.getByTestId('chapter-regimuri-notes')).toContainText(
+      /1fbd01b59b71746ed236baedf6ea44c4\.pdf/,
+    )
+    await expect(page.getByTestId('chapter-regimuri-notes')).toContainText(
+      /aerodynamic downforce \(FL\)/i,
+    )
+
+    const placeholderIds = CHAPTER_IDS.filter(
+      (id) => id !== 'introducere' && id !== 'regimuri',
+    )
+    for (const id of placeholderIds) {
       const section = page.getByTestId(`chapter-${id}`)
       await section.scrollIntoViewIfNeeded()
       await expect(section).toBeVisible()
