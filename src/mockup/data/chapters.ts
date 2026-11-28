@@ -1,5 +1,5 @@
 /**
- * Presentation chapter shell — Cap 01–02 have authored content; others remain placeholders.
+ * Presentation chapter shell — Cap 01–03 have authored content; others remain placeholders.
  * Imagery: official Aston Martin Valhalla page assets (downloaded, not hotlinked).
  */
 
@@ -22,6 +22,15 @@ export interface MockChapterSpecRow {
   value: string
 }
 
+export interface MockChapterMode {
+  /** Short mode name (DRS / Aerobrake / MaxP). */
+  name: string
+  /** One-line role of the mode. */
+  role: string
+  /** Parameter lines sourced from SAE control strategy. */
+  lines: readonly string[]
+}
+
 export interface MockChapter {
   id: string
   number: number
@@ -39,6 +48,8 @@ export interface MockChapter {
     caption: string
     rows: readonly MockChapterSpecRow[]
   }
+  /** Optional control-mode blocks — Cap 03 state machine. */
+  modes?: readonly MockChapterMode[]
 }
 
 export const MOCK_CHAPTERS: readonly MockChapter[] = [
@@ -116,15 +127,49 @@ export const MOCK_CHAPTERS: readonly MockChapter[] = [
     id: 'fundamente',
     number: 3,
     label: 'Fundamente',
-    kicker: 'Capitol 03 — placeholder',
-    headline: 'Limbaj de bază',
-    body: 'Ut enim ad minim veniam, quis nostrud exercitation ullamco. Capitol 03 — placeholder pentru fundamente conceptuale (slot gol, elegant).',
+    kicker: 'Capitol 03',
+    headline:
+      'Sistemul de Control prin Stări (DRS, Aerobrake, MaxP)',
+    body: 'Arhitectura mașinii de stări (State Machine) cu 3 moduri active: DRS (reducere drag), Aerobrake (frânare aerodinamică), MaxP (optimizarea balanței aerodinamice CoP vs. CoG în viraje).',
     image: {
       src: '/images/am-official/am-ch03-fundamente.jpg',
       objectPosition: '50% 40%',
       sourceUrl:
         'https://www.astonmartin.com/-/media/models---valhalla/2026-redesign/valhalla-powertrain-hero-banner-desktop.jpg',
     },
+    modes: [
+      {
+        name: 'DRS',
+        role: 'Reducere drag',
+        lines: [
+          'AOA = 0°',
+          'Splitter = DESCHIS la viteză > 110 km/h',
+          'Pedală accelerație > 70%',
+        ],
+      },
+      {
+        name: 'Aerobrake',
+        role: 'Frânare aerodinamică',
+        lines: [
+          'AOA = 19°..25°',
+          'Splitter = ÎNCHIS la frânare > 40%',
+        ],
+      },
+      {
+        name: 'MaxP',
+        role: 'Balanță aerodinamică CoP vs. CoG',
+        lines: [
+          'AOA = 0° la 100–180 km/h',
+          'AOA = 3° la 180–250 km/h',
+          'AOA = 4.5° la 250–300 km/h',
+        ],
+      },
+    ],
+    notes: [
+      {
+        text: 'SAE 2020-36-0079, pp.4–6 — State machine and Control Strategy (DRS, DRS + Aerobrake, MaxP).',
+      },
+    ],
   },
   {
     id: 'mecanisme',

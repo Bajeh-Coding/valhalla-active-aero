@@ -10,8 +10,9 @@ export function ChapterSection({ chapter }: ChapterSectionProps) {
   const hasNotes = Boolean(chapter.notes?.length)
   const hasDof = Boolean(chapter.dofBreakdown?.length)
   const hasSpecs = Boolean(chapter.specs?.rows.length)
+  const hasModes = Boolean(chapter.modes?.length)
   const titleWidth =
-    chapter.number === 1 || chapter.number === 2
+    chapter.number === 1 || chapter.number === 2 || chapter.number === 3
       ? 'max-w-[920px]'
       : 'max-w-[640px]'
 
@@ -93,6 +94,34 @@ export function ChapterSection({ chapter }: ChapterSectionProps) {
                 </tbody>
               </table>
             </div>
+          ) : null}
+
+          {hasModes ? (
+            <ul
+              className="mt-12 grid max-w-[920px] gap-8 border-t border-aero-ivory/10 pt-8 md:grid-cols-3"
+              data-testid={`chapter-${chapter.id}-modes`}
+            >
+              {chapter.modes!.map((mode) => (
+                <li key={mode.name} className="min-w-0">
+                  <p className="font-display text-lg font-normal tracking-normal text-aero-ivory">
+                    {mode.name}
+                  </p>
+                  <p className="font-ui mt-1 text-[11px] font-medium tracking-[0.55px] text-aero-mist/55 uppercase">
+                    {mode.role}
+                  </p>
+                  <ul className="mt-4 space-y-2">
+                    {mode.lines.map((line) => (
+                      <li
+                        key={line}
+                        className="font-ui text-sm leading-relaxed tracking-[0.35px] text-aero-mist/85"
+                      >
+                        {line}
+                      </li>
+                    ))}
+                  </ul>
+                </li>
+              ))}
+            </ul>
           ) : null}
 
           {hasNotes ? (
