@@ -1,5 +1,5 @@
 /**
- * Presentation chapter shell — Cap 01 has authored content; others remain placeholders.
+ * Presentation chapter shell — Cap 01–02 have authored content; others remain placeholders.
  * Imagery: official Aston Martin Valhalla page assets (downloaded, not hotlinked).
  */
 
@@ -10,6 +10,18 @@ export interface MockChapterNote {
   quote?: string
 }
 
+export interface MockChapterDofItem {
+  /** DOF count label, e.g. "6 DOF". */
+  dof: string
+  /** Short description grounded in the SAE paper. */
+  detail: string
+}
+
+export interface MockChapterSpecRow {
+  parameter: string
+  value: string
+}
+
 export interface MockChapter {
   id: string
   number: number
@@ -18,8 +30,15 @@ export interface MockChapter {
   headline: string
   body: string
   image: { src: string; objectPosition?: string; sourceUrl: string }
-  /** Optional discreet footnotes — Cap 01 SAE citations. */
+  /** Optional discreet footnotes — SAE citations. */
   notes?: readonly MockChapterNote[]
+  /** Optional 14 DOF breakdown (Cap 02). */
+  dofBreakdown?: readonly MockChapterDofItem[]
+  /** Optional Table 1-style specs (Cap 02). */
+  specs?: {
+    caption: string
+    rows: readonly MockChapterSpecRow[]
+  }
 }
 
 export const MOCK_CHAPTERS: readonly MockChapter[] = [
@@ -51,16 +70,47 @@ export const MOCK_CHAPTERS: readonly MockChapter[] = [
   {
     id: 'problema',
     number: 2,
-    label: 'Problema',
-    kicker: 'Capitol 02 — placeholder',
-    headline: 'Tensiunea de rezolvat',
-    body: 'Capitol 02 — placeholder. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Textul va fi înlocuit cu formularea problemei de către autor.',
+    label: 'Modelare',
+    kicker: 'Capitol 02',
+    headline: 'Modelarea Dinamică Multicorp (14 DOF)',
+    body: 'Modelarea șasiului și a suspensiilor pe un model dinamic multicorp cu 14 Grade de Libertate (14 DOF) în mediul VI-CarRealTime.',
     image: {
       src: '/images/am-official/am-ch02-problema.jpg',
       objectPosition: '50% 45%',
       sourceUrl:
         'https://www.astonmartin.com/-/media/models---valhalla/2026-redesign/valhalla-specification-banner-desktop.jpg',
     },
+    dofBreakdown: [
+      {
+        dof: '6 DOF',
+        detail: 'mișcare spațială a șasiului (sprung mass)',
+      },
+      {
+        dof: '4 DOF',
+        detail: 'cursă suspensie (suspensions’ stroke)',
+      },
+      {
+        dof: '4 DOF',
+        detail: 'alunecare longitudinală a roților (wheels’ longitudinal slip)',
+      },
+    ],
+    specs: {
+      caption: 'Table 1 — Vehicle reference model technical specification',
+      rows: [
+        { parameter: 'Sprung mass', value: '2050 kg' },
+        { parameter: 'Power', value: '1257 kW' },
+        { parameter: 'Wheelbase', value: '2691 mm' },
+        { parameter: 'Frontal area', value: '2.1 m²' },
+      ],
+    },
+    notes: [
+      {
+        text: 'SAE 2020-36-0079, p.2 — Vehicle Model and Tailored Maneuvers: VI-CarRealTime; reduced DOF model with 5 rigid parts and 14 DOF (6 chassis / 4 suspension stroke / 4 wheels’ longitudinal slip).',
+      },
+      {
+        text: 'SAE 2020-36-0079, p.3 — Table 1 (Vehicle reference model technical specification): sprung mass 2050 kg; maximum power* 1257 kW; wheelbase 2691 mm; frontal area 2.1 m².',
+      },
+    ],
   },
   {
     id: 'fundamente',
