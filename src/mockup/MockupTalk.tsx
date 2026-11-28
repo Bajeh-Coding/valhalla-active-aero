@@ -5,7 +5,7 @@ import { Hero } from './components/Hero'
 import { MOCK_CHAPTERS } from './data/chapters'
 
 /**
- * Luxury presentation mockup — 10 placeholder chapters.
+ * Luxury scientific presentation — 10 authored chapters.
  * Motions: hero ambient scale, chapter reveal on scroll, nav scrollspy underline.
  */
 export function MockupTalk() {
@@ -119,7 +119,7 @@ export function MockupTalk() {
             Aerodinamică Activă
           </p>
           <p className="font-ui text-[10px] tracking-[0.2em] text-aero-mist/40 uppercase">
-            Mockup · 10 capitole · placeholder only
+            10 capitole · SAE · OEM · simulare
           </p>
         </div>
       </footer>

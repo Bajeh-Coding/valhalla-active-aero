@@ -31,16 +31,16 @@ export function Hero({ onExplore }: HeroProps) {
 
       <div className="relative z-10 mx-auto w-full max-w-[1400px] px-6 pb-16 pt-28 md:px-10 md:pb-24">
         <p className="font-ui mb-5 text-[14px] font-medium tracking-[0.55px] text-aero-mist/85 uppercase">
-          Prezentare · Mockup
+          Prezentare științifică
         </p>
 
         <h1 className="font-display hero-title-reveal max-w-[14ch] text-[clamp(2.75rem,7.5vw,5.4rem)] leading-[1.05] font-normal tracking-normal text-aero-ivory">
           Aerodinamică Activă
         </h1>
 
-        <p className="font-ui mt-6 max-w-[40ch] text-base font-normal leading-relaxed tracking-[0.55px] text-aero-mist/90 md:text-lg">
-          Controlul aerului ca limbaj de performanță — schelet vizual, fără
-          conținut științific.
+        <p className="font-ui mt-6 max-w-[42ch] text-base font-normal leading-relaxed tracking-[0.55px] text-aero-mist/90 md:text-lg">
+          De la modelul 14 DOF la controlul în timp real — un fir narativ despre
+          forța aerului ca limbaj de performanță.
         </p>
 
         <div className="mt-10 flex flex-wrap items-center gap-4">

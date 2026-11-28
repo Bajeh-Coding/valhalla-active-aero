@@ -151,7 +151,7 @@ export const MOCK_CHAPTERS: readonly MockChapter[] = [
   {
     id: 'fundamente',
     number: 3,
-    label: 'Fundamente',
+    label: 'Stări',
     kicker: 'Capitol 03',
     headline:
       'Sistemul de Control prin Stări (DRS, Aerobrake, MaxP)',
@@ -199,7 +199,7 @@ export const MOCK_CHAPTERS: readonly MockChapter[] = [
   {
     id: 'mecanisme',
     number: 4,
-    label: 'Mecanisme',
+    label: 'Traiectorie',
     kicker: 'Capitol 04',
     headline:
       'Optimizarea Traiectoriei & Performanța pe Tur (−2.55s Nürburgring GP)',
