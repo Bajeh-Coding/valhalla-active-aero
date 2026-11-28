@@ -33,13 +33,43 @@ const CHAPTER_IDS = [
   'concluzii',
 ] as const
 
+async function dismissBootSplash(page: Page) {
+  const start = page.getByTestId('boot-splash-start')
+  await expect(start).toBeVisible({ timeout: 15_000 })
+  await start.click()
+}
+
 async function gotoApp(page: Page) {
+  // Splash still requires Start; reduced motion skips the logo hold.
+  await page.emulateMedia({ reducedMotion: 'reduce' })
   await page.goto('/', { waitUntil: 'networkidle' })
+  await dismissBootSplash(page)
   await expect(page.getByTestId('mockup-talk')).toBeVisible({
     timeout: 30_000,
   })
   await page.waitForTimeout(500)
 }
+
+test.describe('Boot splash', () => {
+  test('Start → logo → presentation', async ({ page }) => {
+    await page.goto('/', { waitUntil: 'networkidle' })
+    await expect(page.getByTestId('boot-splash')).toBeVisible()
+    await expect(page.getByTestId('boot-splash-start')).toBeVisible()
+    await expect(page.getByTestId('app-shell')).toHaveCSS('opacity', '0')
+
+    await page.getByTestId('boot-splash-start').click()
+    await expect(page.getByTestId('boot-splash-logo')).toBeVisible({
+      timeout: 5_000,
+    })
+    await expect(page.getByTestId('app-shell')).toHaveCSS('opacity', '1', {
+      timeout: 8_000,
+    })
+    await expect(page.getByTestId('boot-splash')).toHaveCount(0, {
+      timeout: 3_000,
+    })
+    await expect(page.getByTestId('mockup-hero')).toBeVisible()
+  })
+})
 
 test.describe('Mockup 11 capitole E2E (ghid)', () => {
   test('boots hero without console errors', async ({ page }) => {
