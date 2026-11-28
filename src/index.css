@@ -1,10 +1,13 @@
 @import "tailwindcss";
 
 /*
-  Hybrid AM — Valhalla official digital language (approximated)
-  Display: Cinzel (elegant serif weight ≈ AM model titles)
-  Body: Cormorant Garamond · UI/data: Plus Jakarta · Mono: JetBrains
-  Palette: near-black void · ivory · racing-green whisper · lime rare
+  Mockup type — exact Aston Martin Valhalla page families (self-hosted)
+  Computed on https://www.astonmartin.com/en/models/valhalla :
+    h1/h2/h3 → font-family: AstonMartinFlare, sans-serif
+    body/nav → font-family: AstonMartinSans, sans-serif
+    --ff-amflare: AstonMartinFlare, sans-serif
+    --ff-amsans: AstonMartinSans, sans-serif
+  Palette: near-black void · ivory · racing-green (#00665e AM) · lime rare
 */
 @theme {
   --color-aero-bg: #05070a;
@@ -12,21 +15,21 @@
   --color-aero-ink: #0b0e14;
   --color-aero-bg-deep: #0b0e14;
   --color-aero-surface: #0b0e14;
-  --color-aero-amr: #005949;
-  --color-aero-amr-deep: #004225;
+  --color-aero-amr: #00665e;
+  --color-aero-amr-deep: #004944;
   --color-aero-lime: #c4df00;
   --color-aero-mist: #8b929a;
   --color-aero-muted: #8b929a;
-  --color-aero-ivory: #f2f0ea;
-  --color-aero-text: #f2f0ea;
+  --color-aero-ivory: #f8f7f4;
+  --color-aero-text: #f8f7f4;
   --color-aero-signal: #e8e4dc;
   --color-aero-champagne: #e8e4dc;
 
-  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
-  --font-ui: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
-  --font-display: "Cinzel", "Cormorant Garamond", Georgia, serif;
-  --font-serif: "Cormorant Garamond", "Cinzel", Georgia, serif;
-  --font-mono: "JetBrains Mono", ui-monospace, "Cascadia Code", monospace;
+  --font-sans: AstonMartinSans, sans-serif;
+  --font-ui: AstonMartinSans, sans-serif;
+  --font-display: AstonMartinFlare, sans-serif;
+  --font-serif: AstonMartinFlare, sans-serif;
+  --font-mono: AstonMartinSans, sans-serif;
 }
 
 :root {
@@ -62,7 +65,9 @@ body {
     radial-gradient(ellipse 80% 50% at 10% 100%, rgb(11 14 20 / 0.9), transparent 50%),
     var(--void);
   color: var(--ivory);
-  font-family: var(--font-serif);
+  font-family: AstonMartinSans, sans-serif;
+  font-weight: 400;
+  letter-spacing: 0.55px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -124,14 +129,74 @@ input[type="range"].aero-range::-moz-range-thumb {
   }
 }
 
+@keyframes hero-ambient {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1.06);
+  }
+}
+
+@keyframes hero-title-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .luxury-pulse {
   animation: luxury-breathe 3.2s ease-in-out infinite;
+}
+
+.hero-ambient {
+  animation: hero-ambient 28s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+.hero-title-reveal {
+  animation: hero-title-in 1.1s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both;
+}
+
+.chapter-reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity 0.85s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.85s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.chapter-reveal.is-revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.scrollbar-none {
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
   .luxury-pulse {
     animation: none;
     opacity: 0.5;
+  }
+
+  .hero-ambient,
+  .hero-title-reveal {
+    animation: none;
+  }
+
+  .chapter-reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
   }
 }
 

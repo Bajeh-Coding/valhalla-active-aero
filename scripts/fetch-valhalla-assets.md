@@ -1,17 +1,30 @@
-# Valhalla asset provenance
+# Official Aston Martin Valhalla assets (mockup)
 
-Local files under `public/images/valhalla/` were downloaded from Wikimedia Commons
-(Special:FilePath, width≈2400) on 2026-11-27. License: CC BY-SA 4.0 (see each Commons page).
+Downloaded from https://www.astonmartin.com/en/models/valhalla into
+`public/images/am-official/` for offline mockup use (not hotlinked).
 
-| File | Commons source |
-|------|----------------|
-| `hero.jpg` | Aston Martin Valhalla at Miller Motorcars, front view |
-| `showroom.jpg` | 2026 Aston Martin Valhalla |
-| `front.jpg` | 2025 Aston Martin Valhalla 5 |
-| `side.jpg` | 2025 Aston Martin Valhalla 11 |
-| `rear.jpg` | 2025 Aston Martin Valhalla 6 |
-| `prototype.jpg` | Aston Martin Valhalla Prototype (1) |
+Fonts self-hosted from theme:
+`https://www.astonmartin.com/theme/10.3.54.0.1/assets/astonmartin/fonts/`
+→ `public/fonts/aston-martin/` (`AstonMartinFlare`, `AstonMartinSans`).
 
-Machine-readable credits: `src/congress/assets.ts`.
+See project doc `docs/mockup-10-capitole.md` for the full URL table.
 
-**Do not** reintroduce Unsplash car placeholders.
+## Cap 07 surface stills (additional)
+
+From model page + Valhalla Brochure 2025 / press-linked OEM media:
+
+| Local file | Role |
+|------------|------|
+| `am-ch07-front-wing.jpg` | Active front wing / aero still |
+| `am-ch07-grille-front.jpg` | Grille (front wing concealed) |
+| `am-ch07-rear-wing.jpg` | Active rear T-wing |
+| `am-ch07-aero-system.jpg` | Active aero system still |
+| `am-ch07-aero-under.jpg` | Underbody / aero still |
+| `am-ch07-front.jpg` | Front carousel (splitter) |
+| `am-ch07-rear.jpg` | Rear carousel |
+| `am-ch07-underbody.jpg` | Underbody carousel |
+| `am-ch07-side.jpg` | Side carousel |
+| `am-ch07-doors.jpg` | Dihedral doors |
+| `am-ch07-vanes.jpg` | F1 vanes / apertures |
+| `am-ch07-roof-scoop.jpg` | Roof scoop |
+| `am-ch07-rear-design.jpg` | Rear design / diffuser |

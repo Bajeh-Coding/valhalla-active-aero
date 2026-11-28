@@ -1,0 +1,50 @@
+/* Self-hosted from astonmartin.com theme (mockup parity). */
+@font-face {
+  font-family: AstonMartinSans;
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+  src: url('./AstonMartinSans_Lt.woff2') format('woff2');
+}
+@font-face {
+  font-family: AstonMartinSans;
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  src: url('./AstonMartinSans_Rg.woff2') format('woff2');
+}
+@font-face {
+  font-family: AstonMartinSans;
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+  src: url('./AstonMartinSans_Md.woff2') format('woff2');
+}
+@font-face {
+  font-family: AstonMartinSans;
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+  src: url('./AstonMartinSans_Bd.woff2') format('woff2');
+}
+@font-face {
+  font-family: AstonMartinFlare;
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  src: url('./AstonMartinFlare_Rg.woff2') format('woff2');
+}
+@font-face {
+  font-family: AstonMartinFlare;
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+  src: url('./AstonMartinFlare_Md.woff2') format('woff2');
+}
+@font-face {
+  font-family: AstonMartinFlare;
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+  src: url('./AstonMartinFlare_Bd.woff2') format('woff2');
+}
