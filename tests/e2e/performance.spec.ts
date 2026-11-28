@@ -1,13 +1,13 @@
 import { expect, test } from '@playwright/test'
 
 /**
- * Hybrid AM rAF sanity (SVG charts, no WebGL).
+ * Mockup rAF sanity during chapter scroll.
  * Reports measured averages — never claim 60 FPS without numbers.
  */
-test.describe('Hybrid AM performance probe', () => {
-  test('measures rAF FPS during beat scroll', async ({ page }) => {
+test.describe('Mockup performance probe', () => {
+  test('measures rAF FPS during chapter scroll', async ({ page }) => {
     await page.goto('/', { waitUntil: 'networkidle' })
-    await expect(page.getByTestId('hybrid-talk')).toBeVisible({
+    await expect(page.getByTestId('mockup-talk')).toBeVisible({
       timeout: 30_000,
     })
     await page.waitForTimeout(600)
@@ -32,18 +32,17 @@ test.describe('Hybrid AM performance probe', () => {
             resolve()
           }
         }
-        const beats = [
-          'cl-cd-compromise',
-          'ch02-state-machine',
-          'lap-grip-algorithms',
-          'g1-table3-forces',
-          'recap',
-          'title',
+        const chapters = [
+          'introducere',
+          'control',
+          'rezultate',
+          'surse',
+          'problema',
         ]
         let i = 0
         const scrollIv = window.setInterval(() => {
           const el = document.querySelector(
-            `[data-testid="beat-${beats[i % beats.length]}"]`,
+            `[data-testid="chapter-${chapters[i % chapters.length]}"]`,
           )
           el?.scrollIntoView({ behavior: 'instant', block: 'start' })
           i += 1
@@ -62,21 +61,20 @@ test.describe('Hybrid AM performance probe', () => {
         sampleCount: samples.length,
         avgFps: Number(avg.toFixed(1)),
         minFps: Number(min.toFixed(1)),
-        hasHybrid: Boolean(
-          document.querySelector('[data-testid="hybrid-talk"]'),
+        hasMockup: Boolean(
+          document.querySelector('[data-testid="mockup-talk"]'),
         ),
+        chapterCount: document.querySelectorAll('[data-chapter-id]').length,
         valhallaImgCount: document.querySelectorAll(
           'img[src*="/images/valhalla/"]',
         ).length,
-        chartCount: document.querySelectorAll('[data-chart-id]').length,
-        unsplashCount: document.querySelectorAll('img[src*="unsplash"]').length,
       }
     })
 
     console.log(`PERF_JSON ${JSON.stringify(result)}`)
 
-    expect(result.hasHybrid).toBe(true)
-    expect(result.unsplashCount).toBe(0)
+    expect(result.hasMockup).toBe(true)
+    expect(result.chapterCount).toBe(10)
     expect(result.valhallaImgCount).toBeGreaterThan(0)
     expect(result.sampleCount).toBeGreaterThan(0)
     expect(result.avgFps).toBeGreaterThan(2)
