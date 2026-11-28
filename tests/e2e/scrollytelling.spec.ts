@@ -61,7 +61,7 @@ test.describe('Mockup 10 capitole E2E', () => {
     expect(errors, errors.join('\n')).toEqual([])
   })
 
-  test('renders Cap 01–06 content and remaining placeholders', async ({
+  test('renders Cap 01–07 content and remaining placeholders', async ({
     page,
   }) => {
     const errors = await attachErrorTrap(page)
@@ -194,6 +194,41 @@ test.describe('Mockup 10 capitole E2E', () => {
       /aerodynamic downforce \(FL\)/i,
     )
 
+    const caseStudy = page.getByTestId('chapter-studiu-de-caz')
+    await caseStudy.scrollIntoViewIfNeeded()
+    await expect(caseStudy).toBeVisible()
+    await expect(caseStudy).toContainText(
+      /Active Aero — Aston Martin Valhalla/i,
+    )
+    await expect(caseStudy).not.toContainText(/placeholder/i)
+    await expect(
+      page.getByTestId('chapter-studiu-de-caz-surfaces'),
+    ).toBeVisible()
+    await expect(page.getByTestId('surface-front-wing')).toContainText(
+      /Active front wing/i,
+    )
+    await expect(page.getByTestId('surface-rear-wing')).toContainText(
+      /T-wing/i,
+    )
+    await expect(page.getByTestId('surface-front-splitter')).toContainText(
+      /front splitter/i,
+    )
+    await expect(page.getByTestId('surface-air-dam')).toContainText(
+      /air-dam/i,
+    )
+    await expect(page.getByTestId('surface-underbody')).toContainText(
+      /venturi/i,
+    )
+    await expect(page.getByTestId('surface-rear-diffuser')).toContainText(
+      /diffuser/i,
+    )
+    await expect(page.getByTestId('surface-door-ducts')).toContainText(
+      /Dihedral door/i,
+    )
+    await expect(page.getByTestId('chapter-studiu-de-caz-notes')).toContainText(
+      /Aston Martin official/i,
+    )
+
     const authored = new Set([
       'introducere',
       'problema',
@@ -201,6 +236,7 @@ test.describe('Mockup 10 capitole E2E', () => {
       'mecanisme',
       'control',
       'regimuri',
+      'studiu-de-caz',
     ])
     for (const id of CHAPTER_IDS) {
       if (authored.has(id)) continue

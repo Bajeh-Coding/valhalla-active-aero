@@ -1,4 +1,5 @@
 import type { MockChapter } from '../data/chapters'
+import { AeroSurfaces } from './AeroSurfaces'
 import { ChapterMedia } from './ChapterMedia'
 
 interface ChapterSectionProps {
@@ -11,8 +12,9 @@ export function ChapterSection({ chapter }: ChapterSectionProps) {
   const hasDof = Boolean(chapter.dofBreakdown?.length)
   const hasSpecs = Boolean(chapter.specs?.rows.length)
   const hasModes = Boolean(chapter.modes?.length)
+  const hasSurfaces = Boolean(chapter.surfaces?.length)
   const titleWidth =
-    chapter.number >= 1 && chapter.number <= 6
+    chapter.number >= 1 && chapter.number <= 7
       ? 'max-w-[920px]'
       : 'max-w-[640px]'
 
@@ -124,37 +126,45 @@ export function ChapterSection({ chapter }: ChapterSectionProps) {
             </ul>
           ) : null}
 
-          {hasNotes ? (
-            <aside
-              className="mt-12 max-w-[640px] border-t border-aero-ivory/10 pt-6"
-              aria-label="Surse"
-              data-testid={`chapter-${chapter.id}-notes`}
-            >
-              <p className="font-ui mb-4 text-[10px] font-medium tracking-[0.55px] text-aero-mist/45 uppercase">
-                Surse
-              </p>
-              <ol className="space-y-4">
-                {chapter.notes!.map((note, i) => (
-                  <li key={i} className="flex gap-3">
-                    <span className="font-ui shrink-0 text-[10px] tracking-[0.2em] text-aero-mist/40">
-                      {String(i + 1).padStart(2, '0')}
-                    </span>
-                    <div className="min-w-0">
-                      <p className="font-ui text-[11px] leading-relaxed tracking-[0.35px] text-aero-mist/55">
-                        {note.text}
-                      </p>
-                      {note.quote ? (
-                        <blockquote className="font-ui mt-2 border-l border-aero-amr/50 pl-3 text-[11px] leading-relaxed tracking-[0.35px] text-aero-mist/70 italic">
-                          &ldquo;{note.quote}&rdquo;
-                        </blockquote>
-                      ) : null}
-                    </div>
-                  </li>
-                ))}
-              </ol>
-            </aside>
-          ) : null}
         </div>
+
+        {hasSurfaces ? (
+          <AeroSurfaces
+            surfaces={chapter.surfaces!}
+            chapterId={chapter.id}
+          />
+        ) : null}
+
+        {hasNotes ? (
+          <aside
+            className="chapter-reveal mt-12 max-w-[720px] border-t border-aero-ivory/10 pt-6"
+            aria-label="Surse"
+            data-testid={`chapter-${chapter.id}-notes`}
+          >
+            <p className="font-ui mb-4 text-[10px] font-medium tracking-[0.55px] text-aero-mist/45 uppercase">
+              Surse
+            </p>
+            <ol className="space-y-4">
+              {chapter.notes!.map((note, i) => (
+                <li key={i} className="flex gap-3">
+                  <span className="font-ui shrink-0 text-[10px] tracking-[0.2em] text-aero-mist/40">
+                    {String(i + 1).padStart(2, '0')}
+                  </span>
+                  <div className="min-w-0">
+                    <p className="font-ui text-[11px] leading-relaxed tracking-[0.35px] text-aero-mist/55">
+                      {note.text}
+                    </p>
+                    {note.quote ? (
+                      <blockquote className="font-ui mt-2 border-l border-aero-amr/50 pl-3 text-[11px] leading-relaxed tracking-[0.35px] text-aero-mist/70 italic">
+                        &ldquo;{note.quote}&rdquo;
+                      </blockquote>
+                    ) : null}
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </aside>
+        ) : null}
       </div>
     </section>
   )
