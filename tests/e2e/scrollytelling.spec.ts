@@ -313,7 +313,7 @@ test.describe('Mockup 10 capitole E2E', () => {
     await expect(page.getByTestId('sim-table3-anchor')).toBeVisible()
     await expect(page.getByTestId('sim-table3-anchor')).toContainText(/788/)
 
-    // 2.5D Valhalla surfaces respond to mode / AOA / splitter
+    // 3D Valhalla HUD surfaces respond to mode / AOA / splitter
     await expect(page.getByTestId('sim-surface-rear-wing')).toBeVisible()
     await expect(page.getByTestId('sim-surface-front-wing')).toBeVisible()
     await expect(page.getByTestId('sim-surface-splitter')).toBeVisible()
@@ -321,6 +321,7 @@ test.describe('Mockup 10 capitole E2E', () => {
     await expect(page.getByTestId('sim-surface-diffuser')).toBeVisible()
     await expect(page.getByTestId('sim-wheel-rear')).toBeVisible()
     await expect(page.getByTestId('sim-surface-legend')).toContainText(/T-wing/i)
+    await expect(page.getByTestId('sim-visual')).toContainText(/Valhalla 3D/i)
 
     await page.getByTestId('sim-mode-DRS').click()
     await expect(page.getByTestId('sim-visual')).toHaveAttribute(
