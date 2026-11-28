@@ -1,5 +1,6 @@
 import type { MockChapter } from '../data/chapters'
 import { ActiveAeroSimulator } from './ActiveAeroSimulator'
+import { GuideChart } from './GuideCharts'
 import { GuideDiagram } from './GuideDiagrams'
 import { ChapterMedia } from './ChapterMedia'
 
@@ -286,21 +287,11 @@ export function ChapterSection({ chapter }: ChapterSectionProps) {
           : null}
 
         {hasFigure ? (
-          <figure
-            className="chapter-reveal mt-12 max-w-[1000px] border-t border-aero-ivory/10 pt-8"
-            data-testid={`chapter-${chapter.id}-figure`}
-          >
-            <figcaption className="font-ui mb-5 text-[10px] font-medium tracking-[0.55px] text-aero-mist/45 uppercase">
-              {chapter.figure!.caption}
-            </figcaption>
-            <img
-              src={chapter.figure!.src}
-              alt={chapter.figure!.alt}
-              className="w-full bg-aero-ink object-contain"
-              loading="lazy"
-              decoding="async"
-            />
-          </figure>
+          <GuideChart
+            id={chapter.figure!.chartId}
+            caption={chapter.figure!.caption}
+            chapterId={chapter.id}
+          />
         ) : null}
 
         {hasSimulator ? (

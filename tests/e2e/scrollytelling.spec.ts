@@ -121,8 +121,12 @@ test.describe('Mockup 11 capitole E2E (ghid)', () => {
       /Figura 4\.1/i,
     )
     await expect(
-      pachet.locator('img[src*="/images/guide/fig-4-1"]'),
+      page.getByTestId('chapter-pachet-aero-figure').locator('svg'),
     ).toBeVisible()
+    await expect(page.getByTestId('chapter-pachet-aero-figure')).toHaveAttribute(
+      'data-chart-id',
+      'fig-4-1-fl-fd-aoa',
+    )
 
     const states = page.getByTestId('chapter-state-machine')
     await states.scrollIntoViewIfNeeded()
@@ -143,8 +147,11 @@ test.describe('Mockup 11 capitole E2E (ghid)', () => {
       /Figura 6\.1/i,
     )
     await expect(
-      dil.locator('img[src*="/images/guide/fig-6-1"]'),
+      page.getByTestId('chapter-nurburgring-figure').locator('svg'),
     ).toBeVisible()
+    await expect(page.getByTestId('chapter-nurburgring-figure')).toContainText(
+      /129\.06/,
+    )
 
     const valhalla = page.getByTestId('chapter-valhalla-serie')
     await valhalla.scrollIntoViewIfNeeded()
@@ -154,8 +161,11 @@ test.describe('Mockup 11 capitole E2E (ghid)', () => {
       page.getByTestId('chapter-valhalla-serie-figure'),
     ).toContainText(/Figura 7\.1/i)
     await expect(
-      valhalla.locator('img[src*="/images/guide/fig-7-1"]'),
+      page.getByTestId('chapter-valhalla-serie-figure').locator('svg'),
     ).toBeVisible()
+    await expect(
+      page.getByTestId('chapter-valhalla-serie-figure'),
+    ).toContainText(/600 kg @ 240/)
 
     const pirom = page.getByTestId('chapter-pi-rom')
     await pirom.scrollIntoViewIfNeeded()
@@ -165,8 +175,14 @@ test.describe('Mockup 11 capitole E2E (ghid)', () => {
       /Figura 8\.1/i,
     )
     await expect(
-      pirom.locator('img[src*="/images/guide/fig-8-1"]'),
+      page.getByTestId('chapter-pi-rom-figure').locator('svg'),
     ).toBeVisible()
+    await expect(page.getByTestId('chapter-pi-rom-figure')).toContainText(
+      /0\.0906/,
+    )
+    await expect(page.getByTestId('chapter-pi-rom-figure')).toContainText(
+      /2\.4081/,
+    )
 
     const sim = page.getByTestId('chapter-simulator')
     await sim.scrollIntoViewIfNeeded()
