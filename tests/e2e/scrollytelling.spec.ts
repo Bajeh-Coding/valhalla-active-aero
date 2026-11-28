@@ -61,7 +61,7 @@ test.describe('Mockup 10 capitole E2E', () => {
     expect(errors, errors.join('\n')).toEqual([])
   })
 
-  test('renders Cap 01–04 content and remaining placeholders', async ({
+  test('renders Cap 01–05 content and remaining placeholders', async ({
     page,
   }) => {
     const errors = await attachErrorTrap(page)
@@ -156,11 +156,32 @@ test.describe('Mockup 10 capitole E2E', () => {
       /OpenMDAO, Dymos, IPOPT/,
     )
 
+    const control = page.getByTestId('chapter-control')
+    await control.scrollIntoViewIfNeeded()
+    await expect(control).toBeVisible()
+    await expect(control).toContainText(
+      /Modelul de Predicție AI în Timp Real \(PI-ROM\)/i,
+    )
+    await expect(control).toContainText(/sub 1 ms/i)
+    await expect(page.getByTestId('chapter-control-notes')).toContainText(
+      /subramanian_activeaeroROM_preprint\.pdf/i,
+    )
+    await expect(page.getByTestId('chapter-control-notes')).toContainText(
+      /0\.0906 ms/i,
+    )
+    await expect(page.getByTestId('chapter-control-notes')).toContainText(
+      /26\.58/i,
+    )
+    await expect(
+      control.locator('img[src*="/images/am-official/am-ch05-control"]'),
+    ).toBeVisible()
+
     const authored = new Set([
       'introducere',
       'problema',
       'fundamente',
       'mecanisme',
+      'control',
     ])
     for (const id of CHAPTER_IDS) {
       if (authored.has(id)) continue

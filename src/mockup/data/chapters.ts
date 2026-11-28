@@ -1,5 +1,5 @@
 /**
- * Presentation chapter shell — Cap 01–04 have authored content; others remain placeholders.
+ * Presentation chapter shell — Cap 01–05 have authored content; others remain placeholders.
  * Imagery: official Aston Martin Valhalla page assets (downloaded, not hotlinked).
  */
 
@@ -198,15 +198,23 @@ export const MOCK_CHAPTERS: readonly MockChapter[] = [
     id: 'control',
     number: 5,
     label: 'Control',
-    kicker: 'Capitol 05 — placeholder',
-    headline: 'Bucla de decizie',
-    body: 'Excepteur sint occaecat cupidatat non proident. Capitol 05 — placeholder pentru arhitectura de control (fără claim-uri tehnice).',
+    kicker: 'Capitol 05',
+    headline: 'Modelul de Predicție AI în Timp Real (PI-ROM)',
+    body: 'Modelul hibrid bazat pe fizică integrată și rețea neuronală reziduală (PI-ROM) pentru calculul coeficienților aerodinamici în buclă închisă sub 1 ms.',
     image: {
       src: '/images/am-official/am-ch05-control.jpg',
       objectPosition: '55% 42%',
       sourceUrl:
         'https://www.astonmartin.com/-/media/models---valhalla-2026-relaunch/valhalla-lft-image.jpg',
     },
+    notes: [
+      {
+        text: 'subramanian_activeaeroROM_preprint.pdf, p.1 Abstract — PI-ROM architecture: thin airfoil theory + residual neural network + computational acceleration.',
+      },
+      {
+        text: 'subramanian_activeaeroROM_preprint.pdf, p.27 Table 2 — PI-ROM 0.0906 ms vs XFOIL CFD 2.4081 ms → 26.58× faster.',
+      },
+    ],
   },
   {
     id: 'regimuri',

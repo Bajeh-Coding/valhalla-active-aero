@@ -15,7 +15,8 @@ export function ChapterSection({ chapter }: ChapterSectionProps) {
     chapter.number === 1 ||
     chapter.number === 2 ||
     chapter.number === 3 ||
-    chapter.number === 4
+    chapter.number === 4 ||
+    chapter.number === 5
       ? 'max-w-[920px]'
       : 'max-w-[640px]'
 
