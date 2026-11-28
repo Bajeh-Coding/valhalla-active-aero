@@ -91,6 +91,15 @@ export function ActiveAeroSimulator() {
   const showBrake =
     requestedMode === 'AEROBRAKE' || mode === 'AEROBRAKE' || aerobrakeForced
 
+  const onSpeedChange = (v: number) => {
+    setSpeedKmh(v)
+    // Keep MaxP AOA on the paper schedule unless the user is about to override
+    // via the dedicated slider (that calls setAoaDeg directly).
+    if (requestedMode === 'MAXP' && !aerobrakeForced) {
+      setAoaDeg(aeroPhysics.maxpAoaDeg(v))
+    }
+  }
+
   return (
     <div
       className="mt-12 w-full max-w-[1100px] border-t border-aero-ivory/10 pt-10"
@@ -159,7 +168,7 @@ export function ActiveAeroSimulator() {
             max={300}
             step={5}
             unit=" km/h"
-            onChange={setSpeedKmh}
+            onChange={onSpeedChange}
           />
           {showThrottle ? (
             <Slider
