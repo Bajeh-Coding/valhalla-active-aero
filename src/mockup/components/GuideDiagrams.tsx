@@ -3,6 +3,10 @@
  * (Kamm, 14 DOF, state machine, mechatronic synergy, KPI). No invented numbers.
  */
 
+import { Dof14Diagram } from './Dof14Chassis'
+
+export { Dof14Diagram }
+
 const VOID = '#05070a'
 const INK = '#0b0e14'
 const IVORY = '#f8f7f4'
@@ -249,122 +253,6 @@ export function KammCircleDiagram() {
           </g>
         </svg>
       </div>
-    </figure>
-  )
-}
-
-/** Cap 03 — Schemă 14 DOF. */
-export function Dof14Diagram() {
-  return (
-    <figure
-      className="mt-10 max-w-[720px] border-t border-aero-ivory/10 pt-8"
-      data-testid="diagram-dof14"
-    >
-      <figcaption className="font-ui mb-5 text-[10px] font-medium tracking-[0.55px] text-aero-mist/45 uppercase">
-        Schemă — 14 grade de libertate (VI-CarRealTime)
-      </figcaption>
-      <svg
-        viewBox="0 0 640 280"
-        className="w-full"
-        role="img"
-        aria-label="14 DOF: 6 șasiu, 4 suspensii, 4 roți"
-      >
-        <rect width="640" height="280" fill="#0B0E14" rx="2" />
-        {/* Chassis block */}
-        <rect
-          x="200"
-          y="90"
-          width="240"
-          height="70"
-          fill="none"
-          stroke="#005949"
-          strokeWidth="2"
-          rx="2"
-        />
-        <text
-          x="320"
-          y="122"
-          textAnchor="middle"
-          fill="#F5F2EA"
-          fontSize="14"
-          fontFamily="ui-monospace, monospace"
-        >
-          6 DOF Șasiu
-        </text>
-        <text
-          x="320"
-          y="142"
-          textAnchor="middle"
-          fill="#8A9099"
-          fontSize="11"
-          fontFamily="ui-monospace, monospace"
-        >
-          x y z · roll pitch yaw
-        </text>
-
-        {/* Four suspension DOF */}
-        {[
-          { x: 80, y: 40, label: 'Susp. FL' },
-          { x: 460, y: 40, label: 'Susp. FR' },
-          { x: 80, y: 200, label: 'Susp. RL' },
-          { x: 460, y: 200, label: 'Susp. RR' },
-        ].map((n) => (
-          <g key={n.label}>
-            <rect
-              x={n.x}
-              y={n.y}
-              width="100"
-              height="44"
-              fill="none"
-              stroke="#8A9099"
-              strokeWidth="1.25"
-              rx="2"
-            />
-            <text
-              x={n.x + 50}
-              y={n.y + 18}
-              textAnchor="middle"
-              fill="#F5F2EA"
-              fontSize="11"
-              fontFamily="ui-monospace, monospace"
-            >
-              1 DOF
-            </text>
-            <text
-              x={n.x + 50}
-              y={n.y + 34}
-              textAnchor="middle"
-              fill="#8A9099"
-              fontSize="10"
-              fontFamily="ui-monospace, monospace"
-            >
-              {n.label}
-            </text>
-          </g>
-        ))}
-
-        {/* Wheel rotation labels */}
-        <text
-          x="320"
-          y="210"
-          textAnchor="middle"
-          fill="#005949"
-          fontSize="12"
-          fontFamily="ui-monospace, monospace"
-        >
-          + 4 DOF rotație / alunecare longitudinală roți
-        </text>
-        <text
-          x="320"
-          y="250"
-          textAnchor="middle"
-          fill="#8A9099"
-          fontSize="12"
-          fontFamily="ui-monospace, monospace"
-        >
-          Total = 6 + 4 + 4 = 14 DOF
-        </text>
-      </svg>
     </figure>
   )
 }
