@@ -202,6 +202,17 @@ test.describe('Mockup 10 capitole E2E (ghid)', () => {
       page.getByTestId('chapter-valhalla-serie-figure'),
     ).toContainText(/600 kg @ 240/)
 
+    const aeroPanel = page.getByTestId('chapter-valhalla-serie-surfaces')
+    await expect(aeroPanel).toBeVisible()
+    await expect(aeroPanel).toContainText(/Aerodynamic Directives/i)
+    await expect(aeroPanel).toContainText(/Active Equilibrium/)
+    await expect(aeroPanel).toContainText(/Concealed Extraction/)
+    await expect(aeroPanel).toContainText(/Venturi Velocity/)
+    await expect(aeroPanel).toContainText(/255 mm/)
+    await expect(page.getByTestId('surface-front-wing')).toBeVisible()
+    await expect(page.getByTestId('surface-rear-wing')).toBeVisible()
+    await expect(page.getByTestId('surface-door-ducts')).toBeVisible()
+
     const pirom = page.getByTestId('chapter-pi-rom')
     await pirom.scrollIntoViewIfNeeded()
     await expect(pirom).toBeVisible()
