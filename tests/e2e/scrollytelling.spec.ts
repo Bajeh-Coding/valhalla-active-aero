@@ -107,6 +107,9 @@ test.describe('Mockup 11 capitole E2E (ghid)', () => {
     await expect(cadru).toContainText(
       /Optimizing Hypercar Performance via Active Aerodynamics/i,
     )
+    await expect(page.getByTestId('chapter-cadru-subtitle')).toContainText(
+      /De la simulări multicorp \(14 DOF\).*PI-ROM.*1,079 PS/i,
+    )
     await expect(page.getByTestId('chapter-cadru-bullets')).toContainText(
       /PI-ROM/i,
     )

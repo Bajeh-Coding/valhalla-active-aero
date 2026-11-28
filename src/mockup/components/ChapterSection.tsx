@@ -46,6 +46,14 @@ export function ChapterSection({ chapter }: ChapterSectionProps) {
           <h2 className="font-display mt-3 text-[clamp(1.75rem,3.8vw,3rem)] leading-[1.15] font-normal tracking-normal text-aero-ivory">
             {chapter.headline}
           </h2>
+          {chapter.subtitle ? (
+            <p
+              className="chapter-subtitle chapter-subtitle--neon font-ui mt-4 max-w-[720px] text-base leading-snug tracking-[0.35px] md:text-lg"
+              data-testid={`chapter-${chapter.id}-subtitle`}
+            >
+              {chapter.subtitle}
+            </p>
+          ) : null}
           <p className="font-ui mt-3 max-w-[720px] text-[13px] font-medium leading-snug tracking-[0.35px] text-aero-amr/90 md:text-sm">
             {chapter.actionTitle}
           </p>
